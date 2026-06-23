@@ -1,0 +1,130 @@
+﻿@extends('layouts.admin')
+
+@section('title', 'Signalements')
+
+@section('topbar-title')
+    Gestion des <span>signalements</span>
+@endsection
+
+@section('topbar-actions')
+    <div style="font-size:12.5px;color:var(--text-light);font-weight:500;">
+        {{ $signalements->total() }} signalement(s) au total
+    </div>
+@endsection
+
+@section('styles')
+<style>
+    .filter-bar { display: flex; gap: 10px; align-items: center; margin-bottom: 20px; flex-wrap: wrap; }
+    .filter-bar input { padding: 8px 14px; border-radius: 10px; border: 1.5px solid var(--border); background: var(--white); font-size: 13px; font-family: inherit; color: var(--text); outline: none; transition: border 0.2s; width: 240px; }
+    .filter-bar input:focus { border-color: var(--teal); }
+    .filter-bar select { padding: 8px 14px; border-radius: 10px; border: 1.5px solid var(--border); background: var(--white); font-size: 13px; font-family: inherit; color: var(--text); outline: none; cursor: pointer; }
+    .sig-table-card { background: var(--white); border-radius: 16px; border: 1.5px solid var(--border); overflow: hidden; }
+    table { width: 100%; border-collapse: collapse; }
+    thead tr { background: var(--bg); }
+    th { padding: 11px 16px; text-align: left; font-size: 11px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.06em; border-bottom: 1.5px solid var(--border); }
+    td { padding: 13px 16px; font-size: 13px; color: var(--text); border-bottom: 1px solid var(--border); vertical-align: middle; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: var(--teal-light); }
+    .status-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px; }
+    .status-badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+    .status-badge.en_cours { background: #fefce8; color: #a16207; }
+    .status-badge.traite   { background: #f0fdf4; color: #007A4D; }
+    .status-badge.rejete   { background: #f9fafb; color: #6b7280; }
+    .btn-voir { padding: 5px 12px; border-radius: 7px; font-size: 11.5px; font-weight: 700; text-decoration: none; background: #f0fdfa; color: #0F766E; transition: all 0.2s; display: inline-flex; align-items: center; gap: 4px; }
+    .btn-voir:hover { background: #ccfbf1; }
+    .empty-state { text-align: center; padding: 60px 20px; color: var(--text-light); font-size: 13px; }
+    .empty-state svg { width: 48px; height: 48px; color: var(--border); margin: 0 auto 12px; display: block; }
+    .pagination-wrap { display: flex; justify-content: flex-end; padding: 16px 20px; border-top: 1px solid var(--border); }
+</style>
+@endsection
+
+@section('content')
+
+<div class="filter-bar">
+    <input type="text" id="searchInput" placeholder="Rechercher un produit ou fabricant..." onkeyup="filterTable()">
+    <select id="statusFilter" onchange="filterTable()">
+        <option value="">Tous les statuts</option>
+        <option value="en_cours">En cours</option>
+        <option value="traite">TraitÃ©</option>
+        <option value="rejete">RejetÃ©</option>
+    </select>
+    <div style="margin-left:auto;font-size:12.5px;color:var(--text-light);">{{ $signalements->total() }} signalement(s)</div>
+</div>
+
+<div class="sig-table-card">
+    <table id="sigTable">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Produit</th>
+                <th>Fabricant</th>
+                <th>Description</th>
+                <th>Signalant</th>
+                <th>Date</th>
+                <th>Statut</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse($signalements as $sig)
+            @php $produit = $sig->qrCode->lot->produit ?? null; $fab = $produit->fabricant ?? null; @endphp
+            <tr data-search="{{ strtolower(($produit->nom ?? '') . ' ' . ($fab->nom_entreprise ?? '')) }}" data-status="{{ $sig->statut }}">
+                <td style="color:var(--text-light);font-size:12px;">#{{ $sig->id }}</td>
+                <td>
+                    <div style="font-weight:700;">{{ $produit->nom ?? 'Inconnu' }}</div>
+                    <div style="font-size:11px;color:var(--text-light);">Lot {{ $sig->qrCode->lot->numero_lot ?? 'â€”' }}</div>
+                </td>
+                <td>
+                    <div style="font-size:12.5px;font-weight:600;">{{ $fab->nom_entreprise ?? 'â€”' }}</div>
+                    <div style="font-size:11px;color:var(--text-light);">{{ $fab->email ?? '' }}</div>
+                </td>
+                <td style="max-width:180px;font-size:12.5px;">{{ Str::limit($sig->description, 50) }}</td>
+                <td>
+                    <div style="font-size:12.5px;font-weight:600;">{{ $sig->nom_signalant ?? 'Anonyme' }}</div>
+                    <div style="font-size:11px;color:var(--text-light);">{{ $sig->contact_signalant ?? '' }}</div>
+                </td>
+                <td style="font-size:12px;color:var(--text-light);white-space:nowrap;">{{ $sig->created_at->format('d/m/Y') }}</td>
+                <td>
+                    <span class="status-badge {{ $sig->statut }}">
+                        {{ match($sig->statut) { 'en_cours' => 'En cours', 'traite' => 'TraitÃ©', 'rejete' => 'RejetÃ©', default => $sig->statut } }}
+                    </span>
+                </td>
+                <td>
+                    <a href="{{ route('admin.signalements.show', $sig->id) }}" class="btn-voir">
+                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="13" height="13"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                        Voir
+                    </a>
+                </td>
+            </tr>
+            @empty
+            <tr>
+                <td colspan="8">
+                    <div class="empty-state">
+                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                        Aucun signalement pour le moment
+                    </div>
+                </td>
+            </tr>
+            @endforelse
+        </tbody>
+    </table>
+    @if($signalements->hasPages())
+    <div class="pagination-wrap">{{ $signalements->links() }}</div>
+    @endif
+</div>
+
+@endsection
+
+@section('scripts')
+<script>
+function filterTable() {
+    const search = document.getElementById('searchInput').value.toLowerCase();
+    const status = document.getElementById('statusFilter').value;
+    document.querySelectorAll('#sigTable tbody tr').forEach(row => {
+        const s = row.dataset.search ?? '';
+        const t = row.dataset.status ?? '';
+        row.style.display = ((!search || s.includes(search)) && (!status || t === status)) ? '' : 'none';
+    });
+}
+</script>
+@endsection

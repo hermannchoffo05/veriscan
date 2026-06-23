@@ -1,0 +1,14 @@
+﻿G:\veriscan\resources\views\verify.blade.php:197: <form action="{{ route('verify.code') }}" method="POST" class="search-form">
+G:\veriscan\resources\views\verify.blade.php:311: <form method="POST" action="{{ route('verify.signaler') }}" enctype="multipart/form-data">
+G:\veriscan\resources\views\admin\parametres.blade.php:153: <form method="POST" action="{{ route('admin.parametres.photo') }}" enctype="multipart/form-data">
+G:\veriscan\resources\views\admin\parametres.blade.php:239: <form method="POST" action="{{ route('admin.parametres.systeme') }}">
+G:\veriscan\resources\views\admin\rapports\index.blade.php:175: <a href="{{ route('admin.rapports.telecharger') }}?type=global" class="btn-dl">
+G:\veriscan\resources\views\admin\rapports\index.blade.php:186: <a href="{{ route('admin.rapports.telecharger') }}?type=signalements" class="btn-dl">
+G:\veriscan\resources\views\admin\rapports\index.blade.php:197: <a href="{{ route('admin.rapports.telecharger') }}?type=fabricants" class="btn-dl">
+G:\veriscan\resources\views\admin\rapports\index.blade.php:208: <a href="{{ route('admin.rapports.telecharger') }}?type=qrcodes" class="btn-dl">
+G:\veriscan\resources\views\auth\reset-password.blade.php:6: <input type="hidden" name="token" value="{{ $request->route('token') }}">
+G:\veriscan\resources\views\fabricant\profil.blade.php:176: <form method="POST" action="{{ route('fabricant.profil.infos') }}">
+G:\veriscan\resources\views\fabricant\rapports\index.blade.php:39: <a href="{{ route('fabricant.rapports.telecharger') }}?type=mensuel" class="btn-primary">
+G:\veriscan\resources\views\fabricant\rapports\index.blade.php:52: <a href="{{ route('fabricant.rapports.telecharger') }}?type=certificats" class="btn-primary">
+G:\veriscan\resources\views\fabricant\rapports\index.blade.php:78: <a href="{{ route('fabricant.rapports.telecharger') }}?type=signalements" class="btn-primary">
+G:\veriscan\resources\views\layouts\fabricant.blade.php:589: <a href="{{ route('fabricant.carte') }}" class="nav-item {{ request()->routeIs('fabricant.carte') ? 'active' : '' }}">

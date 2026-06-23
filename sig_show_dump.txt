@@ -1,0 +1,125 @@
+﻿@extends('layouts.admin')
+@section('title', 'Signalement #' . $signalement->id)
+@section('topbar-title')Signalement <span>#{{ $signalement->id }}</span>@endsection
+@section('topbar-actions')@endsection
+@section('styles')
+<style>
+.breadcrumb{display:flex;align-items:center;gap:6px;margin-bottom:20px;font-size:13px;}
+.breadcrumb a{color:var(--text-light);text-decoration:none;font-weight:600;display:inline-flex;align-items:center;gap:5px;transition:color 0.2s;}
+.breadcrumb a:hover{color:var(--teal);}
+.breadcrumb a svg{width:13px;height:13px;}
+.breadcrumb span{color:var(--border);}
+.breadcrumb strong{color:var(--text);font-weight:600;}
+.show-layout{display:grid;grid-template-columns:1fr 320px;gap:20px;align-items:start;}
+.detail-card{background:var(--white);border-radius:16px;border:1.5px solid var(--border);overflow:hidden;margin-bottom:20px;}
+.detail-header{padding:16px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.detail-title{font-size:14px;font-weight:800;color:var(--text);display:flex;align-items:center;gap:7px;}
+.detail-title svg{width:15px;height:15px;color:var(--teal);}
+.detail-body{padding:20px 22px;}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.info-item label{font-size:11px;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:4px;}
+.info-item .val{font-size:13px;font-weight:600;color:var(--text);}
+.status-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;}
+.status-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor;}
+.status-badge.en_cours{background:#fefce8;color:#a16207;}
+.status-badge.traite{background:#f0fdf4;color:#007A4D;}
+.status-badge.rejete{background:#f9fafb;color:#6b7280;}
+.desc-box{background:var(--bg);border-radius:10px;padding:14px 16px;font-size:13px;color:var(--text);line-height:1.6;border:1px solid var(--border);}
+.action-card{background:var(--white);border-radius:16px;border:1.5px solid var(--border);overflow:hidden;margin-bottom:16px;}
+.action-header{padding:14px 18px;border-bottom:1px solid var(--border);font-size:13px;font-weight:800;color:var(--text);}
+.action-body{padding:16px 18px;display:flex;flex-direction:column;gap:8px;}
+.btn-action{width:100%;padding:9px 14px;border-radius:10px;font-size:12.5px;font-weight:700;cursor:pointer;border:1.5px solid transparent;font-family:inherit;transition:all 0.2s;display:flex;align-items:center;gap:7px;}
+.btn-action svg{width:14px;height:14px;flex-shrink:0;}
+.btn-traite{background:#f0fdf4;color:#007A4D;border-color:#bbf7d0;}
+.btn-traite:hover{background:#dcfce7;}
+.btn-rejete{background:#f9fafb;color:#6b7280;border-color:#e5e7eb;}
+.btn-rejete:hover{background:#f3f4f6;}
+.btn-escalade{background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe;}
+.btn-escalade:hover{background:#dbeafe;}
+.proof-img{width:100%;border-radius:10px;border:1px solid var(--border);object-fit:cover;max-height:200px;}
+.prod-row{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);font-size:12.5px;}
+.prod-row:last-child{border-bottom:none;}
+.prod-label{color:var(--text-light);width:90px;flex-shrink:0;}
+.prod-val{font-weight:600;color:var(--text);}
+</style>
+@endsection
+@section('content')
+@php
+    $produit=$signalement->qrCode->lot->produit??null;
+    $lot=$signalement->qrCode->lot??null;
+    $fab=$produit->fabricant??null;
+@endphp
+
+<div class="breadcrumb">
+    <a href="{{ route('admin.signalements.index') }}">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+        Signalements
+    </a>
+    <span>/</span>
+    <strong>Signalement #{{ $signalement->id }}</strong>
+</div>
+
+<div class="show-layout">
+    <div>
+        <div class="detail-card">
+            <div class="detail-header">
+                <div class="detail-title"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>DÃ©tails du signalement</div>
+                <span class="status-badge {{ $signalement->statut }}">{{ match($signalement->statut){'en_cours'=>'En cours','traite'=>'TraitÃ©','rejete'=>'RejetÃ©',default=>$signalement->statut} }}</span>
+            </div>
+            <div class="detail-body">
+                <div class="info-grid" style="margin-bottom:16px;">
+                    <div class="info-item"><label>Nom du signalant</label><div class="val">{{ $signalement->nom_signalant??'Anonyme' }}</div></div>
+                    <div class="info-item"><label>Contact</label><div class="val">{{ $signalement->contact_signalant??'â€”' }}</div></div>
+                    <div class="info-item"><label>Date du signalement</label><div class="val">{{ $signalement->created_at->format('d/m/Y Ã  H:i') }}</div></div>
+                    <div class="info-item"><label>RÃ©fÃ©rence QR Code</label><div class="val" style="font-family:monospace;font-size:12px;">{{ $signalement->qrCode->token??'â€”' }}</div></div>
+                </div>
+                <div style="margin-bottom:6px;font-size:11px;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:0.05em;">Description</div>
+                <div class="desc-box">{{ $signalement->description }}</div>
+            </div>
+        </div>
+        <div class="detail-card">
+            <div class="detail-header"><div class="detail-title"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>Produit concernÃ©</div></div>
+            <div class="detail-body">
+                <div class="prod-row"><span class="prod-label">Produit</span><span class="prod-val">{{ $produit->nom??'â€”' }}</span></div>
+                <div class="prod-row"><span class="prod-label">CatÃ©gorie</span><span class="prod-val">{{ $produit->categorie??'â€”' }}</span></div>
+                <div class="prod-row"><span class="prod-label">Code produit</span><span class="prod-val" style="font-family:monospace;font-size:12px;">{{ $produit->code_produit??'â€”' }}</span></div>
+                <div class="prod-row"><span class="prod-label">NÂ° de lot</span><span class="prod-val">{{ $lot->numero_lot??'â€”' }}</span></div>
+                <div class="prod-row"><span class="prod-label">Fabrication</span><span class="prod-val">{{ $lot->date_fabrication??'â€”' }}</span></div>
+                <div class="prod-row"><span class="prod-label">Expiration</span><span class="prod-val">{{ $lot->date_expiration??'â€”' }}</span></div>
+                <div class="prod-row"><span class="prod-label">Fabricant</span><span class="prod-val">{{ $fab->nom_entreprise??'â€”' }}</span></div>
+            </div>
+        </div>
+        @if($signalement->photo_preuve)
+        <div class="detail-card">
+            <div class="detail-header"><div class="detail-title"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>Photo preuve</div></div>
+            <div class="detail-body"><img src="{{ asset('storage/'.$signalement->photo_preuve) }}" class="proof-img" alt="Photo preuve"></div>
+        </div>
+        @endif
+    </div>
+    <div>
+        <div class="action-card">
+            <div class="action-header">ModÃ©rer ce signalement</div>
+            <div class="action-body">
+                <form method="POST" action="{{ route('admin.signalements.traiter',$signalement->id) }}">@csrf<input type="hidden" name="statut" value="traite"><button type="submit" class="btn-action btn-traite"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Marquer comme traitÃ©</button></form>
+                <form method="POST" action="{{ route('admin.signalements.traiter',$signalement->id) }}">@csrf<input type="hidden" name="statut" value="rejete"><button type="submit" class="btn-action btn-rejete"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>Rejeter le signalement</button></form>
+                <form method="POST" action="{{ route('admin.signalements.escalader',$signalement->id) }}">@csrf<button type="submit" class="btn-action btn-escalade"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>Escalader MINCOMMERCE</button></form>
+            </div>
+        </div>
+        @if($fab)
+        <div class="action-card">
+            <div class="action-header">Fabricant concernÃ©</div>
+            <div class="action-body">
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+                    <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#0f766e,#14b8a6);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:white;flex-shrink:0;">{{ strtoupper(substr($fab->nom_entreprise??'F',0,1)) }}</div>
+                    <div><div style="font-size:13px;font-weight:700;color:var(--text);">{{ $fab->nom_entreprise }}</div><div style="font-size:11px;color:var(--text-light);">{{ $fab->email }}</div></div>
+                </div>
+                <a href="{{ route('admin.fabricants.show',$fab->id) }}" style="display:flex;align-items:center;justify-content:center;gap:6px;padding:8px;border-radius:10px;background:var(--teal-light);color:var(--teal);font-size:12.5px;font-weight:700;text-decoration:none;">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                    Voir le profil fabricant
+                </a>
+            </div>
+        </div>
+        @endif
+    </div>
+</div>
+@endsection

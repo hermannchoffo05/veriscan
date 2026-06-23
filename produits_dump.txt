@@ -1,0 +1,111 @@
+﻿<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
+use App\Models\Produit;
+
+class FabricantProduitsController extends Controller
+{
+    public function index()
+    {
+        $fabricant = Auth::guard('fabricant')->user();
+
+        $produits = Produit::where('fabricant_id', $fabricant->id)
+                           ->withCount('lots')
+                           ->latest()
+                           ->paginate(12);
+
+        return view('fabricant.produits.index', compact('produits', 'fabricant'));
+    }
+
+    public function create()
+    {
+        $fabricant = Auth::guard('fabricant')->user();
+        return view('fabricant.produits.create', compact('fabricant'));
+    }
+
+    public function store(Request $request)
+    {
+        $fabricant = Auth::guard('fabricant')->user();
+
+        $validated = $request->validate([
+            'nom'         => 'required|string|max:255',
+            'categorie'   => 'required|string|max:100',
+            'description' => 'nullable|string',
+            'image'       => 'nullable|image|max:2048',
+        ]);
+
+        $validated['fabricant_id'] = $fabricant->id;
+        $validated['code_produit'] = 'VS-' . strtoupper(Str::random(8));
+
+        if ($request->hasFile('image')) {
+            $validated['image'] = $request->file('image')->store('produits', 'public');
+        }
+
+        Produit::create($validated);
+
+        return redirect()->route('fabricant.produits.index')
+                         ->with('success', 'Produit crÃ©Ã© avec succÃ¨s.');
+    }
+
+    public function show($id)
+    {
+        $fabricant = Auth::guard('fabricant')->user();
+
+        $produit = Produit::where('fabricant_id', $fabricant->id)
+                          ->with(['lots.qrcodes'])
+                          ->findOrFail($id);
+
+        return view('fabricant.produits.show', compact('produit', 'fabricant'));
+    }
+
+    public function edit($id)
+    {
+        $fabricant = Auth::guard('fabricant')->user();
+
+        $produit = Produit::where('fabricant_id', $fabricant->id)
+                          ->findOrFail($id);
+
+        return view('fabricant.produits.edit', compact('produit', 'fabricant'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $fabricant = Auth::guard('fabricant')->user();
+
+        $produit = Produit::where('fabricant_id', $fabricant->id)
+                          ->findOrFail($id);
+
+        $validated = $request->validate([
+            'nom'         => 'required|string|max:255',
+            'categorie'   => 'required|string|max:100',
+            'description' => 'nullable|string',
+            'image'       => 'nullable|image|max:2048',
+        ]);
+
+        if ($request->hasFile('image')) {
+            $validated['image'] = $request->file('image')->store('produits', 'public');
+        }
+
+        $produit->update($validated);
+
+        return redirect()->route('fabricant.produits.index')
+                         ->with('success', 'Produit mis Ã  jour.');
+    }
+
+    public function destroy($id)
+    {
+        $fabricant = Auth::guard('fabricant')->user();
+
+        $produit = Produit::where('fabricant_id', $fabricant->id)
+                          ->findOrFail($id);
+
+        $produit->delete();
+
+        return redirect()->route('fabricant.produits.index')
+                         ->with('success', 'Produit supprimÃ©.');
+    }
+}

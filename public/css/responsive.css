@@ -1,0 +1,236 @@
+/* ============================================================
+   VERISCAN — CSS RESPONSIVE GLOBAL
+   ============================================================ */
+
+/* ── BOUTON HAMBURGER (caché sur desktop) ── */
+.hamburger-btn {
+    display: none;
+    background: none;
+    border: none;
+    border-radius: 8px;
+    width: 38px;
+    height: 38px;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text, #1f2937);
+    flex-shrink: 0;
+    transition: background 0.2s;
+}
+.hamburger-btn:hover {
+    background: var(--teal-light, #f0fdfa);
+    color: var(--teal, #0f766e);
+}
+.hamburger-btn svg { width: 22px; height: 22px; }
+
+/* ── OVERLAY (fond sombre derrière la sidebar mobile) ── */
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 199;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+.sidebar-overlay.active { opacity: 1; }
+
+/* ============================================================
+   BREAKPOINT TABLETTE — 1024px
+   ============================================================ */
+@media (max-width: 1024px) {
+
+    :root { --sidebar-w: 220px; }
+
+    .stats-grid,
+    .main-grid { grid-template-columns: repeat(2, 1fr); }
+
+    .carte-layout { grid-template-columns: 1fr; }
+    #map { height: 350px; min-height: 350px; }
+
+    .params-layout { grid-template-columns: 1fr; }
+    .nav-card { position: static; }
+}
+
+/* ============================================================
+   BREAKPOINT MOBILE — 768px
+   ============================================================ */
+@media (max-width: 768px) {
+
+    /* ── Sidebar cachée par défaut via transform ── */
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s cubic-bezier(.4,0,.2,1);
+    }
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    /* ── Main prend toute la largeur ── */
+    .main, main.main {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    /* ── Topbar ── */
+    .topbar {
+        padding: 0 16px;
+        gap: 8px;
+    }
+    .topbar-title { font-size: 14px; }
+    .topbar-actions { gap: 6px; }
+    .btn-topbar { padding: 7px 10px; font-size: 11px; }
+
+    /* ── Bouton hamburger visible dans la topbar ── */
+    .hamburger-btn { display: flex; }
+
+    /* ── Content padding ── */
+    .content { padding: 16px; }
+
+    /* ── Grids ── */
+    .stats-grid,
+    .main-grid,
+    .form-row,
+    .carte-layout,
+    .params-layout,
+    .products-grid { grid-template-columns: 1fr; }
+
+    /* ── stats-row : TOUJOURS 3 colonnes ── */
+    .stats-row { grid-template-columns: repeat(3, 1fr); }
+
+    /* ── Carte Leaflet ── */
+    #map { height: 300px; }
+    .carte-layout { gap: 12px; }
+    .filtres-card, .side-card { width: 100%; }
+
+    /* ── Product cards ── */
+    .product-card { width: 100%; }
+    .product-card-stats { grid-template-columns: repeat(3, 1fr); }
+
+    /* ── Tableaux scrollables ── */
+    .table-wrap, .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    table { min-width: 520px; }
+
+    /* ── Dashboard banner ── */
+    .welcome-banner { padding: 20px; }
+    .welcome-banner h2 { font-size: 18px; }
+    .banner-actions { flex-direction: column; gap: 8px; }
+    .banner-actions a, .banner-actions button { width: 100%; justify-content: center; }
+
+    /* ── Page header ── */
+    .page-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .page-header .btn-primary { width: 100%; justify-content: center; }
+
+    /* ── Section header ── */
+    .section-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+
+    /* ── QR codes ── */
+    .qr-grid { grid-template-columns: 1fr; }
+
+    /* ── Signalements / rapports ── */
+    .filters-bar { flex-direction: column; }
+    .search-input { width: 100%; }
+    .filter-select { width: 100%; }
+
+    /* ── Admin dashboard ── */
+    .admin-stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .admin-main-grid { grid-template-columns: 1fr; }
+
+    /* ── Charts ── */
+    .chart-wrap { height: 200px; }
+
+    /* ── Topbar search ── */
+    .topbar-search { display: none; }
+
+    /* ── Breadcrumb ── */
+    .breadcrumb { display: none; }
+
+    /* ── Params nav card ── */
+    .nav-card { position: static; }
+
+    /* ── Formulaires ── */
+    .form-row { grid-template-columns: 1fr; }
+    .form-grid { grid-template-columns: 1fr; }
+    .field.full { grid-column: 1; }
+
+    /* ── Modal / popup ── */
+    .leaflet-popup-content-wrapper { max-width: 240px; }
+
+    /* ── Dashboard admin rows ── */
+    .stats-grid {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 12px;
+    }
+    .row-2 {
+        grid-template-columns: 1fr !important;
+        gap: 16px;
+    }
+    .row-2-eq {
+        grid-template-columns: 1fr !important;
+        gap: 16px;
+    }
+    .admin-banner {
+        flex-direction: column;
+        gap: 16px;
+        padding: 20px;
+    }
+    .banner-right {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+    .banner-right a {
+        flex: 1;
+        justify-content: center;
+        text-align: center;
+    }
+    .donut-wrap {
+        flex-direction: column;
+        align-items: center;
+    }
+    .fab-date { display: none; }
+    .sig-date { display: none; }
+
+    /* ── Fabricants liste ── */
+    .show-layout { grid-template-columns: 1fr; }
+    .info-grid { grid-template-columns: 1fr; }
+
+    /* ── Signalements filter bar ── */
+    .filter-bar { flex-direction: column; }
+    .filter-bar input { width: 100%; }
+    .filter-bar select { width: 100%; }
+
+    /* ── Rapports ── */
+    .rapports-grid { grid-template-columns: 1fr; }
+    .rapport-actions { flex-direction: column; gap: 8px; }
+}
+.main-layout { grid-template-columns: 1fr !important; }
+.stats-row { grid-template-columns: repeat(2, 1fr) !important; }
+
+/* ============================================================
+   BREAKPOINT TRÈS PETIT — 480px
+   ============================================================ */
+@media (max-width: 480px) {
+
+    .content { padding: 12px; }
+
+    /* stats-row reste 3 colonnes même sur très petit écran */
+    .stats-row { grid-template-columns: repeat(3, 1fr); }
+    .stat-card { padding: 12px 4px; }
+    .stat-value { font-size: 18px; }
+    .stat-label { font-size: 10px; line-height: 1.3; }
+
+    .product-card-footer { flex-wrap: wrap; }
+    .btn-sm { flex: 1; justify-content: center; }
+
+    .topbar { padding: 0 12px; gap: 6px; }
+    .topbar-title { font-size: 13px; }
+
+    .admin-stats-grid { grid-template-columns: 1fr 1fr; }
+
+    .stats-grid { grid-template-columns: 1fr 1fr !important; }
+    .row-2, .row-2-eq { grid-template-columns: 1fr !important; }
+}

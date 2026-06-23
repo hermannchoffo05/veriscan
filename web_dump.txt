@@ -1,0 +1,164 @@
+﻿<?php
+
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\FabricantAuthController;
+use App\Http\Controllers\FabricantProfilController;
+use App\Http\Controllers\FabricantProduitsController;
+use App\Http\Controllers\FabricantLotsController;
+use App\Http\Controllers\FabricantQRCodesController;
+use App\Http\Controllers\FabricantSignalementsController;
+use App\Http\Controllers\FabricantRapportsController;
+use App\Http\Controllers\FabricantStatistiquesController;
+use App\Http\Controllers\FabricantParametresController;
+use App\Http\Controllers\VerificationController;
+use App\Http\Controllers\TarifsController;
+use App\Http\Controllers\PaiementController;
+
+// â”€â”€ Changement de langue â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+Route::get('/langue/{locale}', function ($locale) {
+    if (in_array($locale, ['fr', 'en'])) {
+        session(['locale' => $locale]);
+    }
+    return back();
+})->name('langue.changer');
+
+// â”€â”€â”€ Route d'accueil â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+Route::get('/', function () {
+    return view('welcome');
+});
+
+// â”€â”€â”€ Pages lÃ©gales (publiques) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+Route::get('/conditions-utilisation', function () {
+    return view('public.conditions');
+})->name('conditions');
+
+Route::get('/politique-confidentialite', function () {
+    return view('public.politique');
+})->name('politique');
+
+// â”€â”€â”€ Tarifs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+Route::get('/tarifs', [TarifsController::class, 'index'])->name('tarifs.index');
+Route::post('/tarifs/souscrire', [TarifsController::class, 'souscrire'])->name('tarifs.souscrire');
+
+// â”€â”€â”€ Paiement CamPay â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+Route::prefix('paiement')->name('paiement.')->group(function () {
+    Route::get('/checkout/{plan}',  [PaiementController::class, 'show'])->name('checkout');
+    Route::post('/initier',         [PaiementController::class, 'initier'])->name('initier');
+    Route::get('/attente',          [PaiementController::class, 'attente'])->name('attente');
+    Route::get('/statut',           [PaiementController::class, 'statut'])->name('statut');
+    Route::get('/succes',           [PaiementController::class, 'succes'])->name('succes');
+    Route::post('/webhook',         [PaiementController::class, 'webhook'])->name('webhook')->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
+});
+
+// â”€â”€â”€ VÃ©rification publique â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+Route::get('/verify',           [VerificationController::class, 'home'])->name('verify.home');
+Route::post('/verify/signaler', [VerificationController::class, 'signaler'])->name('verify.signaler');
+Route::post('/verify',          [VerificationController::class, 'verifyCode'])->name('verify.code');
+Route::get('/verify/{token}',   [VerificationController::class, 'verifyToken'])->name('verify.token');
+
+// â”€â”€â”€ Auth Fabricant (non connectÃ©) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+Route::middleware('guest:fabricant')->prefix('fabricant')->name('fabricant.')->group(function () {
+    Route::get('/login',    [FabricantAuthController::class, 'showLogin'])->name('login');
+    Route::post('/login',   [FabricantAuthController::class, 'login']);
+    Route::get('/register', [FabricantAuthController::class, 'showRegister'])->name('register');
+    Route::post('/register',[FabricantAuthController::class, 'register']);
+
+    Route::get('/forgot-password',  [FabricantAuthController::class, 'showForgotPassword'])->name('password.request');
+    Route::post('/forgot-password', [FabricantAuthController::class, 'sendResetCode'])->name('password.email');
+    Route::get('/verify-code',      [FabricantAuthController::class, 'showVerifyCode'])->name('password.verify');
+    Route::post('/verify-code',     [FabricantAuthController::class, 'verifyCode'])->name('password.verify.submit');
+    Route::get('/reset-password',   [FabricantAuthController::class, 'showResetPassword'])->name('password.reset');
+    Route::post('/reset-password',  [FabricantAuthController::class, 'resetPassword'])->name('password.update');
+});
+
+// â”€â”€â”€ Fabricant (connectÃ©) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+Route::middleware('auth:fabricant')->prefix('fabricant')->name('fabricant.')->group(function () {
+
+    Route::get('/dashboard', function () {
+        $fabricant = Auth::guard('fabricant')->user();
+        return view('fabricant.dashboard', compact('fabricant'));
+    })->name('dashboard');
+
+    Route::get('/carte', function () {
+        return view('fabricant.carte');
+    })->name('carte');
+
+    Route::post('/logout', [FabricantAuthController::class, 'logout'])->name('logout');
+
+    Route::get('/profil',            [FabricantProfilController::class, 'index'])->name('profil');
+    Route::post('/profil/infos',     [FabricantProfilController::class, 'updateInfos'])->name('profil.infos');
+    Route::post('/profil/password',  [FabricantProfilController::class, 'updatePassword'])->name('profil.password');
+    Route::post('/profil/logo',      [FabricantProfilController::class, 'updateLogo'])->name('profil.logo');
+
+    Route::get('/produits',           [FabricantProduitsController::class, 'index'])->name('produits.index');
+    Route::get('/produits/create',    [FabricantProduitsController::class, 'create'])->name('produits.create');
+    Route::post('/produits',          [FabricantProduitsController::class, 'store'])->name('produits.store');
+    Route::get('/produits/{id}',      [FabricantProduitsController::class, 'show'])->name('produits.show');
+    Route::get('/produits/{id}/edit', [FabricantProduitsController::class, 'edit'])->name('produits.edit');
+    Route::put('/produits/{id}',      [FabricantProduitsController::class, 'update'])->name('produits.update');
+    Route::delete('/produits/{id}',   [FabricantProduitsController::class, 'destroy'])->name('produits.destroy');
+
+    // â”€â”€â”€ Lots â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    Route::get('/produits/{produitId}/lots',           [FabricantLotsController::class, 'index'])->name('lots.index');
+    Route::get('/produits/{produitId}/lots/create',    [FabricantLotsController::class, 'create'])->name('lots.create');
+    Route::post('/produits/{produitId}/lots',          [FabricantLotsController::class, 'store'])->name('lots.store');
+    Route::get('/produits/{produitId}/lots/{id}/edit', [FabricantLotsController::class, 'edit'])->name('lots.edit');
+    Route::put('/produits/{produitId}/lots/{id}',      [FabricantLotsController::class, 'update'])->name('lots.update');
+    Route::delete('/produits/{produitId}/lots/{id}',   [FabricantLotsController::class, 'destroy'])->name('lots.destroy');
+
+    Route::get('/qrcodes',               [FabricantQRCodesController::class, 'index'])->name('qrcodes.index');
+    Route::get('/qrcodes/create',        [FabricantQRCodesController::class, 'create'])->name('qrcodes.create');
+    Route::post('/qrcodes',              [FabricantQRCodesController::class, 'store'])->name('qrcodes.store');
+    Route::get('/qrcodes/{id}',          [FabricantQRCodesController::class, 'show'])->name('qrcodes.show');
+    Route::get('/qrcodes/{id}/download', [FabricantQRCodesController::class, 'download'])->name('qrcodes.download');
+
+    Route::get('/signalements',                [FabricantSignalementsController::class, 'index'])->name('signalements.index');
+    Route::get('/signalements/{id}',           [FabricantSignalementsController::class, 'show'])->name('signalements.show');
+    Route::patch('/signalements/{id}/traiter', [FabricantSignalementsController::class, 'traiter'])->name('signalements.traiter');
+
+    Route::get('/statistiques', [FabricantStatistiquesController::class, 'index'])->name('statistiques.index');
+
+    Route::get('/rapports',             [FabricantRapportsController::class, 'index'])->name('rapports.index');
+    Route::get('/rapports/telecharger', [FabricantRapportsController::class, 'telecharger'])->name('rapports.telecharger');
+
+    Route::get('/parametres',           [FabricantParametresController::class, 'index'])->name('parametres.index');
+    Route::post('/parametres',          [FabricantParametresController::class, 'update'])->name('parametres.update');
+    Route::post('/parametres/reset',    [FabricantParametresController::class, 'reset'])->name('parametres.reset');
+    Route::delete('/parametres/compte', [FabricantParametresController::class, 'deleteAccount'])->name('parametres.delete-account');
+});
+
+// â”€â”€â”€ Auth Admin (non connectÃ©) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+Route::middleware('guest:admin')->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/login',  [App\Http\Controllers\Admin\AdminAuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [App\Http\Controllers\Admin\AdminAuthController::class, 'login']);
+});
+
+// â”€â”€â”€ Admin (connectÃ©) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+Route::middleware('auth:admin')->prefix('admin')->name('admin.')->group(function () {
+
+    Route::get('/dashboard', [App\Http\Controllers\Admin\AdminDashboardController::class, 'index'])->name('dashboard');
+    Route::post('/logout', [App\Http\Controllers\Admin\AdminAuthController::class, 'logout'])->name('logout');
+
+    Route::get('/fabricants',                [App\Http\Controllers\Admin\AdminFabricantsController::class, 'index'])->name('fabricants.index');
+    Route::get('/fabricants/{id}',           [App\Http\Controllers\Admin\AdminFabricantsController::class, 'show'])->name('fabricants.show');
+    Route::post('/fabricants/{id}/valider',  [App\Http\Controllers\Admin\AdminFabricantsController::class, 'valider'])->name('fabricants.valider');
+    Route::post('/fabricants/{id}/suspendre',[App\Http\Controllers\Admin\AdminFabricantsController::class, 'suspendre'])->name('fabricants.suspendre');
+    Route::delete('/fabricants/{id}',        [App\Http\Controllers\Admin\AdminFabricantsController::class, 'destroy'])->name('fabricants.destroy');
+
+    Route::get('/signalements',                [App\Http\Controllers\Admin\AdminSignalementsController::class, 'index'])->name('signalements.index');
+    Route::get('/signalements/{id}',           [App\Http\Controllers\Admin\AdminSignalementsController::class, 'show'])->name('signalements.show');
+    Route::post('/signalements/{id}/traiter',  [App\Http\Controllers\Admin\AdminSignalementsController::class, 'traiter'])->name('signalements.traiter');
+    Route::post('/signalements/{id}/escalader',[App\Http\Controllers\Admin\AdminSignalementsController::class, 'escalader'])->name('signalements.escalader');
+
+    Route::get('/carte', [App\Http\Controllers\Admin\AdminCarteController::class, 'index'])->name('carte');
+
+    Route::get('/rapports',             [App\Http\Controllers\Admin\AdminRapportsController::class, 'index'])->name('rapports.index');
+    Route::get('/rapports/telecharger', [App\Http\Controllers\Admin\AdminRapportsController::class, 'telecharger'])->name('rapports.telecharger');
+
+    Route::get('/parametres',           [App\Http\Controllers\Admin\AdminParametresController::class, 'index'])->name('parametres');
+    Route::post('/parametres',          [App\Http\Controllers\Admin\AdminParametresController::class, 'update'])->name('parametres.update');
+    Route::post('/parametres/photo',    [App\Http\Controllers\Admin\AdminParametresController::class, 'updatePhoto'])->name('parametres.photo');
+    Route::post('/parametres/systeme',  [App\Http\Controllers\Admin\AdminParametresController::class, 'updateSysteme'])->name('parametres.systeme');
+
+    Route::get('/api/stats', [App\Http\Controllers\Admin\AdminDashboardController::class, 'stats'])->name('api.stats');
+});
