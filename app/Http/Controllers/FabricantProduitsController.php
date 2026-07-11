@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Http\Controllers;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
@@ -19,16 +21,14 @@ class FabricantProduitsController extends Controller
                             ->latest()
                             ->paginate(12);
 
-        // Pour chaque produit, calculer les vraies stats
         foreach ($produits as $produit) {
             $lotIds  = $produit->lots->pluck('id');
             $qrIds   = QrCode::whereIn('lot_id', $lotIds)->pluck('id');
 
             $produit->total_qr    = $qrIds->count();
-            $produit->total_scans = Verification::whereIn('qr_code_id', $qrIds)->count();
+            $produit->total_scans = QrCode::whereIn('id', $qrIds)->sum('nb_scans');
             $produit->total_sigs  = Signalement::whereIn('qr_code_id', $qrIds)
-                                               ->where('statut', 'en_cours')
-                                               ->count();
+                                        ->where('statut', 'en_cours')->count();
             $produit->dernier_lot = $produit->lots->sortByDesc('created_at')->first();
             $produit->est_suspect = $produit->total_sigs > 0;
         }
@@ -122,23 +122,12 @@ class FabricantProduitsController extends Controller
         return $response->json('choices.0.message.content');
     }
 
-    public function classifyCategory(Request $request)
-    {
-        $request->validate(['nom' => 'required|string|max:255']);
-        $nom    = $request->input('nom');
-        $prompt = "Tu es un expert en classification de produits. Classe ce produit dans UNE SEULE des catégories suivantes : Médicaments, Alimentation, Cosmétiques, Pièces automobiles, Électronique, Autre.\n\nNom du produit : {$nom}\n\nRéponds UNIQUEMENT avec le nom de la catégorie, rien d'autre. Exemple de réponse : Médicaments";
-        try {
-            $categorie = $this->groqCall($prompt, 20);
-            if ($categorie) return response()->json(['categorie' => trim($categorie)]);
-            return response()->json(['error' => 'Classification échouée'], 500);
-        } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
-        }
-    }
-
     public function generateDescription(Request $request)
     {
-        $request->validate(['nom' => 'required|string|max:255', 'categorie' => 'required|string']);
+        $request->validate([
+            'nom'       => 'required|string|max:255',
+            'categorie' => 'required|string',
+        ]);
         $nom       = $request->input('nom');
         $categorie = $request->input('categorie');
         $prompt    = "Tu es un expert en rédaction de fiches produits professionnelles pour une plateforme de vérification d'authenticité appelée VeriScan. Génère une description produit concise, professionnelle et informative (3 à 4 phrases maximum) pour le produit suivant :\n\nNom du produit : {$nom}\nCatégorie : {$categorie}\n\nLa description doit :\n- Être rédigée en français\n- Présenter le produit de façon claire et rassurante\n- Mettre en avant la qualité et l'authenticité\n- Être adaptée à la catégorie du produit\n- Ne pas inventer de caractéristiques techniques précises\n\nRéponds uniquement avec la description, sans titre ni guillemets.";
@@ -151,9 +140,40 @@ class FabricantProduitsController extends Controller
         }
     }
 
-    public function chatbot(Request $request)
+    public function classifyCategory(Request $request)
     {
-        $request->validate(['question' => 'required|string|max:500', 'locale' => 'nullable|string|in:fr,en']);
+        $request->validate([
+            'nom'       => 'required|string|max:255',
+            'categorie' => 'nullable|string',
+        ]);
+
+        $nom       = $request->input('nom');
+        $categorie = $request->input('categorie', '');
+
+        $prompt = "Tu es un expert en classification de produits pour la plateforme VeriScan au Cameroun. "
+            . "Propose UNE SEULE catégorie courte et précise (2-3 mots maximum) pour ce produit.\n"
+            . "Produit : {$nom}\n"
+            . ($categorie ? "Catégorie actuelle : {$categorie}\n" : "")
+            . "Exemples de catégories : Alimentaire, Cosmétique, Pharmaceutique, Électronique, Textile, Boisson, Hygiène, Agriculture.\n"
+            . "Réponds UNIQUEMENT avec le nom de la catégorie, sans ponctuation ni explication.";
+
+        try {
+            $category = $this->groqCall($prompt, 20);
+            if ($category) {
+                return response()->json(['category' => trim($category)]);
+            }
+            return response()->json(['error' => 'Classification échouée'], 500);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function chat(Request $request)
+    {
+        $request->validate([
+            'question' => 'required|string|max:500',
+            'locale'   => 'nullable|string|in:fr,en',
+        ]);
         $question     = $request->input('question');
         $locale       = $request->input('locale', 'fr');
         $systemPrompt = $locale === 'fr'

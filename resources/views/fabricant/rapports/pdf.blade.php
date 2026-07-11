@@ -6,18 +6,18 @@
 <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: Arial, sans-serif; font-size: 13px; color: #1f2937; background: #fff; }
-    .header { background: #0f766e; color: #fff; padding: 24px 32px; margin-bottom: 28px; }
+    .header { background: #2E3A6B; color: #fff; padding: 24px 32px; margin-bottom: 28px; }
     .header h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
     .header p { font-size: 13px; opacity: .85; }
     .header .meta { margin-top: 12px; font-size: 12px; opacity: .75; }
     .section { padding: 0 32px; margin-bottom: 28px; }
-    .section-title { font-size: 15px; font-weight: 700; color: #0f766e; border-bottom: 2px solid #0f766e; padding-bottom: 6px; margin-bottom: 16px; }
+    .section-title { font-size: 15px; font-weight: 700; color: #2E3A6B; border-bottom: 2px solid #2E3A6B; padding-bottom: 6px; margin-bottom: 16px; }
     .stats-row { display: flex; gap: 16px; margin-bottom: 24px; }
-    .stat-box { flex: 1; background: #f0fdfa; border: 1px solid #99f6e4; border-radius: 8px; padding: 16px; text-align: center; }
-    .stat-value { font-size: 26px; font-weight: 700; color: #0f766e; }
+    .stat-box { flex: 1; background: #EEF0F8; border: 1px solid #c7cce6; border-radius: 8px; padding: 16px; text-align: center; }
+    .stat-value { font-size: 26px; font-weight: 700; color: #2E3A6B; }
     .stat-label { font-size: 11px; color: #6b7280; margin-top: 4px; }
     table { width: 100%; border-collapse: collapse; font-size: 12px; }
-    th { background: #f0fdfa; padding: 8px 12px; text-align: left; font-weight: 600; color: #0f766e; border: 1px solid #e5e7eb; }
+    th { background: #EEF0F8; padding: 8px 12px; text-align: left; font-weight: 600; color: #2E3A6B; border: 1px solid #e5e7eb; }
     td { padding: 8px 12px; border: 1px solid #e5e7eb; vertical-align: top; }
     tr:nth-child(even) td { background: #f9fafb; }
     .badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: 600; }

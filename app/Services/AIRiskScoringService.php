@@ -11,7 +11,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 
 /**
- * AIRiskScoringService — Module IA VeriScan
+ * AIRiskScoringService – Module IA VeriScan
  *
  * Calcule un score de risque de contrefaçon (0-100) pour chaque produit
  * basé sur 6 features pondérées selon le cahier des charges.
@@ -21,49 +21,46 @@ use Illuminate\Support\Facades\Log;
  *         × poids_categorie × facteur_vetuste × facteur_fabricant
  *
  * Coefficients :
- *   w1 = 0.40 (fréquence signalements — poids le plus fort)
+ *   w1 = 0.40 (fréquence signalements – poids le plus fort)
  *   w2 = 0.35 (densité géographique)
  *   w3 = 0.25 (taux de scan négatif)
  */
 class AIRiskScoringService
 {
-    // ── Coefficients du modèle ────────────────────────────────────────────
+    // -- Coefficients du modèle -----------------------------------------------
     const W1 = 0.40; // Poids fréquence signalements
     const W2 = 0.35; // Poids densité géographique
     const W3 = 0.25; // Poids taux scan négatif
 
-    // ── Poids par catégorie de produit ────────────────────────────────────
+    // -- Poids par catégorie de produit (sans accents pour fiabilité) ----------
     const POIDS_CATEGORIE = [
-        'medicament'    => 1.5,
-        'médicament'    => 1.5,
-        'pharmacie'     => 1.5,
-        'alimentation'  => 1.2,
-        'alimentaire'   => 1.2,
-        'cosmetique'    => 1.1,
-        'cosmétique'    => 1.1,
-        'hygiene'       => 1.1,
-        'hygiène'       => 1.1,
-        'automobile'    => 1.3,
-        'auto'          => 1.3,
+        'medicament'   => 1.5,
+        'pharmacie'    => 1.5,
+        'alimentation' => 1.2,
+        'alimentaire'  => 1.2,
+        'cosmetique'   => 1.1,
+        'hygiene'      => 1.1,
+        'automobile'   => 1.3,
+        'auto'         => 1.3,
     ];
 
-    // ── Zones du Cameroun (code → coordonnées centre) ─────────────────────
+    // -- Zones du Cameroun (code → coordonnées centre) ------------------------
     const ZONES_CAMEROUN = [
-        'YAO' => ['nom' => 'Yaoundé (Centre)',       'lat' => 3.848,  'lng' => 11.502],
-        'DLA' => ['nom' => 'Douala (Littoral)',       'lat' => 4.061,  'lng' => 9.778],
-        'GAR' => ['nom' => 'Garoua (Nord)',           'lat' => 9.301,  'lng' => 13.398],
-        'BAF' => ['nom' => 'Bafoussam (Ouest)',       'lat' => 5.476,  'lng' => 10.421],
-        'BAM' => ['nom' => 'Bamenda (Nord-Ouest)',    'lat' => 5.959,  'lng' => 10.145],
-        'MAR' => ['nom' => 'Maroua (Extrême-Nord)',   'lat' => 10.591, 'lng' => 14.316],
-        'NGA' => ['nom' => 'Ngaoundéré (Adamaoua)',   'lat' => 7.321,  'lng' => 13.584],
-        'BER' => ['nom' => 'Bertoua (Est)',           'lat' => 4.578,  'lng' => 13.684],
-        'EBO' => ['nom' => 'Ebolowa (Sud)',           'lat' => 2.900,  'lng' => 11.150],
-        'BUE' => ['nom' => 'Buea (Sud-Ouest)',        'lat' => 4.156,  'lng' => 9.241],
+        'YAO' => ['nom' => 'Yaoundé (Centre)',      'lat' => 3.848,  'lng' => 11.502],
+        'DLA' => ['nom' => 'Douala (Littoral)',      'lat' => 4.061,  'lng' => 9.778],
+        'GAR' => ['nom' => 'Garoua (Nord)',          'lat' => 9.301,  'lng' => 13.398],
+        'BAF' => ['nom' => 'Bafoussam (Ouest)',      'lat' => 5.476,  'lng' => 10.421],
+        'BAM' => ['nom' => 'Bamenda (Nord-Ouest)',   'lat' => 5.959,  'lng' => 10.145],
+        'MAR' => ['nom' => 'Maroua (Extrême-Nord)', 'lat' => 10.591, 'lng' => 14.316],
+        'NGA' => ['nom' => 'Ngaoundéré (Adamaoua)', 'lat' => 7.321,  'lng' => 13.584],
+        'BER' => ['nom' => 'Bertoua (Est)',          'lat' => 4.578,  'lng' => 13.684],
+        'EBO' => ['nom' => 'Ebolowa (Sud)',          'lat' => 2.900,  'lng' => 11.150],
+        'BUE' => ['nom' => 'Buea (Sud-Ouest)',       'lat' => 4.156,  'lng' => 9.241],
     ];
 
     /**
-     * Calcule et persiste le score de risque pour tous les produits
-     * Appelé par le Scheduler Laravel toutes les 6 heures
+     * Calcule et persiste le score de risque pour tous les produits.
+     * Appelé par le Scheduler Laravel toutes les 6 heures.
      */
     public function calculerTousLesScores(): int
     {
@@ -75,22 +72,22 @@ class AIRiskScoringService
                 $this->calculerScoreProduit($produit);
                 $count++;
             } catch (\Exception $e) {
-                Log::error("VeriScan IA — Erreur scoring produit #{$produit->id}: " . $e->getMessage());
+                Log::error("VeriScan IA – Erreur scoring produit #{$produit->id}: " . $e->getMessage());
             }
         }
 
-        Log::info("VeriScan IA — Scoring terminé : {$count} produits traités");
+        Log::info("VeriScan IA – Scoring terminé : {$count} produits traités");
         return $count;
     }
 
     /**
-     * Calcule le score de risque pour un produit spécifique
+     * Calcule le score de risque pour un produit spécifique.
      */
     public function calculerScoreProduit(Produit $produit): RiskScore
     {
-        // ── Feature 1 : Fréquence de signalements sur 30 jours ───────────
-        $lotIds    = $produit->lots()->pluck('id');
-        $qrIds     = QrCode::whereIn('lot_id', $lotIds)->pluck('id');
+        // -- Feature 1 : Fréquence de signalements sur 30 jours ---------------
+        $lotIds = $produit->lots()->pluck('id');
+        $qrIds  = QrCode::whereIn('lot_id', $lotIds)->pluck('id');
 
         $signalementsRecents = Signalement::whereIn('qr_code_id', $qrIds)
             ->where('created_at', '>=', Carbon::now()->subDays(30))
@@ -99,57 +96,54 @@ class AIRiskScoringService
         // Normaliser sur 100 (max raisonnable = 20 signalements en 30j)
         $freqSignalements = min(100, ($signalementsRecents / 20) * 100);
 
-        // ── Feature 2 : Densité géographique (simulation Phase 1) ─────────
-        // En Phase 1 sans géolocalisation mobile, on calcule la densité
-        // comme le ratio signalements / QR codes générés
-        $totalQr     = $qrIds->count();
-        $totalSig    = Signalement::whereIn('qr_code_id', $qrIds)->count();
-        $densiteGeo  = $totalQr > 0 ? min(100, ($totalSig / $totalQr) * 100) : 0;
+        // -- Feature 2 : Densité géographique (simulation Phase 1) ------------
+        $totalQr    = $qrIds->count();
+        $totalSig   = Signalement::whereIn('qr_code_id', $qrIds)->count();
+        $densiteGeo = $totalQr > 0 ? min(100, ($totalSig / $totalQr) * 100) : 0;
 
-        // ── Feature 3 : Vétusté du lot (jours depuis création du dernier lot) ──
-        $dernierLot  = $produit->lots()->latest()->first();
-        $vetusteLot  = 0;
+        // -- Feature 3 : Vétusté du lot (jours depuis création du dernier lot) -
+        $dernierLot = $produit->lots()->latest()->first();
+        $vetusteLot = 0;
         if ($dernierLot) {
             $jours      = $dernierLot->created_at->diffInDays(Carbon::now());
-            $vetusteLot = min(100, ($jours / 365) * 100); // Max 1 an
+            $vetusteLot = min(100, ($jours / 365) * 100);
         }
 
-        // ── Feature 4 : Taux de scan négatif ─────────────────────────────
-        // Ratio QR codes avec signalements / total QR codes
-        $qrAvecSig     = QrCode::whereIn('lot_id', $lotIds)
-            ->whereHas('signalements')
-            ->count();
+        // -- Feature 4 : Taux de scan négatif ---------------------------------
+        $qrAvecSig       = QrCode::whereIn('lot_id', $lotIds)->whereHas('signalements')->count();
         $tauxScanNegatif = $totalQr > 0 ? min(100, ($qrAvecSig / $totalQr) * 100) : 0;
 
-        // ── Feature 5 : Poids catégorie produit ──────────────────────────
-        $categorieLower = strtolower($produit->categorie ?? '');
-        $poidsCategorie = 1.0;
+        // -- Feature 5 : Poids catégorie produit ------------------------------
+        // ✅ mb_strtolower + iconv pour normaliser les accents
+        $categorieLower  = mb_strtolower($produit->categorie ?? '', 'UTF-8');
+        $categorieAscii  = iconv('UTF-8', 'ASCII//TRANSLIT', $categorieLower);
+        $poidsCategorie  = 1.0;
+
+        // ✅ Espace ajouté : "POIDS_CATEGORIE as" (était "POIDS_CATEGORIEas")
         foreach (self::POIDS_CATEGORIE as $key => $poids) {
-            if (str_contains($categorieLower, $key)) {
+            if (str_contains($categorieAscii, $key)) {
                 $poidsCategorie = $poids;
                 break;
             }
         }
 
-        // ── Feature 6 : Score historique fabricant ───────────────────────
-        // Ratio signalements totaux / produits du fabricant
-        $fabricantId    = $produit->fabricant_id;
-        $totalProduits  = Produit::where('fabricant_id', $fabricantId)->count();
-        $totalSigFab    = Signalement::whereHas('qrCode.lot.produit', function($q) use ($fabricantId) {
+        // -- Feature 6 : Score historique fabricant ---------------------------
+        $fabricantId   = $produit->fabricant_id;
+        $totalProduits = Produit::where('fabricant_id', $fabricantId)->count();
+        $totalSigFab   = Signalement::whereHas('qrCode.lot.produit', function ($q) use ($fabricantId) {
             $q->where('fabricant_id', $fabricantId);
         })->count();
         $scoreFabricant = $totalProduits > 0
             ? min(100, ($totalSigFab / ($totalProduits * 5)) * 100)
             : 0;
 
-        // ── Calcul du score final ─────────────────────────────────────────
+        // -- Calcul du score final --------------------------------------------
         $scoreBase = (
             self::W1 * $freqSignalements +
             self::W2 * $densiteGeo +
             self::W3 * $tauxScanNegatif
         );
 
-        // Appliquer les multiplicateurs
         $scoreFinal = $scoreBase * $poidsCategorie;
 
         // Bonus vétusté (+10% si lot > 6 mois)
@@ -164,7 +158,7 @@ class AIRiskScoringService
 
         $scoreFinal = min(100, round($scoreFinal, 2));
 
-        // ── Déterminer le niveau de risque ────────────────────────────────
+        // -- Déterminer le niveau de risque -----------------------------------
         $niveau = match(true) {
             $scoreFinal >= 70 => 'critique',
             $scoreFinal >= 50 => 'eleve',
@@ -172,10 +166,10 @@ class AIRiskScoringService
             default           => 'faible',
         };
 
-        // ── Déterminer la zone (simulation : Yaoundé par défaut en Phase 1) ──
-        $zoneCode = 'YAO'; // En Phase 2, sera déterminé par géolocalisation Flutter
+        // -- Zone (Yaoundé par défaut en Phase 1) ----------------------------
+        $zoneCode = 'YAO';
 
-        // ── Persister le score ────────────────────────────────────────────
+        // -- Persister le score -----------------------------------------------
         $riskScore = RiskScore::updateOrCreate(
             ['produit_id' => $produit->id, 'zone_code' => $zoneCode],
             [
@@ -195,52 +189,46 @@ class AIRiskScoringService
     }
 
     /**
-     * Retourne les scores pour la heat-map Leaflet.js
-     * Format GeoJSON compatible
+     * Retourne les scores pour la heat-map Leaflet.js (format GeoJSON).
      */
     public function getScoresPourCarte(): array
     {
-        $scores = RiskScore::with('produit.fabricant')
-            ->orderByDesc('score')
-            ->get();
-
+        $scores   = RiskScore::with('produit.fabricant')->orderByDesc('score')->get();
         $features = [];
 
         foreach ($scores as $score) {
             $zone = self::ZONES_CAMEROUN[$score->zone_code] ?? self::ZONES_CAMEROUN['YAO'];
 
             $features[] = [
-                'type' => 'Feature',
+                'type'     => 'Feature',
                 'geometry' => [
                     'type'        => 'Point',
                     'coordinates' => [$zone['lng'], $zone['lat']],
                 ],
                 'properties' => [
-                    'produit'    => $score->produit->nom ?? 'Inconnu',
-                    'fabricant'  => $score->produit->fabricant->nom_entreprise ?? 'Inconnu',
-                    'score'      => $score->score,
-                    'niveau'     => $score->niveau,
-                    'couleur'    => $score->couleur,
-                    'zone'       => $zone['nom'],
-                    'computed'   => $score->computed_at?->format('d/m/Y H:i'),
+                    'produit'   => $score->produit->nom ?? 'Inconnu',
+                    'fabricant' => $score->produit->fabricant->nom_entreprise ?? 'Inconnu',
+                    'score'     => $score->score,
+                    'niveau'    => $score->niveau,
+                    'couleur'   => $score->couleur,
+                    'zone'      => $zone['nom'],
+                    'computed'  => $score->computed_at?->format('d/m/Y H:i'),
                 ],
             ];
         }
 
-        return [
-            'type'     => 'FeatureCollection',
-            'features' => $features,
-        ];
+        return ['type' => 'FeatureCollection', 'features' => $features];
     }
 
     /**
-     * Retourne un résumé des scores pour le dashboard admin
+     * Retourne un résumé des scores pour le dashboard admin.
      */
     public function getResumeDashboard(): array
     {
         return [
             'total_analyses' => RiskScore::count(),
-            'critiques'      => RiskScore::where('niveau', 'critiques')->count(),
+            // ✅ 'critique' (singulier) — cohérent avec le match() ci-dessus
+            'critiques'      => RiskScore::where('niveau', 'critique')->count(),
             'eleves'         => RiskScore::where('niveau', 'eleve')->count(),
             'moderes'        => RiskScore::where('niveau', 'modere')->count(),
             'faibles'        => RiskScore::where('niveau', 'faible')->count(),

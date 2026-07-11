@@ -16,12 +16,12 @@
 <style>
 .breadcrumb { display:flex;align-items:center;gap:6px;margin-bottom:20px;font-size:13px; }
 .breadcrumb a { color:#6b7280;text-decoration:none;font-weight:600;display:inline-flex;align-items:center;gap:5px;transition:color 0.2s; }
-.breadcrumb a:hover { color:#0f766e; }
+.breadcrumb a:hover { color:#2E3A6B; }
 .breadcrumb a svg { width:13px;height:13px; }
 .breadcrumb span { color:#d1d5db; }
 .breadcrumb strong { color:#1f2937;font-weight:600; }
-.product-info-bar { background:#f0fdfa;border:1px solid #99f6e4;border-radius:12px;padding:14px 20px;margin-bottom:24px;display:flex;align-items:center;gap:12px; }
-.product-info-bar strong { color:#0f766e; }
+.product-info-bar { background:#EEF0F8;border:1px solid #c7cce6;border-radius:12px;padding:14px 20px;margin-bottom:24px;display:flex;align-items:center;gap:12px; }
+.product-info-bar strong { color:#2E3A6B; }
 .product-info-bar span { font-size:13px;color:#374151; }
 .table-card { background:#fff;border-radius:16px;border:1px solid #e5e7eb;overflow:hidden; }
 .table-header { padding:20px 24px;border-bottom:1px solid #f3f4f6;display:flex;justify-content:space-between;align-items:center; }
@@ -34,11 +34,11 @@ tr:hover td { background:#fafafa; }
 .badge-green { background:#dcfce7;color:#16a34a; }
 .badge-red { background:#fee2e2;color:#dc2626; }
 .btn-sm { padding:5px 12px;border-radius:8px;font-size:12px;font-weight:600;text-decoration:none;border:none;cursor:pointer;transition:.2s;display:inline-block; }
-.btn-sm-teal { background:#f0fdfa;color:#0f766e; }
-.btn-sm-teal:hover { background:#ccfbf1; }
+.btn-sm-teal { background:#EEF0F8;color:#2E3A6B; }
+.btn-sm-teal:hover { background:#dde1f0; }
 .btn-sm-red { background:#fef2f2;color:#dc2626; }
 .btn-sm-red:hover { background:#fee2e2; }
-.btn-topbar-primary { background:#0f766e;color:#fff !important;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:600;text-decoration:none; }
+.btn-topbar-primary { background:#F5A623;color:#171B3D !important;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:700;text-decoration:none; }
 .empty-state { text-align:center;padding:48px 24px;color:#6b7280; }
 .empty-state svg { width:48px;height:48px;margin-bottom:12px;color:#d1d5db; }
 .alert-success { background:#f0fdf4;border:1px solid #bbf7d0;color:#16a34a;padding:12px 16px;border-radius:10px;margin-bottom:20px;font-size:13px; }
@@ -63,7 +63,7 @@ tr:hover td { background:#fafafa; }
 @endif
 
 <div class="product-info-bar">
-    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="20" height="20" style="color:#0f766e;flex-shrink:0">
+    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="20" height="20" style="color:#2E3A6B;flex-shrink:0">
         <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"/>
     </svg>
     <span>{{ __('messages.produit') }} : <strong>{{ $produit->nom }}</strong> — {{ $produit->code_produit }}</span>

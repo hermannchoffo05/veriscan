@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        :root { --teal: #0F766E; --teal-dark: #0a5c55; --teal-light: #F0FDFA; --text: #1F2937; --text-light: #6b7280; --border: #e5e7eb; }
+        :root { --teal: #2E3A6B; --teal-dark: #232C54; --teal-light: #EEF0F8; --text: #1F2937; --text-light: #6b7280; --border: #e5e7eb; }
         body { font-family: 'Inter', sans-serif; background: #f8fafc; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; }
         .card { background: white; border-radius: 24px; border: 1.5px solid var(--border); padding: 40px 32px; max-width: 440px; width: 100%; text-align: center; box-shadow: 0 8px 32px rgba(0,0,0,0.06); }
 

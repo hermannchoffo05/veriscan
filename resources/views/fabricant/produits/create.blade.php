@@ -6,7 +6,7 @@
 <style>
 .breadcrumb{display:flex;align-items:center;gap:6px;margin-bottom:20px;font-size:13px;}
 .breadcrumb a{color:#6b7280;text-decoration:none;font-weight:600;display:inline-flex;align-items:center;gap:5px;transition:color 0.2s;}
-.breadcrumb a:hover{color:#0f766e;}
+.breadcrumb a:hover{color:#2E3A6B;}
 .breadcrumb a svg{width:13px;height:13px;}
 .breadcrumb span{color:#d1d5db;}
 .breadcrumb strong{color:#1f2937;font-weight:600;}
@@ -16,31 +16,31 @@
 .form-label{display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:6px;}
 .form-label span.required{color:#ef4444;}
 .form-control{width:100%;padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:14px;color:#1f2937;background:#f9fafb;transition:border-color .2s,box-shadow .2s;box-sizing:border-box;}
-.form-control:focus{outline:none;border-color:#0f766e;box-shadow:0 0 0 3px rgba(15,118,110,.1);background:#fff;}
+.form-control:focus{outline:none;border-color:#2E3A6B;box-shadow:0 0 0 3px rgba(46,58,107,.1);background:#fff;}
 .form-control.is-invalid{border-color:#ef4444;}
 .invalid-feedback{font-size:12px;color:#ef4444;margin-top:4px;}
 select.form-control{appearance:none;cursor:pointer;}
 textarea.form-control{resize:vertical;min-height:100px;}
 .image-preview{width:100%;height:160px;border:2px dashed #d1d5db;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:border-color .2s;background:#f9fafb;color:#9ca3af;font-size:13px;gap:8px;}
-.image-preview:hover{border-color:#0f766e;color:#0f766e;}
+.image-preview:hover{border-color:#2E3A6B;color:#2E3A6B;}
 .image-preview svg{width:32px;height:32px;}
 .form-actions{display:flex;gap:12px;justify-content:flex-end;margin-top:28px;padding-top:20px;border-top:1px solid #f3f4f6;}
-.btn-primary{padding:10px 24px;background:#0f766e;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;}
-.btn-primary:hover{background:#0d6560;}
+.btn-primary{padding:10px 24px;background:#F5A623;color:#171B3D;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;}
+.btn-primary:hover{background:#e0961d;}
 .btn-secondary{padding:10px 24px;background:#f3f4f6;color:#374151;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;text-decoration:none;}
 .btn-secondary:hover{background:#e5e7eb;}
 .alert-error{background:#fef2f2;border:1px solid #fecaca;color:#dc2626;padding:12px 16px;border-radius:10px;font-size:13px;margin-bottom:20px;}
 .alert-error ul{margin:6px 0 0 16px;}
-.ai-badge{display:none;align-items:center;gap:6px;font-size:11px;font-weight:600;color:#0f766e;background:#f0fdf9;border:1px solid #99f6e4;border-radius:6px;padding:4px 10px;margin-top:6px;width:fit-content;}
+.ai-badge{display:none;align-items:center;gap:6px;font-size:11px;font-weight:600;color:#2E3A6B;background:#EEF0F8;border:1px solid #c7cce6;border-radius:6px;padding:4px 10px;margin-top:6px;width:fit-content;}
 .ai-badge svg{width:13px;height:13px;}
 .ai-badge.visible{display:flex;}
 .ai-loading{display:none;align-items:center;gap:8px;font-size:12px;color:#6b7280;margin-top:6px;}
 .ai-loading.visible{display:flex;}
-.ai-loading .spinner{width:14px;height:14px;border:2px solid #e5e7eb;border-top-color:#0f766e;border-radius:50%;animation:spin .7s linear infinite;}
+.ai-loading .spinner{width:14px;height:14px;border:2px solid #e5e7eb;border-top-color:#2E3A6B;border-radius:50%;animation:spin .7s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
 .desc-wrapper{position:relative;}
-.desc-regen-btn{position:absolute;bottom:10px;right:10px;background:#0f766e;color:#fff;border:none;border-radius:7px;padding:5px 10px;font-size:11px;font-weight:600;cursor:pointer;display:none;align-items:center;gap:5px;transition:background .2s;}
-.desc-regen-btn:hover{background:#0d6560;}
+.desc-regen-btn{position:absolute;bottom:10px;right:10px;background:#2E3A6B;color:#fff;border:none;border-radius:7px;padding:5px 10px;font-size:11px;font-weight:600;cursor:pointer;display:none;align-items:center;gap:5px;transition:background .2s;}
+.desc-regen-btn:hover{background:#212a52;}
 .desc-regen-btn.visible{display:flex;}
 .desc-regen-btn svg{width:12px;height:12px;}
 </style>
@@ -56,7 +56,7 @@ textarea.form-control{resize:vertical;min-height:100px;}
 </div>
 <div class="form-card">
     <div class="form-title">
-        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="20" height="20" style="vertical-align:middle;margin-right:8px;color:#0f766e"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"/></svg>
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="20" height="20" style="vertical-align:middle;margin-right:8px;color:#2E3A6B"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"/></svg>
         {{ __('messages.infos_produit') }}
     </div>
     @if($errors->any())
@@ -146,7 +146,6 @@ const CSRF_TOKEN     = '{{ csrf_token() }}';
 const ROUTE_CLASSIFY = '{{ route("fabricant.produits.classify-category") }}';
 const ROUTE_DESC     = '{{ route("fabricant.produits.generate-description") }}';
 
-// Mapping pour normaliser la réponse IA vers les valeurs du select
 const CAT_MAP = {
     'medicament': 'Médicaments', 'médicaments': 'Médicaments', 'medicaments': 'Médicaments', 'pharmaceut': 'Médicaments',
     'alimentat': 'Alimentation', 'food': 'Alimentation', 'boisson': 'Alimentation', 'nourriture': 'Alimentation',
@@ -176,7 +175,6 @@ function previewImage(input) {
     }
 }
 
-// 1. Classification automatique de catégorie
 async function classifierCategorie(nom) {
     const catSelect  = document.getElementById('categorieProduit');
     const catLoading = document.getElementById('catLoading');
@@ -198,7 +196,6 @@ async function classifierCategorie(nom) {
             if (normalized) {
                 catSelect.value = normalized;
                 catBadge.classList.add('visible');
-                // Enchaîner la génération de description
                 await genererDescription();
             }
         }
@@ -209,7 +206,6 @@ async function classifierCategorie(nom) {
     }
 }
 
-// 2. Génération automatique de description
 async function genererDescription() {
     const nom       = document.getElementById('nomProduit').value.trim();
     const categorie = document.getElementById('categorieProduit').value;
@@ -246,15 +242,14 @@ async function genererDescription() {
     }
 }
 
-// Événements
 document.getElementById('nomProduit').addEventListener('blur', function() {
     const nom       = this.value.trim();
     const categorie = document.getElementById('categorieProduit').value;
     if (!nom) return;
     if (categorie) {
-        genererDescription(); // catégorie déjà choisie → juste description
+        genererDescription();
     } else {
-        classifierCategorie(nom); // classifier d'abord → puis description auto
+        classifierCategorie(nom);
     }
 });
 

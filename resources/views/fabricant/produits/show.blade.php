@@ -39,9 +39,9 @@
     transition: all 0.2s;
 }
 .page-actions-mobile a.primary {
-    background: #0f766e;
-    color: #fff;
-    border-color: #0f766e;
+    background: #F5A623;
+    color: #171B3D;
+    border-color: #F5A623;
 }
 
 .product-header {
@@ -57,12 +57,12 @@
 .product-image {
     width: 120px; height: 120px;
     border-radius: 12px;
-    flex-shrink: 0; background: #f0fdfa;
+    flex-shrink: 0; background: #EEF0F8;
     display: flex; align-items: center; justify-content: center;
     overflow: hidden;
 }
 .product-image img { width: 120px; height: 120px; border-radius: 12px; object-fit: cover; }
-.product-image svg { width: 48px; height: 48px; color: #0f766e; }
+.product-image svg { width: 48px; height: 48px; color: #2E3A6B; }
 .product-meta { flex: 1; min-width: 0; }
 .product-name { font-size: 22px; font-weight: 700; color: #1f2937; margin-bottom: 6px; }
 
@@ -70,21 +70,21 @@
     display: inline-flex;
     align-items: center;
     gap: 10px;
-    background: #f0fdfa;
-    border: 1.5px solid rgba(15,118,110,0.3);
+    background: #EEF0F8;
+    border: 1.5px solid rgba(46,58,107,0.3);
     border-radius: 10px;
     padding: 8px 14px;
     margin-bottom: 10px;
     max-width: 100%;
 }
 .code-produit-label { font-size: 11px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap; }
-.code-produit-value { font-family: monospace; font-size: 16px; font-weight: 800; color: #0f766e; letter-spacing: 0.08em; word-break: break-all; }
+.code-produit-value { font-family: monospace; font-size: 16px; font-weight: 800; color: #2E3A6B; letter-spacing: 0.08em; word-break: break-all; }
 .code-produit-copy { background: none; border: none; cursor: pointer; color: #9ca3af; padding: 2px; display: flex; align-items: center; transition: color 0.2s; border-radius: 4px; flex-shrink: 0; }
-.code-produit-copy:hover { color: #0f766e; }
+.code-produit-copy:hover { color: #2E3A6B; }
 .code-produit-copy svg { width: 14px; height: 14px; }
 .code-produit-hint { font-size: 11px; color: #9ca3af; margin-bottom: 12px; display: flex; align-items: flex-start; gap: 4px; line-height: 1.5; }
 .code-produit-hint svg { width: 12px; height: 12px; flex-shrink: 0; margin-top: 2px; }
-.product-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; background: #f0fdfa; color: #0f766e; border: 1px solid #99f6e4; }
+.product-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; background: #EEF0F8; color: #2E3A6B; border: 1px solid #c7cce6; }
 .product-desc { font-size: 14px; color: #6b7280; margin-top: 10px; line-height: 1.6; }
 
 .stats-row {
@@ -92,7 +92,7 @@
     gap: 16px; margin-bottom: 24px;
 }
 .stat-card { background: #fff; border-radius: 12px; border: 1px solid #e5e7eb; padding: 20px; text-align: center; }
-.stat-value { font-size: 28px; font-weight: 700; color: #0f766e; }
+.stat-value { font-size: 28px; font-weight: 700; color: #2E3A6B; }
 .stat-label { font-size: 12px; color: #6b7280; margin-top: 4px; }
 
 .lots-section { background: #fff; border-radius: 16px; border: 1px solid #e5e7eb; overflow: hidden; }
@@ -110,17 +110,17 @@ tr:hover td { background: #f9fafb; }
 .badge-red   { background: #fee2e2; color: #dc2626; }
 .badge-gray  { background: #f3f4f6; color: #6b7280; }
 .btn-sm { padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; text-decoration: none; border: none; cursor: pointer; transition: .2s; white-space: nowrap; display: inline-flex; align-items: center; }
-.btn-sm-teal { background: #f0fdfa; color: #0f766e; }
-.btn-sm-teal:hover { background: #ccfbf1; }
+.btn-sm-teal { background: #EEF0F8; color: #2E3A6B; }
+.btn-sm-teal:hover { background: #dde1f0; }
 .btn-sm-edit { background: #eff6ff; color: #2563eb; }
 .btn-sm-edit:hover { background: #dbeafe; }
 .btn-sm-red { background: #fef2f2; color: #dc2626; }
 .btn-sm-red:hover { background: #fee2e2; }
 .empty-state { text-align: center; padding: 48px 24px; color: #6b7280; }
 .empty-state svg { width: 48px; height: 48px; margin: 0 auto 12px; display: block; color: #d1d5db; }
-.btn-topbar-primary { background: #0f766e; color: #fff !important; border-radius: 8px; padding: 8px 16px; font-size: 13px; font-weight: 600; text-decoration: none; }
+.btn-topbar-primary { background: #F5A623; color: #171B3D !important; border-radius: 8px; padding: 8px 16px; font-size: 13px; font-weight: 700; text-decoration: none; }
 
-.copy-toast { position: fixed; bottom: 24px; right: 24px; background: #064e3b; color: white; padding: 10px 18px; border-radius: 10px; font-size: 13px; font-weight: 600; box-shadow: 0 4px 16px rgba(0,0,0,0.15); opacity: 0; transform: translateY(8px); transition: all 0.3s; pointer-events: none; z-index: 9999; }
+.copy-toast { position: fixed; bottom: 24px; right: 24px; background: #171B3D; color: white; padding: 10px 18px; border-radius: 10px; font-size: 13px; font-weight: 600; box-shadow: 0 4px 16px rgba(0,0,0,0.15); opacity: 0; transform: translateY(8px); transition: all 0.3s; pointer-events: none; z-index: 9999; }
 .copy-toast.show { opacity: 1; transform: translateY(0); }
 
 /* ── RESPONSIVE MOBILE ── */

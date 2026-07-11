@@ -28,9 +28,9 @@
 
     /* Profil card */
     .profile-card { background: var(--white); border-radius: 16px; border: 1.5px solid var(--border); overflow: hidden; }
-    .profile-banner { height: 72px; background: linear-gradient(135deg, #042f2e 0%, #0f766e 100%); }
+    .profile-banner { height: 72px; background: linear-gradient(135deg, #171B3D 0%, #2E3A6B 100%); }
     .profile-header { padding: 0 18px 16px; border-bottom: 1px solid var(--border); }
-    .profile-avatar { width: 52px; height: 52px; border-radius: 12px; background: linear-gradient(135deg, #0f766e, #14b8a6); display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 800; color: white; border: 3px solid white; box-shadow: 0 4px 12px rgba(0,0,0,0.12); margin-top: -26px; margin-bottom: 10px; text-transform: uppercase; }
+    .profile-avatar { width: 52px; height: 52px; border-radius: 12px; background: linear-gradient(135deg, #2E3A6B, #4A5899); display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 800; color: white; border: 3px solid white; box-shadow: 0 4px 12px rgba(0,0,0,0.12); margin-top: -26px; margin-bottom: 10px; text-transform: uppercase; }
     .profile-name { font-size: 15px; font-weight: 800; color: var(--text); margin-bottom: 2px; }
     .profile-email { font-size: 11.5px; color: var(--text-light); margin-bottom: 10px; }
     
@@ -85,7 +85,7 @@
     .table-scroll tr:last-child td { border-bottom: none; }
     .table-scroll tr:hover td { background: var(--teal-light); }
     .empty-row { text-align: center; color: var(--text-light); padding: 30px; font-size: 13px; }
-    .cat-badge { font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 6px; background: #f0fdfa; color: #0F766E; white-space: nowrap; }
+    .cat-badge { font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 6px; background: #EEF0F8; color: #2E3A6B; white-space: nowrap; }
     .code-mono { font-family: monospace; font-size: 11.5px; color: var(--text-light); white-space: nowrap; }
 
     /* Signalements */
@@ -177,10 +177,6 @@
         </div>
         
         <div class="profile-actions">
-            {{-- Si la demande est en attente ou rejetée, on affiche l'interface d'évaluation --}}
-
-            
-            {{-- Si la demande est active, on peut la suspendre --}}
             @if($statut === 'actif')
                 <form method="POST" action="{{ route('admin.fabricants.suspendre', $fabricant->id) }}">
                     @csrf
@@ -191,10 +187,6 @@
                 </form>
             @endif
 
-            {{-- Si la demande est suspendue, on peut la réactiver --}}
-       
-            
-            {{-- Le bouton de suppression définitive n'est disponible que si le fabricant n'est plus en attente --}}
             @if($statut !== 'en_attente')
                 <form method="POST" action="{{ route('admin.fabricants.destroy', $fabricant->id) }}" onsubmit="return confirm('Supprimer définitivement ce fabricant et toutes ses données associées ?')">
                     @csrf @method('DELETE')

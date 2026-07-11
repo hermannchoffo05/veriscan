@@ -7,15 +7,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        :root { --teal: #0F766E; --teal-dark: #0a5c55; --teal-light: #F0FDFA; --text: #1F2937; --text-light: #6b7280; --border: #e5e7eb; }
+        :root { --teal: #2E3A6B; --teal-dark: #232C54; --teal-light: #EEF0F8; --text: #1F2937; --text-light: #6b7280; --border: #e5e7eb; }
         body { font-family: 'Inter', sans-serif; background: #f8fafc; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
-        .card { background: white; border-radius: 24px; border: 1.5px solid #bbf7d0; padding: 40px 32px; max-width: 440px; width: 100%; text-align: center; box-shadow: 0 8px 32px rgba(15,118,110,0.1); }
+        .card { background: white; border-radius: 24px; border: 1.5px solid #bbf7d0; padding: 40px 32px; max-width: 440px; width: 100%; text-align: center; box-shadow: 0 8px 32px rgba(46,58,107,0.1); }
         .icon { font-size: 72px; margin-bottom: 20px; animation: bounce 0.6s ease; }
         @keyframes bounce { 0%{transform:scale(0)} 60%{transform:scale(1.2)} 100%{transform:scale(1)} }
         .title { font-size: 24px; font-weight: 900; color: #16a34a; margin-bottom: 8px; }
         .subtitle { font-size: 14px; color: var(--text-light); line-height: 1.7; margin-bottom: 28px; }
         .recap { background: var(--teal-light); border-radius: 14px; padding: 20px; margin-bottom: 28px; text-align: left; }
-        .recap-row { display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid rgba(15,118,110,0.15); font-size: 13px; }
+        .recap-row { display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid rgba(46,58,107,0.15); font-size: 13px; }
         .recap-row:last-child { border-bottom: none; }
         .recap-label { color: var(--text-light); }
         .recap-val { font-weight: 700; color: var(--teal); }

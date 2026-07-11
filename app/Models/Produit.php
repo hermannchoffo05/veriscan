@@ -27,18 +27,6 @@ class Produit extends Model
         return $this->hasManyThrough(QrCode::class, Lot::class);
     }
 
-    // Accès direct aux signalements via lots → qrcodes
-    public function signalements()
-    {
-        return $this->hasManyThrough(
-            Signalement::class,
-            Lot::class,
-            'produit_id',   // FK sur lots
-            'lot_id',       // FK sur signalements... via qr_codes
-        );
-        // Note : pour les signalements, utiliser la méthode statique ci-dessous
-    }
-
     // Compte total de signalements (via lots → qr_codes → signalements)
     public function getNbSignalementsAttribute()
     {

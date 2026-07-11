@@ -15,8 +15,8 @@
     .rapport-icon svg { width: 22px; height: 22px; color: var(--teal); }
     .rapport-title { font-size: 14px; font-weight: 800; color: var(--text); margin-bottom: 5px; }
     .rapport-desc { font-size: 12px; color: var(--text-light); margin-bottom: 16px; line-height: 1.5; }
-    .btn-primary { background: var(--teal); color: white; border: none; border-radius: 8px; padding: 9px 16px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: inherit; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s; text-decoration: none; width: 100%; justify-content: center; }
-    .btn-primary:hover { background: #0a5c55; }
+    .btn-primary { background: #F5A623; color: #171B3D; border: none; border-radius: 8px; padding: 9px 16px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: inherit; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s; text-decoration: none; width: 100%; justify-content: center; }
+    .btn-primary:hover { background: #e0961d; }
     .btn-primary svg { width: 13px; height: 13px; }
 </style>
 @endsection

@@ -12,7 +12,7 @@
     .page-header { margin-bottom: 24px; }
     .page-header h1 { font-size: 22px; font-weight: 800; color: var(--text); }
     .page-header p { font-size: 13px; color: var(--text-light); margin-top: 3px; }
-    .btn-topbar-primary { background: var(--teal); color: #fff !important; border-radius: 8px; padding: 8px 16px; font-size: 13px; font-weight: 600; text-decoration: none; }
+    .btn-topbar-primary { background: #F5A623; color: #171B3D !important; border-radius: 8px; padding: 8px 16px; font-size: 13px; font-weight: 700; text-decoration: none; }
     .alert-success { background: #f0fdf4; border: 1px solid #bbf7d0; color: #16a34a; padding: 12px 16px; border-radius: 10px; margin-bottom: 20px; font-size: 13px; }
     .card { background: white; border-radius: 16px; border: 1.5px solid var(--border); overflow: hidden; margin-bottom: 20px; }
     .card-header { padding: 18px 22px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
@@ -41,7 +41,6 @@
     .empty-state h3 { font-size: 16px; font-weight: 800; color: var(--text); margin-bottom: 6px; }
     .empty-state p { font-size: 13px; color: var(--text-light); margin-bottom: 16px; }
 
-    /* ── RESPONSIVE mobile : cards au lieu de tableau ── */
     .qr-mobile-list { display: none; }
     .qr-mobile-card { background: white; border: 1.5px solid var(--border); border-radius: 12px; padding: 14px 16px; margin-bottom: 10px; }
     .qr-mobile-token { font-family: monospace; font-size: 11px; color: var(--text-light); margin-bottom: 8px; word-break: break-all; }
@@ -84,7 +83,6 @@
     </div>
     @else
 
-    {{-- Desktop : tableau --}}
     <div class="table-wrap">
         <table>
             <thead>
@@ -125,7 +123,6 @@
         </table>
     </div>
 
-    {{-- Mobile : cards --}}
     <div class="qr-mobile-list">
         @foreach($qrcodes as $qr)
         <div class="qr-mobile-card">
@@ -157,4 +154,3 @@
     @endif
 </div>
 @endsection
-

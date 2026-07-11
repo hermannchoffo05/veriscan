@@ -5,15 +5,15 @@
 <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: DejaVu Sans, sans-serif; font-size: 11px; color: #1F2937; }
-    .header { background: linear-gradient(135deg, #042f2e, #0f766e); color: white; padding: 24px 28px; margin-bottom: 20px; }
+    .header { background: linear-gradient(135deg, #171B3D, #2E3A6B); color: white; padding: 24px 28px; margin-bottom: 20px; }
     .logo { font-size: 20px; font-weight: 800; }
-    .logo span { color: #5eead4; }
+    .logo span { color: #F5A623; }
     .header h1 { font-size: 14px; font-weight: 700; margin-top: 8px; }
     .header-date { font-size: 10px; color: rgba(255,255,255,0.7); }
     .section { margin: 0 24px 20px; }
-    .section-title { font-size: 12px; font-weight: 800; color: #0f766e; border-bottom: 2px solid #0f766e; padding-bottom: 5px; margin-bottom: 12px; text-transform: uppercase; }
+    .section-title { font-size: 12px; font-weight: 800; color: #2E3A6B; border-bottom: 2px solid #2E3A6B; padding-bottom: 5px; margin-bottom: 12px; text-transform: uppercase; }
     table { width: 100%; border-collapse: collapse; }
-    th { background: #f0fdfa; padding: 8px 10px; text-align: left; font-size: 9px; font-weight: 700; color: #6b7280; text-transform: uppercase; border-bottom: 2px solid #e5e7eb; }
+    th { background: #EEF0F8; padding: 8px 10px; text-align: left; font-size: 9px; font-weight: 700; color: #6b7280; text-transform: uppercase; border-bottom: 2px solid #e5e7eb; }
     td { padding: 8px 10px; font-size: 10px; border-bottom: 1px solid #f3f4f6; vertical-align: top; }
     .badge { display: inline-block; padding: 2px 7px; border-radius: 10px; font-size: 9px; font-weight: 700; }
     .badge.en_cours { background: #fefce8; color: #a16207; }

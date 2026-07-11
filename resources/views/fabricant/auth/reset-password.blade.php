@@ -8,10 +8,10 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'DM Sans', system-ui, sans-serif; background: #dce8e6; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 40px 24px; }
+        body { font-family: 'DM Sans', system-ui, sans-serif; background: #dde1f0; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 40px 24px; }
         .card { width: 100%; max-width: 440px; background: white; border-radius: 24px; box-shadow: 0 30px 80px rgba(0,0,0,0.18); padding: 44px 44px 36px; display: flex; flex-direction: column; align-items: center; animation: cardIn 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards; }
         @keyframes cardIn { from { opacity: 0; transform: translateY(24px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
-        .logo-wrapper { width: 110px; height: 110px; border-radius: 50%; background: white; box-shadow: 0 4px 6px rgba(0,0,0,0.04), 0 10px 30px rgba(15,118,110,0.10), 0 20px 50px rgba(15,118,110,0.07); display: flex; align-items: center; justify-content: center; overflow: hidden; border: 1.5px solid rgba(15,118,110,0.08); margin-bottom: 28px; transition: transform 0.35s ease; }
+        .logo-wrapper { width: 110px; height: 110px; border-radius: 50%; background: white; box-shadow: 0 4px 6px rgba(0,0,0,0.04), 0 10px 30px rgba(46,58,107,0.10), 0 20px 50px rgba(46,58,107,0.07); display: flex; align-items: center; justify-content: center; overflow: hidden; border: 1.5px solid rgba(46,58,107,0.08); margin-bottom: 28px; transition: transform 0.35s ease; }
         .logo-wrapper:hover { transform: scale(1.03); }
         .logo-wrapper img { width: 88px; height: 88px; object-fit: contain; mix-blend-mode: multiply; }
         h1 { font-size: 24px; font-weight: 800; color: #111827; text-align: center; margin-bottom: 8px; }
@@ -22,7 +22,7 @@
         .iw { position: relative; }
         .iw > svg:first-child { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); width: 15px; height: 15px; color: #9ca3af; pointer-events: none; }
         input[type=password], input[type=text] { width: 100%; padding: 11px 42px 11px 40px; border: 1.5px solid #e5e7eb; border-radius: 12px; font-size: 13.5px; color: #111827; background: #f9fafb; font-family: inherit; outline: none; transition: border-color 0.2s, box-shadow 0.2s, background 0.2s; }
-        input:focus { border-color: #0F766E; box-shadow: 0 0 0 3px rgba(15,118,110,0.12); background: white; }
+        input:focus { border-color: #2E3A6B; box-shadow: 0 0 0 3px rgba(46,58,107,0.12); background: white; }
         input.valid { border-color: #10b981; }
         input.invalid { border-color: #ef4444; }
         .eye-btn { position: absolute; right: 11px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: #9ca3af; padding: 0; display: flex; align-items: center; }
@@ -35,13 +35,13 @@
         .match-msg { font-size: 11.5px; font-weight: 600; margin-top: 4px; display: none; }
         .match-msg.ok  { color: #10b981; display: block; }
         .match-msg.err { color: #ef4444; display: block; }
-        .btn { width: 100%; padding: 13px; background: #0F766E; color: white; border: none; border-radius: 12px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; transition: background 0.2s, transform 0.1s, box-shadow 0.2s; box-shadow: 0 4px 14px rgba(15,118,110,0.35); margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .btn:hover { background: #0d6b63; box-shadow: 0 6px 20px rgba(15,118,110,0.45); }
+        .btn { width: 100%; padding: 13px; background: #F5A623; color: #171B3D; border: none; border-radius: 12px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; transition: background 0.2s, transform 0.1s, box-shadow 0.2s; box-shadow: 0 4px 14px rgba(245,166,35,0.35); margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn:hover { background: #e0961d; box-shadow: 0 6px 20px rgba(245,166,35,0.45); }
         .btn:active { transform: scale(0.99); }
         .btn svg { width: 16px; height: 16px; }
         .error-box { width: 100%; background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; border-radius: 11px; padding: 10px 14px; font-size: 13px; margin-bottom: 14px; }
         .back-link { margin-top: 22px; font-size: 12.5px; color: #6b7280; text-align: center; }
-        .back-link a { color: #0F766E; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
+        .back-link a { color: #2E3A6B; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
         .back-link a:hover { text-decoration: underline; }
         .back-link a svg { width: 13px; height: 13px; }
         .card > * { opacity: 0; animation: fadeUp 0.4s ease forwards; }
@@ -52,7 +52,7 @@
         @media (max-width: 480px) {
             body { padding: 16px; align-items: flex-start; padding-top: 40px; }
             .card { padding: 32px 24px 28px; border-radius: 20px; }
-           .logo-wrapper { width: 110px; height: 110px; border-radius: 50%; background: white center 55% / 85% no-repeat; box-shadow: 0 4px 6px rgba(0,0,0,0.04), 0 10px 30px rgba(15,118,110,0.10), 0 20px 50px rgba(15,118,110,0.07); border: 1.5px solid rgba(15,118,110,0.08); margin-bottom: 28px; transition: transform 0.35s ease; }
+           .logo-wrapper { width: 110px; height: 110px; border-radius: 50%; background: white center 55% / 85% no-repeat; box-shadow: 0 4px 6px rgba(0,0,0,0.04), 0 10px 30px rgba(46,58,107,0.10), 0 20px 50px rgba(46,58,107,0.07); border: 1.5px solid rgba(46,58,107,0.08); margin-bottom: 28px; transition: transform 0.35s ease; }
             .logo-wrapper:hover { transform: scale(1.03); }
             h1 { font-size: 20px; }
             .sub { font-size: 12.5px; margin-bottom: 20px; }

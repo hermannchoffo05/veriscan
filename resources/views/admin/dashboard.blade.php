@@ -30,9 +30,9 @@
     }
     .btn-export:hover { background: #d1fae5; transform: translateY(-1px); }
 
-    /* ── Welcome banner ADMIN — teal foncé Option B ── */
+    /* ── Welcome banner ADMIN — marine ── */
     .admin-banner {
-        background: linear-gradient(135deg, #042f2e 0%, #0f766e 60%, #0d9488 100%);
+        background: linear-gradient(135deg, #171B3D 0%, #2E3A6B 60%, #4A5899 100%);
         border-radius: 20px; padding: 28px 32px; color: white;
         display: flex; align-items: center; justify-content: space-between;
         margin-bottom: 28px; position: relative; overflow: hidden; min-height: 96px;
@@ -58,7 +58,7 @@
     }
     .banner-badge::before {
         content: ''; width: 6px; height: 6px; border-radius: 50%;
-        background: #a5f3fc; display: inline-block;
+        background: #8B93D1; display: inline-block;
         animation: pulse-dot 2s ease-in-out infinite;
     }
     @keyframes pulse-dot {
@@ -69,12 +69,12 @@
     .banner-left p { font-size: 12.5px; color: rgba(255,255,255,0.65); }
     .banner-right { position: relative; z-index: 1; display: flex; gap: 10px; align-items: center; }
     .btn-banner-white {
-        background: white; color: #042f2e; border: none; border-radius: 10px;
+        background: white; color: #171B3D; border: none; border-radius: 10px;
         padding: 10px 18px; font-size: 13px; font-weight: 700; cursor: pointer;
         font-family: inherit; display: flex; align-items: center; gap: 7px;
         transition: all 0.2s; text-decoration: none; white-space: nowrap;
     }
-    .btn-banner-white:hover { background: #f0fdfa; transform: translateY(-1px); }
+    .btn-banner-white:hover { background: #EEF0F8; transform: translateY(-1px); }
     .btn-banner-white svg { width: 15px; height: 15px; flex-shrink: 0; }
     .btn-banner-ghost {
         background: rgba(255,255,255,0.12); color: white;
@@ -124,8 +124,8 @@
     .stat-header { display: flex; align-items: center; justify-content: space-between; }
     .stat-icon { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
     .stat-icon svg { width: 20px; height: 20px; }
-    .stat-icon.indigo { background: #f0fdfa; color: #0F766E; }
-    .stat-icon.teal   { background: #f0fdfa; color: #0F766E; }
+    .stat-icon.indigo { background: #EEF0F8; color: #2E3A6B; }
+    .stat-icon.teal   { background: #EEF0F8; color: #2E3A6B; }
     .stat-icon.yellow { background: #fefce8; color: #a16207; }
     .stat-icon.red    { background: #fef2f2; color: #CE1126; }
     .stat-change {
@@ -145,17 +145,17 @@
         display: flex; align-items: center; justify-content: space-between;
     }
     .card-title { font-size: 14px; font-weight: 800; color: var(--text); display: flex; align-items: center; gap: 8px; }
-    .card-title svg { width: 16px; height: 16px; color: #0F766E; }
+    .card-title svg { width: 16px; height: 16px; color: #2E3A6B; }
     .card-body { padding: 22px; }
     .btn-sm {
         padding: 5px 12px; border-radius: 8px; font-size: 11.5px; font-weight: 700;
         text-decoration: none; font-family: inherit; cursor: pointer; border: none;
         transition: all 0.2s; display: inline-flex; align-items: center; gap: 5px;
     }
-    .btn-sm.primary { background: #f0fdfa; color: #0F766E; }
-    .btn-sm.primary:hover { background: #ccfbf1; }
+    .btn-sm.primary { background: #EEF0F8; color: #2E3A6B; }
+    .btn-sm.primary:hover { background: #dde2f5; }
     .btn-sm.outline { background: var(--bg); color: var(--text-light); border: 1.5px solid var(--border); }
-    .btn-sm.outline:hover { border-color: #0F766E; color: #0F766E; }
+    .btn-sm.outline:hover { border-color: #2E3A6B; color: #2E3A6B; }
 
     /* ── Grilles ── */
     .row-2   { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 20px; }
@@ -182,10 +182,10 @@
         transition: background 0.15s;
     }
     .fab-row:last-child { border-bottom: none; }
-    .fab-row:hover { background: #f0fdfa; }
+    .fab-row:hover { background: #EEF0F8; }
     .fab-avatar {
         width: 36px; height: 36px; border-radius: 10px;
-        background: linear-gradient(135deg, #0f766e, #0d9488);
+        background: linear-gradient(135deg, #2E3A6B, #4A5899);
         display: flex; align-items: center; justify-content: center;
         font-size: 13px; font-weight: 800; color: white; flex-shrink: 0;
     }
@@ -231,12 +231,12 @@
         border: 1.5px solid var(--border); cursor: pointer; text-decoration: none;
         transition: all 0.2s; text-align: center;
     }
-    .action-tile:hover { border-color: #0F766E; background: #f0fdfa; transform: translateY(-2px); }
+    .action-tile:hover { border-color: #2E3A6B; background: #EEF0F8; transform: translateY(-2px); }
     .action-tile .tile-icon {
         width: 42px; height: 42px; border-radius: 12px;
-        background: #f0fdfa; display: flex; align-items: center; justify-content: center;
+        background: #EEF0F8; display: flex; align-items: center; justify-content: center;
     }
-    .action-tile .tile-icon svg { width: 20px; height: 20px; color: #0F766E; }
+    .action-tile .tile-icon svg { width: 20px; height: 20px; color: #2E3A6B; }
     .action-tile strong { font-size: 12.5px; font-weight: 700; color: var(--text); }
     .action-tile span   { font-size: 11px; color: var(--text-light); }
 
@@ -490,8 +490,8 @@ new Chart(document.getElementById('scansChart'), {
         datasets: [{
             label: 'Scans',
             data: scansData.map(d => d.total),
-            backgroundColor: 'rgba(15,118,110,0.6)',
-            borderColor: '#0F766E',
+            backgroundColor: 'rgba(46,58,107,0.6)',
+            borderColor: '#2E3A6B',
             borderWidth: 2,
             borderRadius: 8,
             borderSkipped: false,

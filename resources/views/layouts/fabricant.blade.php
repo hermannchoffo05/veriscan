@@ -11,10 +11,12 @@
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         :root {
-            --teal:        #0F766E;
-            --teal-dark:   #064e3b;
-            --teal-light:  #F0FDFA;
-            --teal-mid:    #14b8a6;
+            --teal:        #2E3A6B;
+            --teal-dark:   #171B3D;
+            --teal-light:  #EEF0F8;
+            --teal-mid:    #4A5899;
+            --accent:      #F5A623;
+            --accent-dark: #e0961d;
             --red:         #CE1126;
             --yellow:      #FCD116;
             --green-ok:    #007A4D;
@@ -34,7 +36,7 @@
             --text:        #e2e8f0;
             --text-light:  #94a3b8;
             --border:      #334155;
-            --teal-light:  #134e4a;
+            --teal-light:  #232a4d;
             --topbar-bg:   #1e293b;
             --card-bg:     #1e293b;
         }
@@ -92,7 +94,7 @@
             position: absolute;
             width: 280px; height: 280px;
             border-radius: 50%;
-            background: radial-gradient(circle at 35% 35%, rgba(20,184,166,0.18), rgba(6,78,59,0.05));
+            background: radial-gradient(circle at 35% 35%, rgba(74,88,153,0.18), rgba(23,27,61,0.05));
             bottom: -100px; right: -100px;
             pointer-events: none;
         }
@@ -154,7 +156,7 @@
         .nav-item:hover { background: rgba(255,255,255,0.08); color: white; }
         .nav-item.active {
             background: var(--teal); color: white;
-            font-weight: 700; box-shadow: 0 4px 12px rgba(15,118,110,0.4);
+            font-weight: 700; box-shadow: 0 4px 12px rgba(46,58,107,0.4);
         }
         .nav-item .badge {
             margin-left: auto; background: var(--yellow);
@@ -253,7 +255,7 @@
         .notif-dot { position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; border-radius: 50%; background: var(--red); border: 2px solid white; }
         .topbar-date {
             font-size: 12px; color: var(--text-light);
-            background: var(--teal-light); border: 1px solid rgba(15,118,110,0.15);
+            background: var(--teal-light); border: 1px solid rgba(46,58,107,0.15);
             padding: 5px 12px; border-radius: 8px; font-weight: 600;
         }
 
@@ -345,14 +347,14 @@
         #vs-chat-toggle {
             width: 56px; height: 56px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #0f766e, #14b8a6);
+            background: linear-gradient(135deg, #2E3A6B, #F5A623);
             border: none; cursor: pointer;
             display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 8px 24px rgba(15,118,110,0.4);
+            box-shadow: 0 8px 24px rgba(46,58,107,0.4);
             transition: transform 0.2s, box-shadow 0.2s;
             position: relative;
         }
-        #vs-chat-toggle:hover { transform: scale(1.08); box-shadow: 0 12px 32px rgba(15,118,110,0.5); }
+        #vs-chat-toggle:hover { transform: scale(1.08); box-shadow: 0 12px 32px rgba(46,58,107,0.5); }
         #vs-chat-toggle svg { width: 26px; height: 26px; color: white; transition: opacity 0.2s; }
         #vs-chat-toggle .icon-chat { display: flex; }
         #vs-chat-toggle .icon-close-chat { display: none; }
@@ -395,7 +397,7 @@
 
         /* Header du chat */
         .vs-chat-header {
-            background: linear-gradient(135deg, #0f766e, #0d6560);
+            background: linear-gradient(135deg, #2E3A6B, #171B3D);
             padding: 16px 18px;
             display: flex; align-items: center; gap: 12px;
             flex-shrink: 0;
@@ -463,7 +465,7 @@
             font-size: 11.5px; font-weight: 600;
             color: var(--teal);
             background: var(--teal-light);
-            border: 1px solid rgba(15,118,110,0.2);
+            border: 1px solid rgba(46,58,107,0.2);
             border-radius: 20px;
             padding: 5px 12px;
             cursor: pointer;
@@ -520,15 +522,16 @@
         .vs-send-btn {
             width: 38px; height: 38px;
             border-radius: 10px;
-            background: var(--teal);
+            background: var(--accent);
             border: none; cursor: pointer;
             display: flex; align-items: center; justify-content: center;
             transition: background 0.2s;
             flex-shrink: 0;
         }
-        .vs-send-btn:hover { background: #0d6560; }
-        .vs-send-btn svg { width: 16px; height: 16px; color: white; }
+        .vs-send-btn:hover { background: var(--accent-dark); }
+        .vs-send-btn svg { width: 16px; height: 16px; color: #171B3D; }
         .vs-send-btn:disabled { background: #d1d5db; cursor: not-allowed; }
+        .vs-send-btn:disabled svg { color: white; }
 
         @media (max-width: 480px) {
             #vs-chat-window { width: calc(100vw - 32px); }

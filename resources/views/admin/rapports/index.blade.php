@@ -23,10 +23,10 @@
         display: flex; align-items: center; gap: 12px;
         transition: all 0.2s;
     }
-    .stat-card:hover { border-color: rgba(15,118,110,0.3); transform: translateY(-2px); box-shadow: 0 4px 16px rgba(15,118,110,0.08); }
+    .stat-card:hover { border-color: rgba(46,58,107,0.3); transform: translateY(-2px); box-shadow: 0 4px 16px rgba(46,58,107,0.08); }
     .stat-icon { width: 40px; height: 40px; border-radius: 11px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .stat-icon svg { width: 18px; height: 18px; }
-    .stat-icon.teal   { background: #f0fdfa; color: #0F766E; }
+    .stat-icon.teal { background: #EEF0F8; color: #2E3A6B; }
     .stat-icon.green  { background: #f0fdf4; color: #007A4D; }
     .stat-icon.yellow { background: #fefce8; color: #a16207; }
     .stat-icon.red    { background: #fef2f2; color: #CE1126; }

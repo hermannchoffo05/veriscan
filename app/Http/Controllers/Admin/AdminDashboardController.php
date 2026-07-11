@@ -12,43 +12,44 @@ use App\Services\AIRiskScoringService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
+// ✅ Espace corrigé : "extends Controller" (était "extendsController")
 class AdminDashboardController extends Controller
 {
     public function index()
     {
-        // ── Totaux globaux ────────────────────────────────────────────────
+        // -- Totaux globaux ---------------------------------------------------
         $totalFabricants     = Fabricant::count();
         $totalProduits       = Produit::count();
-        $totalScans          = Verification::count();
+        $totalScans          = QrCode::sum('nb_scans');
         $totalSignalements   = Signalement::count();
         $signalementsEnCours = Signalement::where('statut', 'en_cours')->count();
 
-        // ── Variations aujourd'hui ────────────────────────────────────────
+        // -- Variations aujourd'hui -------------------------------------------
         $fabricantsAujourdhui   = Fabricant::whereDate('created_at', today())->count();
         $signalementsAujourdhui = Signalement::whereDate('created_at', today())->count();
 
-        // ── Derniers fabricants ───────────────────────────────────────────
+        // -- Derniers fabricants ----------------------------------------------
         $derniersFabricants = Fabricant::latest()->take(5)->get();
 
-        // ── Derniers signalements ─────────────────────────────────────────
+        // -- Derniers signalements --------------------------------------------
         $derniersSignalements = Signalement::with('qrCode.lot.produit')
             ->latest()
             ->take(6)
             ->get();
 
-        // ── Fabricants en attente ─────────────────────────────────────────
+        // -- Fabricants en attente --------------------------------------------
         $fabricantsEnAttente = Fabricant::where('statut', 'en_attente')
             ->orWhereNull('statut')
             ->count();
 
-        // ── Signalements par statut ───────────────────────────────────────
+        // -- Signalements par statut ------------------------------------------
         $sigParStatut = [
             'en_cours' => Signalement::where('statut', 'en_cours')->count(),
             'traite'   => Signalement::where('statut', 'traite')->count(),
             'rejete'   => Signalement::where('statut', 'rejete')->count(),
         ];
 
-        // ── Activité scans 7 derniers jours ───────────────────────────────
+        // -- Activité scans 7 derniers jours ----------------------------------
         $scansParJour = [];
         for ($i = 6; $i >= 0; $i--) {
             $date = Carbon::now()->subDays($i);
@@ -58,11 +59,11 @@ class AdminDashboardController extends Controller
             ];
         }
 
-        // ── Module IA — Résumé scoring ────────────────────────────────────
+        // -- Module IA – Résumé scoring ---------------------------------------
         $scoringService = new AIRiskScoringService();
         $resumeIA       = $scoringService->getResumeDashboard();
 
-        // ── Top 5 produits à risque ───────────────────────────────────────
+        // -- Top 5 produits à risque ------------------------------------------
         $topRisques = \App\Models\RiskScore::with('produit.fabricant')
             ->orderByDesc('score')
             ->take(5)
@@ -97,7 +98,7 @@ class AdminDashboardController extends Controller
         return response()->json([
             'fabricants'         => Fabricant::count(),
             'produits'           => Produit::count(),
-            'scans'              => Verification::count(),
+            'scans'              => QrCode::sum('nb_scans'),
             'signalements'       => Signalement::count(),
             'signalements_cours' => Signalement::where('statut', 'en_cours')->count(),
             'fabricants_attente' => Fabricant::where('statut', 'en_attente')

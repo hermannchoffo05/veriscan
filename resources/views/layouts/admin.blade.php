@@ -11,10 +11,12 @@
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         :root {
-            --teal:        #0F766E;
-            --teal-dark:   #064e3b;
-            --teal-light:  #F0FDFA;
-            --teal-mid:    #14b8a6;
+            --teal:        #2E3A6B;
+            --teal-dark:   #171B3D;
+            --teal-light:  #EEF0F8;
+            --teal-mid:    #4A5899;
+            --accent:      #F5A623;
+            --accent-dark: #e0961d;
             --red:         #CE1126;
             --yellow:      #FCD116;
             --green-ok:    #007A4D;
@@ -26,8 +28,8 @@
             --sidebar-w:   260px;
             --topbar-bg:   #ffffff;
             --card-bg:     #ffffff;
-            --sb-bg:       #064e3b;
-            --sb-bg2:      #065f46;
+            --sb-bg:       #171B3D;
+            --sb-bg2:      #212a52;
             --sb-text:     rgba(255,255,255,1);
             --sb-text-act: #ffffff;
             --sb-active:   rgba(255,255,255,0.12);
@@ -143,9 +145,9 @@
         .sidebar-logo-badge {
             font-size: 9px;
             font-weight: 700;
-            color: #5eead4;
-            background: rgba(94,234,212,0.12);
-            border: 1px solid rgba(94,234,212,0.25);
+            color: #F5A623;
+            background: rgba(245,166,35,0.12);
+            border: 1px solid rgba(245,166,35,0.25);
             border-radius: 4px;
             padding: 2px 6px;
             letter-spacing: 0.08em;
@@ -195,7 +197,7 @@
             position: absolute;
             left: 0; top: 20%; bottom: 20%;
             width: 3px;
-            background: #5eead4;
+            background: #F5A623;
             border-radius: 0 3px 3px 0;
         }
         .nav-badge {
@@ -227,13 +229,13 @@
         .admin-avatar {
             width: 36px; height: 36px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #0f766e, #14b8a6);
+            background: linear-gradient(135deg, #2E3A6B, #4A5899);
             display: flex; align-items: center; justify-content: center;
             font-size: 13px; font-weight: 800; color: white;
             flex-shrink: 0;
         }
         .admin-name { font-size: 13px; font-weight: 700; color: white; line-height: 1.2; }
-        .admin-role { font-size: 10px; color: #5eead4; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+        .admin-role { font-size: 10px; color: #F5A623; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
         .logout-btn {
             background: rgba(206,17,38,0.2); border: none; cursor: pointer;
             color: #fca5a5; padding: 6px; border-radius: 8px;
@@ -307,7 +309,7 @@
             transition: all 0.2s;
             text-decoration: none;
         }
-        .topbar-btn:hover { background: var(--teal-light); color: var(--teal); border-color: rgba(15,118,110,0.2); }
+        .topbar-btn:hover { background: var(--teal-light); color: var(--teal); border-color: rgba(46,58,107,0.2); }
         .topbar-btn svg { width: 16px; height: 16px; }
         .topbar-notif-dot {
             position: absolute;
@@ -341,7 +343,7 @@
         .card-title svg { width: 16px; height: 16px; color: var(--teal); }
 
         .stat-card { background: var(--card-bg); border: 1.5px solid var(--border); border-radius: 16px; padding: 20px; transition: all 0.25s; }
-        .stat-card:hover { border-color: rgba(15,118,110,0.3); box-shadow: 0 4px 20px rgba(15,118,110,0.08); transform: translateY(-2px); }
+        .stat-card:hover { border-color: rgba(46,58,107,0.3); box-shadow: 0 4px 20px rgba(46,58,107,0.08); transform: translateY(-2px); }
         .stat-icon { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 14px; }
         .stat-icon svg { width: 20px; height: 20px; }
         .stat-icon.teal   { background: var(--teal-light); color: var(--teal); }
@@ -355,11 +357,11 @@
         .stat-change.down { background: #fef2f2; color: #dc2626; }
         .stat-change svg  { width: 10px; height: 10px; }
 
-        .btn-primary { padding: 8px 16px; background: var(--teal); color: white; border: none; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: inherit; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; text-decoration: none; box-shadow: 0 2px 8px rgba(15,118,110,0.25); }
-        .btn-primary:hover { background: var(--teal-dark); }
+        .btn-primary { padding: 8px 16px; background: var(--accent); color: #171B3D; border: none; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: inherit; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; text-decoration: none; box-shadow: 0 2px 8px rgba(245,166,35,0.3); }
+        .btn-primary:hover { background: var(--accent-dark); }
         .btn-primary svg { width: 14px; height: 14px; }
         .btn-secondary { padding: 8px 16px; background: var(--bg); color: var(--text-light); border: 1.5px solid var(--border); border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; text-decoration: none; }
-        .btn-secondary:hover { color: var(--teal); border-color: rgba(15,118,110,0.3); background: var(--teal-light); }
+        .btn-secondary:hover { color: var(--teal); border-color: rgba(46,58,107,0.3); background: var(--teal-light); }
         .btn-secondary svg { width: 14px; height: 14px; }
 
         .badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; }

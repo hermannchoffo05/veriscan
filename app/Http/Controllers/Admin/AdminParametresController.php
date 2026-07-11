@@ -32,8 +32,7 @@ class AdminParametresController extends Controller
 
         if ($request->filled('password')) {
             $request->validate([
-                'password'              => 'min:8',
-                'password_confirmation' => 'same:password',
+                'password' => ['min:8', 'confirmed'], // ✅ 'confirmed' au lieu de 'same:password'
             ]);
             $data['password'] = Hash::make($request->password);
         }

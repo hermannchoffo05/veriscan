@@ -11,8 +11,8 @@
     .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
     .page-header-left h1 { font-size: 22px; font-weight: 800; color: var(--text); }
     .page-header-left p { font-size: 13px; color: var(--text-light); margin-top: 3px; }
-    .btn-primary { background: var(--teal); color: white; border: none; border-radius: 10px; padding: 10px 20px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s; text-decoration: none; }
-    .btn-primary:hover { background: #0a5c55; transform: translateY(-1px); }
+    .btn-primary { background: #F5A623; color: #171B3D; border: none; border-radius: 10px; padding: 10px 20px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s; text-decoration: none; }
+    .btn-primary:hover { background: #e0961d; transform: translateY(-1px); }
     .btn-primary svg { width: 15px; height: 15px; }
     .filters-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
     .search-input { display: flex; align-items: center; gap: 8px; background: var(--white); border: 1.5px solid var(--border); border-radius: 10px; padding: 8px 14px; flex: 1; min-width: 200px; }
@@ -137,7 +137,6 @@
                             @endif
                         </div>
 
-                        {{-- Stats dynamiques et correctes --}}
                         <div class="product-card-stats">
                             <div class="product-stat">
                                 <div class="product-stat-val">{{ $produit->total_qr }}</div>

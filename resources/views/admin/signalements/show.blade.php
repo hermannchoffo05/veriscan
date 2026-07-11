@@ -46,7 +46,7 @@
 .btn-analyse-ia {
     display: flex; align-items: center; gap: 6px;
     padding: 6px 14px; border-radius: 8px;
-    background: linear-gradient(135deg, #042f2e, #0f766e);
+    background: linear-gradient(135deg, #171B3D, #2E3A6B);
     color: white; font-size: 12px; font-weight: 700;
     border: none; cursor: pointer; font-family: inherit;
     transition: opacity 0.2s;
@@ -57,8 +57,8 @@
 
 .ia-result {
     margin-top: 14px;
-    background: linear-gradient(135deg, #042f2e08, #0f766e08);
-    border: 1.5px solid rgba(15,118,110,0.2);
+    background: linear-gradient(135deg, #171B3D08, #2E3A6B08);
+    border: 1.5px solid rgba(46,58,107,0.2);
     border-radius: 12px;
     padding: 14px 16px;
     display: none;
@@ -225,7 +225,7 @@
             <div class="action-header">Fabricant concerné</div>
             <div class="action-body">
                 <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
-                    <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#0f766e,#14b8a6);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:white;flex-shrink:0;">
+                    <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#2E3A6B,#4A5899);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:white;flex-shrink:0;">
                         {{ strtoupper(substr($fab->nom_entreprise ?? 'F', 0, 1)) }}
                     </div>
                     <div>

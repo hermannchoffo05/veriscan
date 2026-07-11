@@ -32,7 +32,7 @@
         </div>
         <div style="max-height:300px;overflow-y:auto;">
             @forelse($notifications as $notif)
-                <a href="{{ route('fabricant.signalements.show', $notif->id) }}" style="display:flex;align-items:flex-start;gap:12px;padding:12px 18px;border-bottom:1px solid #f3f4f6;text-decoration:none;background:white;transition:background 0.2s;" onmouseover="this.style.background='#f0fdfa'" onmouseout="this.style.background='white'">
+                <a href="{{ route('fabricant.signalements.show', $notif->id) }}" style="display:flex;align-items:flex-start;gap:12px;padding:12px 18px;border-bottom:1px solid #f3f4f6;text-decoration:none;background:white;transition:background 0.2s;" onmouseover="this.style.background='#EEF0F8'" onmouseout="this.style.background='white'">
                     <div style="width:36px;height:36px;border-radius:10px;background:#fef2f2;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
                         <svg fill="none" viewBox="0 0 24 24" stroke="#CE1126" stroke-width="2" style="width:16px;height:16px;"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
                     </div>
@@ -46,21 +46,21 @@
                 <div style="padding:24px;text-align:center;color:#6b7280;font-size:13px;">Aucune notification</div>
             @endforelse
         </div>
-        <a href="{{ route('fabricant.signalements.index') }}" style="display:block;padding:12px;text-align:center;font-size:12.5px;font-weight:700;color:#0F766E;text-decoration:none;border-top:1px solid #e5e7eb;">Voir tous les signalements →</a>
+        <a href="{{ route('fabricant.signalements.index') }}" style="display:block;padding:12px;text-align:center;font-size:12.5px;font-weight:700;color:#2E3A6B;text-decoration:none;border-top:1px solid #e5e7eb;">Voir tous les signalements →</a>
     </div>
 @endsection
 
 @section('styles')
 <style>
-    .welcome-banner { background: linear-gradient(135deg, #064e3b 0%, #0F766E 100%); border-radius: 20px; padding: 24px 28px; color: white; display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; position: relative; overflow: hidden; min-height: 90px; flex-wrap: wrap; gap: 16px; }
+    .welcome-banner { background: linear-gradient(135deg, #171B3D 0%, #2E3A6B 100%); border-radius: 20px; padding: 24px 28px; color: white; display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; position: relative; overflow: hidden; min-height: 90px; flex-wrap: wrap; gap: 16px; }
     .welcome-banner::before { content: ''; position: absolute; inset: 0; background-image: radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 20px 20px; pointer-events: none; }
     .welcome-banner::after { content: ''; position: absolute; width: 320px; height: 320px; border-radius: 50%; background: rgba(255,255,255,0.04); right: -80px; top: -80px; pointer-events: none; }
     .welcome-text { position: relative; z-index: 1; }
     .welcome-text h2 { font-size: 20px; font-weight: 800; margin-bottom: 4px; color: white; }
     .welcome-text p { font-size: 13px; color: rgba(255,255,255,0.7); }
     .welcome-actions { position: relative; z-index: 1; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-    .btn-white { background: white; color: #064e3b; border: none; border-radius: 10px; padding: 9px 18px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; display: flex; align-items: center; gap: 7px; transition: all 0.2s; text-decoration: none; white-space: nowrap; }
-    .btn-white:hover { background: #f0fdfa; }
+    .btn-white { background: #F5A623; color: #171B3D; border: none; border-radius: 10px; padding: 9px 18px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; display: flex; align-items: center; gap: 7px; transition: all 0.2s; text-decoration: none; white-space: nowrap; }
+    .btn-white:hover { background: #e0961d; }
     .btn-white svg { width: 15px; height: 15px; flex-shrink: 0; }
     .btn-outline-white { background: rgba(255,255,255,0.15); color: white; border: 2px solid rgba(255,255,255,0.35); border-radius: 10px; padding: 9px 18px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; display: flex; align-items: center; gap: 7px; transition: all 0.2s; text-decoration: none; white-space: nowrap; }
     .btn-outline-white:hover { background: rgba(255,255,255,0.25); }
@@ -72,7 +72,7 @@
     .stat-header { display: flex; align-items: center; justify-content: space-between; }
     .stat-icon { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
     .stat-icon svg { width: 20px; height: 20px; }
-    .stat-icon.teal{background:#F0FDFA;color:#0F766E} .stat-icon.green{background:#f0fdf4;color:#007A4D} .stat-icon.yellow{background:#fefce8;color:#a16207} .stat-icon.red{background:#fef2f2;color:#CE1126}
+    .stat-icon.teal{background:#EEF0F8;color:#2E3A6B} .stat-icon.green{background:#f0fdf4;color:#007A4D} .stat-icon.yellow{background:#fefce8;color:#a16207} .stat-icon.red{background:#fef2f2;color:#CE1126}
     .stat-trend { font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 20px; display: flex; align-items: center; gap: 3px; }
     .stat-trend.up{background:#f0fdf4;color:#007A4D} .stat-trend.neutral{background:#f3f4f6;color:#6b7280} .stat-trend.down{background:#fef2f2;color:#CE1126}
     .stat-value { font-size: 30px; font-weight: 800; color: var(--text); line-height: 1; }
@@ -81,9 +81,9 @@
     .card { background: var(--white); border-radius: 16px; border: 1.5px solid var(--border); overflow: hidden; }
     .card-header { padding: 18px 22px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
     .card-title { font-size: 14px; font-weight: 800; color: var(--text); display: flex; align-items: center; gap: 8px; }
-    .card-title svg { width: 16px; height: 16px; color: #0F766E; }
+    .card-title svg { width: 16px; height: 16px; color: #2E3A6B; }
     .card-body { padding: 22px; }
-    .card-action { font-size: 12px; font-weight: 600; color: #0F766E; text-decoration: none; display: flex; align-items: center; gap: 4px; cursor: pointer; background: none; border: none; font-family: inherit; transition: all 0.2s; }
+    .card-action { font-size: 12px; font-weight: 600; color: #2E3A6B; text-decoration: none; display: flex; align-items: center; gap: 4px; cursor: pointer; background: none; border: none; font-family: inherit; transition: all 0.2s; }
     .card-action:hover { text-decoration: underline; }
     .card-action svg { width: 13px; height: 13px; }
     .chart-wrap { position: relative; height: 220px; }
@@ -94,7 +94,7 @@
     tr:last-child td { border-bottom: none; }
     tr:hover td { background: var(--teal-light); }
     .product-name { font-weight: 700; color: var(--text); }
-    .product-sector { font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 6px; background: #F0FDFA; color: #0F766E; }
+    .product-sector { font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 6px; background: #EEF0F8; color: #2E3A6B; }
     .status-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 700; padding: 4px 10px; border-radius: 20px; }
     .status-badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; }
     .status-badge.actif{background:#f0fdf4;color:#007A4D} .status-badge.actif::before{background:#007A4D}
@@ -102,7 +102,7 @@
     .status-badge.contrefait{background:#fef2f2;color:#CE1126} .status-badge.contrefait::before{background:#CE1126}
     .signal-list { display: flex; flex-direction: column; gap: 12px; }
     .signal-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px; border-radius: 12px; background: var(--bg); border: 1.5px solid var(--border); transition: all 0.2s; text-decoration: none; }
-    .signal-item:hover { border-color: #0F766E; background: var(--teal-light); }
+    .signal-item:hover { border-color: #2E3A6B; background: var(--teal-light); }
     .signal-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .signal-icon svg { width: 16px; height: 16px; }
     .signal-icon.yellow{background:#fefce8;color:#a16207} .signal-icon.red{background:#fef2f2;color:#CE1126}
@@ -114,16 +114,16 @@
     .lot-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
     .lot-item:last-child { border-bottom: none; padding-bottom: 0; }
     .lot-icon { width: 38px; height: 38px; border-radius: 10px; background: var(--teal-light); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .lot-icon svg { width: 18px; height: 18px; color: #0F766E; }
+    .lot-icon svg { width: 18px; height: 18px; color: #2E3A6B; }
     .lot-info { flex: 1; }
     .lot-info strong { display: block; font-size: 13px; font-weight: 700; color: var(--text); }
     .lot-info span { font-size: 11.5px; color: var(--text-light); }
-    .lot-count { font-size: 13px; font-weight: 800; color: #0F766E; }
+    .lot-count { font-size: 13px; font-weight: 800; color: #2E3A6B; }
     .actions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .action-btn { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 16px 12px; border-radius: 14px; background: var(--bg); border: 1.5px solid var(--border); cursor: pointer; text-decoration: none; transition: all 0.2s; text-align: center; }
-    .action-btn:hover { border-color: #0F766E; background: var(--teal-light); transform: translateY(-2px); }
+    .action-btn:hover { border-color: #2E3A6B; background: var(--teal-light); transform: translateY(-2px); }
     .action-btn .action-icon { width: 42px; height: 42px; border-radius: 12px; background: var(--teal-light); display: flex; align-items: center; justify-content: center; }
-    .action-btn .action-icon svg { width: 20px; height: 20px; color: #0F766E; }
+    .action-btn .action-icon svg { width: 20px; height: 20px; color: #2E3A6B; }
     .action-btn strong { font-size: 12.5px; font-weight: 700; color: var(--text); }
     .action-btn span { font-size: 11px; color: var(--text-light); }
     .empty-state { text-align: center; padding: 24px; color: var(--text-light); font-size: 13px; }
@@ -408,7 +408,7 @@
         data: {
             labels: labels,
             datasets: [
-                { label: locale === 'en' ? 'Authentic' : 'Authentiques', data: scansData, backgroundColor: 'rgba(15,118,110,0.85)', borderRadius: 8, borderSkipped: false },
+                { label: locale === 'en' ? 'Authentic' : 'Authentiques', data: scansData, backgroundColor: 'rgba(46,58,107,0.85)', borderRadius: 8, borderSkipped: false },
                 { label: locale === 'en' ? 'Suspect' : 'Suspects', data: suspectsData, backgroundColor: 'rgba(251,191,36,0.85)', borderRadius: 8, borderSkipped: false }
             ]
         },
@@ -440,9 +440,9 @@
                     searchResults.innerHTML = '<div style="padding:16px;text-align:center;color:#6b7280;font-size:13px;">Aucun produit trouvé</div>';
                 } else {
                     searchResults.innerHTML = data.map(p => `
-                        <a href="${p.url}" style="display:flex;align-items:center;gap:10px;padding:10px 14px;text-decoration:none;background:white;border-bottom:1px solid #f3f4f6;" onmouseover="this.style.background='#f0fdfa'" onmouseout="this.style.background='white'">
-                            <div style="width:32px;height:32px;border-radius:8px;background:#F0FDFA;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                                <svg fill="none" viewBox="0 0 24 24" stroke="#0F766E" stroke-width="2" style="width:15px;height:15px;"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                        <a href="${p.url}" style="display:flex;align-items:center;gap:10px;padding:10px 14px;text-decoration:none;background:white;border-bottom:1px solid #f3f4f6;" onmouseover="this.style.background='#EEF0F8'" onmouseout="this.style.background='white'">
+                            <div style="width:32px;height:32px;border-radius:8px;background:#EEF0F8;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                <svg fill="none" viewBox="0 0 24 24" stroke="#2E3A6B" stroke-width="2" style="width:15px;height:15px;"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
                             </div>
                             <div>
                                 <div style="font-size:13px;font-weight:700;color:#1F2937;">${p.nom}</div>

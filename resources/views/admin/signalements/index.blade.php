@@ -36,31 +36,31 @@
     .status-badge.en_cours { background: #fefce8; color: #a16207; }
     .status-badge.traite   { background: #f0fdf4; color: #007A4D; }
     .status-badge.rejete   { background: #f9fafb; color: #6b7280; }
-    .btn-voir { padding: 5px 12px; border-radius: 7px; font-size: 11.5px; font-weight: 700; text-decoration: none; background: #f0fdfa; color: #0F766E; transition: all 0.2s; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
-    .btn-voir:hover { background: #ccfbf1; }
+    .btn-voir { padding: 5px 12px; border-radius: 7px; font-size: 11.5px; font-weight: 700; text-decoration: none; background: #EEF0F8; color: #2E3A6B; transition: all 0.2s; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
+    .btn-voir:hover { background: #dde2f5; }
     .empty-state { text-align: center; padding: 60px 20px; color: var(--text-light); font-size: 13px; }
     .empty-state svg { width: 48px; height: 48px; color: var(--border); margin: 0 auto 12px; display: block; }
     .pagination-wrap { display: flex; justify-content: flex-end; padding: 16px 20px; border-top: 1px solid var(--border); }
 
     /* ── Résumé IA ── */
     .ia-resume-bar {
-        background: linear-gradient(135deg, #042f2e 0%, #0f766e 100%);
+        background: linear-gradient(135deg, #171B3D 0%, #2E3A6B 100%);
         border-radius: 16px; padding: 18px 22px; margin-bottom: 20px;
         display: flex; align-items: center; justify-content: space-between;
         gap: 16px; flex-wrap: wrap;
     }
     .ia-resume-left { display: flex; align-items: center; gap: 12px; }
     .ia-resume-icon { width: 40px; height: 40px; background: rgba(255,255,255,0.12); border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .ia-resume-icon svg { width: 20px; height: 20px; color: #5eead4; }
+    .ia-resume-icon svg { width: 20px; height: 20px; color: #8B93D1; }
     .ia-resume-title { font-size: 14px; font-weight: 700; color: white; }
     .ia-resume-sub { font-size: 12px; color: rgba(255,255,255,0.65); margin-top: 2px; }
     .btn-generate-resume {
-        padding: 9px 20px; background: white; color: #0f766e; border: none;
+        padding: 9px 20px; background: white; color: #2E3A6B; border: none;
         border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer;
         font-family: inherit; display: flex; align-items: center; gap: 7px;
         transition: all 0.2s; flex-shrink: 0;
     }
-    .btn-generate-resume:hover { background: #f0fdfa; }
+    .btn-generate-resume:hover { background: #EEF0F8; }
     .btn-generate-resume:disabled { opacity: 0.6; cursor: not-allowed; }
     .btn-generate-resume svg { width: 16px; height: 16px; }
 

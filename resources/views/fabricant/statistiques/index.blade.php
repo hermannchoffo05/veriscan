@@ -33,7 +33,6 @@
         <p>{{ __('messages.statistiques_desc') }}</p>
     </div>
 
-    {{-- ── Stats dynamiques ── --}}
     <div class="stats-grid">
         <div class="stat-card">
             <div class="stat-icon teal">
@@ -66,7 +65,6 @@
     </div>
 
     <div class="charts-grid">
-        {{-- Graphique scans 7 jours --}}
         <div class="card">
             <div class="card-header">
                 <div class="card-title">
@@ -79,7 +77,6 @@
             </div>
         </div>
 
-        {{-- Graphique scans par produit --}}
         <div class="card">
             <div class="card-header">
                 <div class="card-title">
@@ -96,7 +93,6 @@
 
 @section('scripts')
 <script>
-    // ── Graphique scans 7 jours (dynamique) ──────────────────────────────────
     new Chart(document.getElementById('scanChart').getContext('2d'), {
         type: 'bar',
         data: {
@@ -108,7 +104,7 @@
                 {
                     label: '{{ __("messages.authentiques") }}',
                     data: @json($scans7jours),
-                    backgroundColor: 'rgba(15,118,110,0.85)',
+                    backgroundColor: 'rgba(46,58,107,0.85)',
                     borderRadius: 6
                 },
                 {
@@ -126,14 +122,13 @@
         }
     });
 
-    // ── Graphique scans par produit (dynamique) ───────────────────────────────
     new Chart(document.getElementById('produitChart').getContext('2d'), {
         type: 'doughnut',
         data: {
             labels: @json($topProduits->pluck('nom')),
             datasets: [{
                 data: @json($topProduits->pluck('total_scans')->values()),
-                backgroundColor: ['#0F766E','#14b8a6','#FCD116','#e5e7eb','#94a3b8'],
+                backgroundColor: ['#2E3A6B','#4A5899','#F5A623','#e5e7eb','#94a3b8'],
                 borderWidth: 0
             }]
         },

@@ -18,8 +18,8 @@
     transition: background 0.2s;
 }
 .hamburger-btn:hover {
-    background: var(--teal-light, #f0fdfa);
-    color: var(--teal, #0f766e);
+    background: var(--teal-light, #EEF0F8);
+    color: var(--teal, #2E3A6B);
 }
 .hamburger-btn svg { width: 22px; height: 22px; }
 

@@ -14,6 +14,7 @@ class AdminAuthController extends Controller
             return redirect()->route('admin.dashboard');
         }
         if (Auth::guard('fabricant')->check()) {
+            // ✅ Espace corrigé : "Cet espace" (était "Cetespace")
             return redirect()->route('fabricant.dashboard')
                 ->with('warning', 'Cet espace est réservé aux administrateurs VeriScan.');
         }

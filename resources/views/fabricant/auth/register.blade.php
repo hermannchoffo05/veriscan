@@ -12,7 +12,7 @@
             height: 100%;
             overflow: hidden;
             font-family: 'DM Sans', system-ui, sans-serif;
-            background: #dce8e6;
+            background: #dde1f0;
         }
         body {
             display: flex;
@@ -36,7 +36,7 @@
             position: relative;
             overflow: hidden;
             border-radius: 24px 0 0 24px;
-            background: #064e3b;
+            background: #171B3D;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -56,7 +56,7 @@
         .sphere {
             position: absolute;
             border-radius: 50%;
-            background: radial-gradient(circle at 35% 35%, rgba(255,255,255,0.20), rgba(6,78,59,0.55) 60%, rgba(4,55,41,0.75));
+            background: radial-gradient(circle at 35% 35%, rgba(255,255,255,0.20), rgba(46,58,107,0.55) 60%, rgba(23,27,61,0.75));
             box-shadow: inset -6px -6px 20px rgba(0,0,0,0.3), inset 6px 6px 20px rgba(255,255,255,0.10);
             z-index: 1;
         }
@@ -123,7 +123,7 @@
             padding: 5px 12px;
             border-radius: 20px;
         }
-        .badge svg { width: 11px; height: 11px; color: #5eead4; flex-shrink: 0; }
+        .badge svg { width: 11px; height: 11px; color: #F5A623; flex-shrink: 0; }
         .left-features {
             position: relative;
             z-index: 3;
@@ -152,7 +152,7 @@
             justify-content: center;
             flex-shrink: 0;
         }
-        .feat-icon svg { width: 15px; height: 15px; color: #5eead4; }
+        .feat-icon svg { width: 15px; height: 15px; color: #F5A623; }
         .right {
             width: 50%;
             padding: 24px 32px;
@@ -163,11 +163,11 @@
             overflow: hidden;
         }
         .form-card {
-            background: #f8fffe;
-            border: 1.5px solid rgba(15,118,110,0.18);
+            background: #F8F9FD;
+            border: 1.5px solid rgba(46,58,107,0.18);
             border-radius: 16px;
             padding: 20px 22px 18px;
-            box-shadow: 0 2px 16px rgba(15,118,110,0.06);
+            box-shadow: 0 2px 16px rgba(46,58,107,0.06);
         }
         .form-tag {
             display: inline-flex;
@@ -175,12 +175,12 @@
             gap: 6px;
             font-size: 10.5px;
             font-weight: 700;
-            color: #0F766E;
+            color: #2E3A6B;
             letter-spacing: 0.08em;
             text-transform: uppercase;
             margin-bottom: 4px;
         }
-        .form-tag .dot { width:6px; height:6px; border-radius:50%; background:#0F766E; }
+        .form-tag .dot { width:6px; height:6px; border-radius:50%; background:#2E3A6B; }
         h1 { font-size: 20px; font-weight: 800; color: #111827; margin-bottom: 2px; }
         .sub { font-size: 12px; color: #6b7280; margin-bottom: 14px; }
         .form-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
@@ -211,8 +211,8 @@
             appearance: none;
         }
         input:focus, select:focus {
-            border-color: #0F766E;
-            box-shadow: 0 0 0 3px rgba(15,118,110,0.12);
+            border-color: #2E3A6B;
+            box-shadow: 0 0 0 3px rgba(46,58,107,0.12);
         }
         .eye-btn {
             position: absolute;
@@ -252,17 +252,17 @@
         }
         .terms-row input[type=checkbox] {
             width: 13px; height: 13px;
-            accent-color: #0F766E;
+            accent-color: #2E3A6B;
             margin-top: 1px;
             flex-shrink: 0;
         }
-        .terms-row a { color: #0F766E; font-weight: 600; text-decoration: none; }
+        .terms-row a { color: #2E3A6B; font-weight: 600; text-decoration: none; }
         .terms-row a:hover { text-decoration: underline; }
         .btn {
             width: 100%;
             padding: 10px;
-            background: #0F766E;
-            color: white;
+            background: #F5A623;
+            color: #171B3D;
             border: none;
             border-radius: 10px;
             font-size: 13.5px;
@@ -270,10 +270,10 @@
             cursor: pointer;
             font-family: inherit;
             transition: background 0.2s, box-shadow 0.2s;
-            box-shadow: 0 4px 14px rgba(15,118,110,0.35);
+            box-shadow: 0 4px 14px rgba(245,166,35,0.35);
             margin-top: 4px;
         }
-        .btn:hover { background: #0d6b63; }
+        .btn:hover { background: #e0961d; }
         .btn:active { transform: scale(0.99); }
         .footer-link {
             text-align: center;
@@ -281,7 +281,7 @@
             color: #6b7280;
             margin-top: 12px;
         }
-        .footer-link a { color: #0F766E; font-weight: 700; text-decoration: none; }
+        .footer-link a { color: #2E3A6B; font-weight: 700; text-decoration: none; }
         .error-box {
             background: #fef2f2;
             border: 1px solid #fecaca;
@@ -338,26 +338,26 @@
 
         <svg class="shapes-layer" viewBox="0 0 500 720" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
             <defs>
-                <radialGradient id="sg1" cx="35%" cy="30%" r="65%"><stop offset="0%" stop-color="#14b8a6" stop-opacity="0.9"/><stop offset="100%" stop-color="#042f23" stop-opacity="0.6"/></radialGradient>
-                <radialGradient id="sg2" cx="30%" cy="25%" r="70%"><stop offset="0%" stop-color="#0F766E" stop-opacity="0.95"/><stop offset="100%" stop-color="#021a12" stop-opacity="0.75"/></radialGradient>
-                <radialGradient id="sg3" cx="40%" cy="35%" r="60%"><stop offset="0%" stop-color="#2dd4bf" stop-opacity="0.85"/><stop offset="100%" stop-color="#064e3b" stop-opacity="0.65"/></radialGradient>
-                <linearGradient id="sring1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#14b8a6" stop-opacity="0.65"/><stop offset="100%" stop-color="#064e3b" stop-opacity="0.05"/></linearGradient>
+                <radialGradient id="sg1" cx="35%" cy="30%" r="65%"><stop offset="0%" stop-color="#4A5899" stop-opacity="0.9"/><stop offset="100%" stop-color="#0d0f26" stop-opacity="0.6"/></radialGradient>
+                <radialGradient id="sg2" cx="30%" cy="25%" r="70%"><stop offset="0%" stop-color="#2E3A6B" stop-opacity="0.95"/><stop offset="100%" stop-color="#08091a" stop-opacity="0.75"/></radialGradient>
+                <radialGradient id="sg3" cx="40%" cy="35%" r="60%"><stop offset="0%" stop-color="#7480c2" stop-opacity="0.85"/><stop offset="100%" stop-color="#171B3D" stop-opacity="0.65"/></radialGradient>
+                <linearGradient id="sring1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#4A5899" stop-opacity="0.65"/><stop offset="100%" stop-color="#171B3D" stop-opacity="0.05"/></linearGradient>
             </defs>
             <circle cx="420" cy="580" r="110" fill="url(#sg2)" opacity="0.20"/>
             <circle cx="250" cy="60" r="55" fill="url(#sg1)" opacity="0.20"/>
             <circle cx="55" cy="380" r="38" fill="url(#sg3)" opacity="0.25"/>
             <circle cx="370" cy="180" r="18" fill="url(#sg1)" opacity="0.60"/>
             <ellipse cx="440" cy="130" rx="52" ry="52" fill="none" stroke="url(#sring1)" stroke-width="14" opacity="0.65"/>
-            <rect x="130" y="180" width="60" height="50" rx="2" fill="#064e3b" opacity="0.40"/>
-            <g opacity="0.28" stroke="#14b8a6" stroke-width="1.5" fill="none">
+            <rect x="130" y="180" width="60" height="50" rx="2" fill="#171B3D" opacity="0.40"/>
+            <g opacity="0.28" stroke="#4A5899" stroke-width="1.5" fill="none">
                 <rect x="330" y="500" width="48" height="48" rx="3"/>
                 <rect x="344" y="488" width="48" height="48" rx="3"/>
                 <line x1="330" y1="500" x2="344" y2="488"/>
                 <line x1="378" y1="500" x2="392" y2="488"/>
             </g>
             <rect x="220" y="480" width="34" height="34" rx="4" fill="url(#sg3)" opacity="0.42" transform="rotate(45 237 497)"/>
-            <circle cx="195" cy="300" r="4" fill="#5eead4" opacity="0.45"/>
-            <circle cx="370" cy="340" r="3" fill="#14b8a6" opacity="0.55"/>
+            <circle cx="195" cy="300" r="4" fill="#F5A623" opacity="0.45"/>
+            <circle cx="370" cy="340" r="3" fill="#4A5899" opacity="0.55"/>
         </svg>
 
         <div class="logo-center">

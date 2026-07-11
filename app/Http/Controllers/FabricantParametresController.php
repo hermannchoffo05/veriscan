@@ -12,22 +12,20 @@ class FabricantParametresController extends Controller
      */
     public function index()
     {
-        $fabricant  = Auth::guard('fabricant')->user();
+        $fabricant = Auth::guard('fabricant')->user();
 
-        // Charger les paramètres depuis la colonne JSON en base
-        // Si pas encore de paramètres, on retourne les valeurs par défaut
         $parametres = $fabricant->parametres ?? [
-            'notif_signalement'    => true,
-            'notif_score_critique' => true,
-            'notif_rapport_mensuel'=> false,
-            'notif_resume_hebdo'   => false,
-            'seuil_alerte'         => 70,
-            'frequence_calcul'     => 6,
-            'langue'               => 'fr',
-            'format_date'          => 'd/m/Y',
-            'afficher_carte'       => true,
-            'afficher_graphiques'  => true,
-            'mode_leger'           => false,
+            'notif_signalement'     => true,
+            'notif_score_critique'  => true,
+            'notif_rapport_mensuel' => false,
+            'notif_resume_hebdo'    => false,
+            'seuil_alerte'          => 70,
+            'frequence_calcul'      => 6,
+            'langue'                => 'fr',
+            'format_date'           => 'd/m/Y',
+            'afficher_carte'        => true,
+            'afficher_graphiques'   => true,
+            'mode_leger'            => false,
         ];
 
         return view('fabricant.parametres.index', compact('fabricant', 'parametres'));
@@ -41,17 +39,17 @@ class FabricantParametresController extends Controller
         $fabricant = Auth::guard('fabricant')->user();
 
         $parametres = [
-            'notif_signalement'    => $request->boolean('notif_signalement'),
-            'notif_score_critique' => $request->boolean('notif_score_critique'),
-            'notif_rapport_mensuel'=> $request->boolean('notif_rapport_mensuel'),
-            'notif_resume_hebdo'   => $request->boolean('notif_resume_hebdo'),
-            'seuil_alerte'         => (int) $request->input('seuil_alerte', 70),
-            'frequence_calcul'     => (int) $request->input('frequence_calcul', 6),
-            'langue'               => $request->input('langue', 'fr'),
-            'format_date'          => $request->input('format_date', 'd/m/Y'),
-            'afficher_carte'       => $request->boolean('afficher_carte'),
-            'afficher_graphiques'  => $request->boolean('afficher_graphiques'),
-            'mode_leger'           => $request->boolean('mode_leger'),
+            'notif_signalement'     => $request->boolean('notif_signalement'),
+            'notif_score_critique'  => $request->boolean('notif_score_critique'),
+            'notif_rapport_mensuel' => $request->boolean('notif_rapport_mensuel'),
+            'notif_resume_hebdo'    => $request->boolean('notif_resume_hebdo'),
+            'seuil_alerte'          => (int) $request->input('seuil_alerte', 70),
+            'frequence_calcul'      => (int) $request->input('frequence_calcul', 6),
+            'langue'                => $request->input('langue', 'fr'),
+            'format_date'           => $request->input('format_date', 'd/m/Y'),
+            'afficher_carte'        => $request->boolean('afficher_carte'),
+            'afficher_graphiques'   => $request->boolean('afficher_graphiques'),
+            'mode_leger'            => $request->boolean('mode_leger'),
         ];
 
         $fabricant->parametres = $parametres;
@@ -69,17 +67,17 @@ class FabricantParametresController extends Controller
         $fabricant = Auth::guard('fabricant')->user();
 
         $fabricant->parametres = [
-            'notif_signalement'    => true,
-            'notif_score_critique' => true,
-            'notif_rapport_mensuel'=> false,
-            'notif_resume_hebdo'   => false,
-            'seuil_alerte'         => 70,
-            'frequence_calcul'     => 6,
-            'langue'               => 'fr',
-            'format_date'          => 'd/m/Y',
-            'afficher_carte'       => true,
-            'afficher_graphiques'  => true,
-            'mode_leger'           => false,
+            'notif_signalement'     => true,
+            'notif_score_critique'  => true,
+            'notif_rapport_mensuel' => false,
+            'notif_resume_hebdo'    => false,
+            'seuil_alerte'          => 70,
+            'frequence_calcul'      => 6,
+            'langue'                => 'fr',
+            'format_date'           => 'd/m/Y',
+            'afficher_carte'        => true,
+            'afficher_graphiques'   => true,
+            'mode_leger'            => false,
         ];
 
         $fabricant->save();
@@ -95,12 +93,10 @@ class FabricantParametresController extends Controller
     {
         $fabricant = Auth::guard('fabricant')->user();
 
-        // Déconnecter d'abord
         Auth::guard('fabricant')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        // Supprimer le compte (cascade supprime produits, lots, qrcodes)
         $fabricant->delete();
 
         return redirect()->route('fabricant.login')

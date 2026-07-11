@@ -44,7 +44,7 @@
     /* Résultats dropdown */
     .map-search-result-item { padding: 10px 14px; cursor: pointer; border-bottom: 1px solid #f3f4f6; transition: background 0.15s; }
     .map-search-result-item:last-child { border-bottom: none; }
-    .map-search-result-item:hover { background: #f0fdfa; }
+    .map-search-result-item:hover { background: #EEF0F8; }
     .map-search-result-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
     .map-search-result-name { font-weight: 700; color: #1F2937; font-size: 12.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .map-search-result-sub { font-size: 11px; color: #9ca3af; margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -55,20 +55,20 @@
     .map-search-tag.lieu        { background: #ecfdf5; color: #007A4D; }
     .map-search-empty { padding: 14px; color: #9ca3af; font-size: 12px; text-align: center; }
     .map-search-loading { padding: 10px 14px; color: #9ca3af; font-size: 11px; display: flex; align-items: center; gap: 6px; }
-    .map-search-spinner-sm { width: 11px; height: 11px; border: 2px solid #e5e7eb; border-top-color: #0F766E; border-radius: 50%; animation: spin 0.6s linear infinite; flex-shrink: 0; }
+    .map-search-spinner-sm { width: 11px; height: 11px; border: 2px solid #e5e7eb; border-top-color: #2E3A6B; border-radius: 50%; animation: spin 0.6s linear infinite; flex-shrink: 0; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
     /* Contrôles carte custom */
     .map-zoom-stack { background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.15); overflow: hidden; width: 34px; }
     .map-zoom-btn { width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none; background: white; font-size: 17px; font-weight: 600; color: #374151; border-bottom: 1px solid #f3f4f6; transition: background 0.15s; }
-    .map-zoom-btn:hover { background: #f0fdfa; }
-    .map-zoom-btn.geoloc { border-bottom: none; color: #0F766E; }
+    .map-zoom-btn:hover { background: #EEF0F8; }
+    .map-zoom-btn.geoloc { border-bottom: none; color: #2E3A6B; }
     .map-zoom-btn.geoloc svg { width: 15px; height: 15px; }
     .map-layers-panel { background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.15); overflow: hidden; font-size: 12px; }
     .map-layer-option { display: flex; align-items: center; gap: 7px; padding: 8px 12px; cursor: pointer; color: #6b7280; font-weight: 600; border-bottom: 1px solid #f3f4f6; transition: background 0.15s, color 0.15s; white-space: nowrap; }
     .map-layer-option:last-child { border-bottom: none; }
     .map-layer-option:hover { background: #f9fafb; }
-    .map-layer-option.active { color: #0F766E; background: #f0fdfa; }
+    .map-layer-option.active { color: #2E3A6B; background: #EEF0F8; }
     .map-layer-option svg { width: 13px; height: 13px; flex-shrink: 0; }
 
     /* Légende */
@@ -313,7 +313,7 @@ setTimeout(() => {
 }, 400);
 
 map.on('locationfound', function(e) {
-    L.circleMarker(e.latlng, { radius: 8, fillColor: '#0F766E', color: '#fff', weight: 2, fillOpacity: 1 })
+    L.circleMarker(e.latlng, { radius: 8, fillColor: '#2E3A6B', color: '#fff', weight: 2, fillOpacity: 1 })
         .addTo(map).bindPopup('Vous êtes ici').openPopup();
 });
 

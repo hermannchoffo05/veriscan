@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        :root { --teal: #0F766E; --teal-dark: #0a5c55; --teal-light: #F0FDFA; --text: #1F2937; --text-light: #6b7280; --border: #e5e7eb; }
+        :root { --teal: #2E3A6B; --teal-dark: #212a52; --teal-light: #EEF0F8; --yellow: #F5A623; --yellow-dark: #e0961d; --text: #1F2937; --text-light: #6b7280; --border: #e5e7eb; }
         body { font-family: 'Inter', sans-serif; color: var(--text); background: #f8fafc; overflow-x: hidden; }
 
         nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(255,255,255,0.96); backdrop-filter: blur(16px); border-bottom: 1px solid rgba(0,0,0,0.07); padding: 0 60px; height: 72px; display: flex; align-items: center; justify-content: space-between; }
@@ -27,12 +27,12 @@
         .nav-mobile-menu a { font-size: 15px; font-weight: 600; color: var(--text); text-decoration: none; padding: 12px 0; border-bottom: 1px solid var(--border); }
         .nav-mobile-menu a:last-child { border-bottom: none; }
 
-        .page-hero { padding: 110px 60px 56px; text-align: center; background: linear-gradient(135deg, #042f2e 0%, #0f766e 60%, #0d9488 100%); position: relative; overflow: hidden; }
+        .page-hero { padding: 110px 60px 56px; text-align: center; background: linear-gradient(135deg, #171B3D 0%, #2E3A6B 60%, #4A5899 100%); position: relative; overflow: hidden; }
         .page-hero::before { content: ''; position: absolute; inset: 0; background-image: radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px); background-size: 24px 24px; }
         .page-hero-content { position: relative; z-index: 1; max-width: 640px; margin: 0 auto; }
         .page-hero-badge { display: inline-flex; align-items: center; gap: 7px; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); border-radius: 20px; padding: 5px 14px; font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.9); margin-bottom: 20px; }
         .page-hero h1 { font-size: 42px; font-weight: 900; color: white; line-height: 1.1; margin-bottom: 16px; }
-        .page-hero h1 span { color: #5eead4; }
+        .page-hero h1 span { color: var(--yellow); }
         .page-hero p { font-size: 16px; color: rgba(255,255,255,0.75); line-height: 1.7; }
 
         .lang-bar { display: flex; justify-content: flex-end; gap: 8px; padding: 12px 60px 0; }
@@ -43,8 +43,8 @@
         .pricing-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
         .plan-card { background: white; border-radius: 20px; border: 2px solid var(--border); padding: 28px 22px; display: flex; flex-direction: column; gap: 18px; position: relative; transition: transform 0.2s, box-shadow 0.2s; }
         .plan-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(0,0,0,0.08); }
-        .plan-card.popular { border-color: var(--teal); box-shadow: 0 8px 32px rgba(15,118,110,0.15); }
-        .popular-badge { position: absolute; top: -14px; left: 50%; transform: translateX(-50%); background: var(--teal); color: white; font-size: 11px; font-weight: 800; padding: 4px 14px; border-radius: 20px; white-space: nowrap; letter-spacing: 0.05em; }
+        .plan-card.popular { border-color: var(--yellow); box-shadow: 0 8px 32px rgba(245,166,35,0.18); }
+        .popular-badge { position: absolute; top: -14px; left: 50%; transform: translateX(-50%); background: var(--yellow); color: var(--teal-dark); font-size: 11px; font-weight: 800; padding: 4px 14px; border-radius: 20px; white-space: nowrap; letter-spacing: 0.05em; }
         .plan-name { font-size: 12px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.08em; }
         .plan-price { display: flex; align-items: baseline; gap: 4px; flex-wrap: wrap; }
         .plan-price .amount { font-size: 30px; font-weight: 900; color: var(--text); }
@@ -59,12 +59,15 @@
         .plan-feature.excluded { color: #9ca3af; }
         .plan-feature.excluded svg { color: #d1d5db; }
 
-        /* ── TOUS LES BOUTONS EN VERT ── */
+        /* ── BOUTONS ── */
         .btn-plan { display: block; width: 100%; padding: 12px; border-radius: 12px; font-size: 14px; font-weight: 700; text-align: center; cursor: pointer; text-decoration: none; transition: all 0.2s; border: none; font-family: inherit; background: var(--teal); color: white; }
         .btn-plan:hover { background: var(--teal-dark); transform: translateY(-1px); }
-        /* Plan gratuit : outline vert */
+        /* Plan gratuit : outline marine */
         .btn-plan.outline { background: white; color: var(--teal); border: 2px solid var(--teal); }
         .btn-plan.outline:hover { background: var(--teal-light); transform: translateY(-1px); }
+        /* Plan populaire (Pro) : orange plein */
+        .plan-card.popular .btn-plan { background: var(--yellow); color: var(--teal-dark); }
+        .plan-card.popular .btn-plan:hover { background: var(--yellow-dark); }
 
         .faq-section { max-width: 720px; margin: 0 auto; padding: 0 24px 72px; }
         .faq-title { font-size: 28px; font-weight: 800; color: var(--text); text-align: center; margin-bottom: 36px; }
@@ -75,7 +78,7 @@
         .faq-answer { display: none; padding: 0 20px 16px; font-size: 14px; color: var(--text-light); line-height: 1.8; }
         .faq-answer.open { display: block; }
 
-        footer { background: #042f2e; padding: 24px 60px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+        footer { background: #171B3D; padding: 24px 60px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
         footer p { font-size: 13px; color: rgba(255,255,255,0.5); }
         .footer-links { display: flex; gap: 20px; flex-wrap: wrap; }
         .footer-links a { font-size: 13px; color: rgba(255,255,255,0.6); text-decoration: none; }

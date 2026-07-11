@@ -9,19 +9,19 @@
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        body { font-family: 'DM Sans', system-ui, sans-serif; background: #dce8e6; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 40px 24px; }
+        body { font-family: 'DM Sans', system-ui, sans-serif; background: #dde2f0; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 40px 24px; }
 
         .card { width: 100%; max-width: 440px; background: white; border-radius: 24px; padding: 30px 40px; box-shadow: 0 16px 40px rgba(0,0,0,0.12); position: relative; animation: fadeUp 0.5s ease forwards; }
 
         .brand { display: flex; flex-direction: column; align-items: center; margin-bottom: 10px; }
         .logo-wrapper { width: 78px; height: 78px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; animation: logoEntrance 0.7s cubic-bezier(0.34,1.56,0.64,1) forwards; }
-        .logo-circle { width: 78px; height: 78px; border-radius: 50%; background: white center 55% / 85% no-repeat; box-shadow: 0 2px 4px rgba(0,0,0,0.04), 0 8px 24px rgba(15,118,110,0.12), 0 20px 48px rgba(15,118,110,0.08); border: 1.5px solid rgba(15,118,110,0.1); transition: transform 0.35s ease; }
+        .logo-circle { width: 78px; height: 78px; border-radius: 50%; background: white center 55% / 85% no-repeat; box-shadow: 0 2px 4px rgba(0,0,0,0.04), 0 8px 24px rgba(46,58,107,0.12), 0 20px 48px rgba(46,58,107,0.08); border: 1.5px solid rgba(46,58,107,0.1); transition: transform 0.35s ease; }
         .logo-circle:hover { transform: scale(1.03); }
 
         @keyframes logoEntrance { from { opacity: 0; transform: scale(0.7) translateY(-10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
 
-        .brand-tag { display: inline-flex; align-items: center; gap: 7px; background: #f0fdfa; border: 1px solid rgba(15,118,110,0.25); border-radius: 20px; padding: 5px 14px; font-size: 11px; font-weight: 700; color: #0f766e; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 12px; }
-        .brand-tag .dot { width: 6px; height: 6px; border-radius: 50%; background: #0f766e; animation: pulse 2s infinite; }
+        .brand-tag { display: inline-flex; align-items: center; gap: 7px; background: #EEF0F8; border: 1px solid rgba(46,58,107,0.25); border-radius: 20px; padding: 5px 14px; font-size: 11px; font-weight: 700; color: #2E3A6B; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 12px; }
+        .brand-tag .dot { width: 6px; height: 6px; border-radius: 50%; background: #2E3A6B; animation: pulse 2s infinite; }
         @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.75); } }
 
         h1 { font-size: 26px; font-weight: 800; color: #111827; text-align: center; margin-bottom: 4px; }
@@ -35,18 +35,18 @@
 
         input[type=email], input[type=password], input[type=text] { width: 100%; padding: 11px 14px 11px 40px; border: 1.5px solid #e5e7eb; border-radius: 11px; font-size: 13.5px; color: #111827; outline: none; font-family: 'DM Sans', system-ui, sans-serif; transition: border-color 0.2s, box-shadow 0.2s; background: #f9fafb !important; -webkit-text-fill-color: #111827; box-shadow: none; }
         input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus { -webkit-box-shadow: 0 0 0px 1000px #f9fafb inset !important; -webkit-text-fill-color: #111827 !important; border: 1.5px solid #e5e7eb !important; font-family: 'DM Sans', system-ui, sans-serif !important; font-size: 13.5px !important; }
-        input:focus { border-color: #0F766E; box-shadow: 0 0 0 3px rgba(15,118,110,0.13) !important; background: white !important; }
-        input:focus:-webkit-autofill { -webkit-box-shadow: 0 0 0px 1000px white inset, 0 0 0 3px rgba(15,118,110,0.13) !important; }
+        input:focus { border-color: #2E3A6B; box-shadow: 0 0 0 3px rgba(46,58,107,0.13) !important; background: white !important; }
+        input:focus:-webkit-autofill { -webkit-box-shadow: 0 0 0px 1000px white inset, 0 0 0 3px rgba(46,58,107,0.13) !important; }
 
         .eye-btn { position: absolute; right: 13px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: #9ca3af; padding: 0; display: flex; align-items: center; z-index: 2; }
         .eye-btn:hover { color: #374151; }
 
         .row-mid { display: flex; align-items: center; margin-bottom: 12px; }
         .remember { display: flex; align-items: center; gap: 7px; font-size: 12.5px; color: #6b7280; cursor: pointer; }
-        input[type=checkbox] { accent-color: #0F766E; width: 14px; height: 14px; }
+        input[type=checkbox] { accent-color: #2E3A6B; width: 14px; height: 14px; }
 
-        .btn { width: 100%; padding: 12px; background: #0F766E; color: white; border: none; border-radius: 11px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; transition: background 0.2s, transform 0.1s, box-shadow 0.2s; box-shadow: 0 4px 14px rgba(15,118,110,0.35); display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .btn:hover { background: #0d6b63; box-shadow: 0 6px 20px rgba(15,118,110,0.45); }
+        .btn { width: 100%; padding: 12px; background: #2E3A6B; color: white; border: none; border-radius: 11px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; transition: background 0.2s, transform 0.1s, box-shadow 0.2s; box-shadow: 0 4px 14px rgba(46,58,107,0.35); display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn:hover { background: #232C54; box-shadow: 0 6px 20px rgba(46,58,107,0.45); }
         .btn:active { transform: scale(0.99); }
         .btn svg { width: 15px; height: 15px; }
 
@@ -54,7 +54,7 @@
         .error-box svg { width: 15px; height: 15px; flex-shrink: 0; }
 
         .back-link { display: flex; align-items: center; justify-content: center; gap: 5px; margin-top: 18px; font-size: 12px; color: #9ca3af; text-decoration: none; font-weight: 600; transition: color 0.2s; }
-        .back-link:hover { color: #0f766e; }
+        .back-link:hover { color: #2E3A6B; }
         .back-link svg { width: 12px; height: 12px; }
 
         @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }

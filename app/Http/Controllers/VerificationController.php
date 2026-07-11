@@ -4,12 +4,17 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use App\Models\QrCode;
 use App\Models\Produit;
 use App\Models\Signalement;
 
 class VerificationController extends Controller
 {
+    // Seuil : plus de 10 scans en moins de 24h = vélocité suspecte
+    const SEUIL_SCANS_24H = 3;
+    const FENETRE_HEURES  = 24;
+
     public function verifyToken(Request $request, string $token)
     {
         $qrCode = QrCode::with(['lot.produit.fabricant'])
@@ -48,26 +53,32 @@ class VerificationController extends Controller
             ]);
         }
 
+        // Incrémenter nb_scans global
         $qrCode->increment('nb_scans');
+
+        // Mettre à jour la fenêtre glissante 24h
+        $this->mettreAJourVelocite($qrCode);
+
+        // Déterminer le statut
+        $statut = $this->determinerStatut($qrCode);
+
+        $produit = $qrCode->lot->produit ?? null;
 
         $signalementsEnCours = Signalement::where('qr_code_id', $qrCode->id)
             ->where('statut', 'en_cours')
             ->count();
 
-        $statut  = $signalementsEnCours > 0 ? 'suspect' : 'authentique';
-        $produit = $qrCode->lot->produit ?? null;
-
         return view('verify', [
             'statut'            => $statut,
-            'message'           => $statut === 'authentique'
-                ? 'Ce produit est authentique.'
-                : 'Ce produit a reçu des signalements suspects.',
+            'message'           => $this->messageStatut($statut, $qrCode),
             'produit'           => $produit,
             'qrCode'            => $qrCode,
             'lot'               => $qrCode->lot,
             'fabricant'         => $produit?->fabricant,
             'signalementsCount' => $signalementsEnCours,
             'token'             => $token,
+            'alerte_velocite'   => $qrCode->alerte_velocite,
+            'nb_scans_24h'      => $qrCode->nb_scans_24h,
         ]);
     }
 
@@ -99,7 +110,12 @@ class VerificationController extends Controller
             ->where('statut', 'en_cours')
             ->count();
 
-        $statut = $signalementsEnCours > 0 ? 'suspect' : 'authentique';
+        // Vélocité globale sur tous les QR codes du produit
+        $alerteVelocite = QrCode::whereIn('id', $qrCodeIds)
+            ->where('alerte_velocite', true)
+            ->exists();
+
+        $statut = $signalementsEnCours > 0 || $alerteVelocite ? 'suspect' : 'authentique';
 
         return view('verify', [
             'statut'            => $statut,
@@ -113,6 +129,7 @@ class VerificationController extends Controller
             'signalementsCount' => $signalementsEnCours,
             'token'             => null,
             'code'              => strtoupper($code),
+            'alerte_velocite'   => $alerteVelocite,
         ]);
     }
 
@@ -133,7 +150,15 @@ class VerificationController extends Controller
             'description'       => 'required|string|min:10|max:500',
             'nom_signalant'     => 'nullable|string|max:100',
             'contact_signalant' => 'nullable|string|max:100',
-            'photo_preuve'      => 'nullable|image|max:2048',
+            'photo_preuve'      => 'nullable|image|max:8192',
+        ], [
+            'qr_code_id.required'   => 'Identifiant QR code manquant.',
+            'qr_code_id.exists'     => 'Ce QR code n\'existe pas.',
+            'description.required'  => 'La description est obligatoire.',
+            'description.min'       => 'La description doit faire au moins 10 caractères.',
+            'description.max'       => 'La description ne doit pas dépasser 500 caractères.',
+            'photo_preuve.image'    => 'Le fichier doit être une image (jpg, png, gif...).',
+            'photo_preuve.max'      => 'La photo ne doit pas dépasser 8 Mo.',
         ]);
 
         $data = [
@@ -144,7 +169,7 @@ class VerificationController extends Controller
             'statut'            => 'en_cours',
             'latitude'          => $request->latitude,
             'longitude'         => $request->longitude,
-            'localisation' => $request->localisation,
+            'localisation'      => $request->localisation,
         ];
 
         $analyseIA = null;
@@ -164,10 +189,84 @@ class VerificationController extends Controller
             }
         }
 
-        $signalement = Signalement::create($data);
+        try {
+            $signalement = Signalement::create($data);
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error_signalement', 'Une erreur est survenue lors de l\'enregistrement. Veuillez réessayer.');
+        }
 
-        return back()->with('success_signalement', 'Votre signalement a été enregistré.')
-                     ->with('analyse_ia', $analyseIA);
+        return back()
+            ->with('success_signalement', 'Votre signalement a bien été enregistré. Merci pour votre contribution.')
+            ->with('analyse_ia', $analyseIA);
+    }
+
+    /**
+     * Met à jour le compteur de vélocité sur une fenêtre glissante de 24h.
+     * Réinitialise la fenêtre si elle est expirée.
+     */
+    private function mettreAJourVelocite(QrCode $qrCode): void
+    {
+        $maintenant = now();
+        $fenetre    = self::FENETRE_HEURES;
+        $seuil      = self::SEUIL_SCANS_24H;
+
+        // Si pas de fenêtre ouverte ou fenêtre expirée → on repart de zéro
+        if (
+            is_null($qrCode->premier_scan_fenetre) ||
+            $maintenant->diffInHours($qrCode->premier_scan_fenetre) >= $fenetre
+        ) {
+            $qrCode->update([
+                'nb_scans_24h'        => 1,
+                'premier_scan_fenetre' => $maintenant,
+                'alerte_velocite'     => false,
+            ]);
+            return;
+        }
+
+        // Fenêtre active : incrémenter
+        $nouveauCompte = $qrCode->nb_scans_24h + 1;
+        $alerte        = $nouveauCompte > $seuil;
+
+        $qrCode->update([
+            'nb_scans_24h'    => $nouveauCompte,
+            'alerte_velocite' => $alerte,
+        ]);
+    }
+
+    /**
+     * Détermine le statut final : prend en compte signalements ET vélocité.
+     */
+    private function determinerStatut(QrCode $qrCode): string
+    {
+        // Vélocité suspecte
+        if ($qrCode->alerte_velocite) {
+            return 'suspect';
+        }
+
+        // Signalements en cours
+        $signalements = Signalement::where('qr_code_id', $qrCode->id)
+            ->where('statut', 'en_cours')
+            ->count();
+
+        return $signalements > 0 ? 'suspect' : 'authentique';
+    }
+
+    /**
+     * Retourne le message adapté au statut et à la cause.
+     */
+    private function messageStatut(string $statut, QrCode $qrCode): string
+    {
+        if ($statut === 'authentique') {
+            return 'Ce produit est authentique.';
+        }
+
+        if ($qrCode->alerte_velocite) {
+            return "Ce QR code a été scanné {$qrCode->nb_scans_24h} fois en moins de 24h — comportement suspect détecté automatiquement.";
+        }
+
+        return 'Ce produit a reçu des signalements suspects.';
     }
 
     private function analyserPhotoIA($photoFile, string $description): ?string

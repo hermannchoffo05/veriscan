@@ -9,7 +9,7 @@
 <style>
 .breadcrumb{display:flex;align-items:center;gap:6px;margin-bottom:20px;font-size:13px;}
 .breadcrumb a{color:#6b7280;text-decoration:none;font-weight:600;display:inline-flex;align-items:center;gap:5px;transition:color 0.2s;}
-.breadcrumb a:hover{color:#0f766e;}
+.breadcrumb a:hover{color:#2E3A6B;}
 .breadcrumb a svg{width:13px;height:13px;}
 .breadcrumb span{color:#d1d5db;}
 .breadcrumb strong{color:#1f2937;font-weight:600;}
@@ -90,12 +90,11 @@
             <span class="info-val">{{ $signalement->created_at->format('d/m/Y à H:i') }}</span>
         </div>
 
-        {{-- Infos QR Code / Produit — seulement si lié --}}
         @if($signalement->qrCode && $signalement->qrCode->lot && $signalement->qrCode->lot->produit)
         <div class="info-row">
             <span class="info-key">{{ __('messages.produit') }}</span>
             <span class="info-val">
-                <a href="{{ route('fabricant.produits.show', $signalement->qrCode->lot->produit->id) }}" style="color:#0f766e;text-decoration:none;font-weight:600">
+                <a href="{{ route('fabricant.produits.show', $signalement->qrCode->lot->produit->id) }}" style="color:#2E3A6B;text-decoration:none;font-weight:600">
                     {{ $signalement->qrCode->lot->produit->nom }}
                 </a>
             </span>
@@ -115,7 +114,6 @@
         </div>
         @endif
 
-        {{-- GPS --}}
         @if($signalement->latitude && $signalement->longitude)
         <div class="gps-box">
             📍 <strong>Position GPS capturée</strong><br>
@@ -129,13 +127,12 @@
         </div>
         @endif
 
-        {{-- Bouton traiter --}}
         @if($signalement->statut === 'en_cours')
         <div style="padding:16px 24px;">
             <form method="POST" action="{{ route('fabricant.signalements.traiter', $signalement->id) }}">
                 @csrf
                 @method('PATCH')
-                <button type="submit" style="background:#0f766e;color:#fff;border:none;padding:10px 20px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;">
+                <button type="submit" style="background:#F5A623;color:#171B3D;border:none;padding:10px 20px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;">
                     ✅ Marquer comme traité
                 </button>
             </form>

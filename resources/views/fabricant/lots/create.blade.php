@@ -13,24 +13,24 @@
 <style>
 .breadcrumb { display:flex;align-items:center;gap:6px;margin-bottom:20px;font-size:13px; }
 .breadcrumb a { color:#6b7280;text-decoration:none;font-weight:600;display:inline-flex;align-items:center;gap:5px;transition:color 0.2s; }
-.breadcrumb a:hover { color:#0f766e; }
+.breadcrumb a:hover { color:#2E3A6B; }
 .breadcrumb a svg { width:13px;height:13px; }
 .breadcrumb span { color:#d1d5db; }
 .breadcrumb strong { color:#1f2937;font-weight:600; }
 .form-card { background:#fff;border-radius:16px;border:1px solid #e5e7eb;padding:32px;max-width:720px;margin:0 auto; }
-.product-info-bar { background:#f0fdfa;border:1px solid #99f6e4;border-radius:12px;padding:14px 20px;margin-bottom:24px;display:flex;align-items:center;gap:12px; }
+.product-info-bar { background:#EEF0F8;border:1px solid #c7cce6;border-radius:12px;padding:14px 20px;margin-bottom:24px;display:flex;align-items:center;gap:12px; }
 .form-title { font-size:18px;font-weight:700;color:#1f2937;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid #f3f4f6; }
 .form-group { margin-bottom:20px; }
 .form-label { display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:6px; }
 .form-label .required { color:#ef4444; }
 .form-control { width:100%;padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:14px;color:#1f2937;background:#f9fafb;transition:.2s;box-sizing:border-box; }
-.form-control:focus { outline:none;border-color:#0f766e;box-shadow:0 0 0 3px rgba(15,118,110,.1);background:#fff; }
+.form-control:focus { outline:none;border-color:#2E3A6B;box-shadow:0 0 0 3px rgba(46,58,107,.1);background:#fff; }
 .form-control.is-invalid { border-color:#ef4444; }
 .invalid-feedback { font-size:12px;color:#ef4444;margin-top:4px; }
 .form-row { display:grid;grid-template-columns:1fr 1fr;gap:16px; }
 .form-actions { display:flex;gap:12px;justify-content:flex-end;margin-top:28px;padding-top:20px;border-top:1px solid #f3f4f6; }
-.btn-primary { padding:10px 24px;background:#0f766e;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer; }
-.btn-primary:hover { background:#0d6560; }
+.btn-primary { padding:10px 24px;background:#F5A623;color:#171B3D;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer; }
+.btn-primary:hover { background:#e0961d; }
 .btn-secondary { padding:10px 24px;background:#f3f4f6;color:#374151;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;text-decoration:none; }
 .btn-secondary:hover { background:#e5e7eb; }
 .alert-error { background:#fef2f2;border:1px solid #fecaca;color:#dc2626;padding:12px 16px;border-radius:10px;font-size:13px;margin-bottom:20px; }
@@ -52,10 +52,10 @@
 </div>
 
 <div class="product-info-bar">
-    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="20" height="20" style="color:#0f766e;flex-shrink:0">
+    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="20" height="20" style="color:#2E3A6B;flex-shrink:0">
         <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"/>
     </svg>
-    <span style="font-size:13px;color:#374151">{{ __('messages.produit') }} : <strong style="color:#0f766e">{{ $produit->nom }}</strong></span>
+    <span style="font-size:13px;color:#374151">{{ __('messages.produit') }} : <strong style="color:#2E3A6B">{{ $produit->nom }}</strong></span>
 </div>
 
 <div class="form-card">

@@ -10,7 +10,7 @@
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: 'DM Sans', system-ui, sans-serif;
-            background: #f0faf9;
+            background: #F3F4FA;
             color: #111827;
             min-height: 100vh;
         }
@@ -43,7 +43,7 @@
         .nav-name {
             font-size: 18px;
             font-weight: 800;
-            color: #0F766E;
+            color: #2E3A6B;
         }
         .nav-back {
             font-size: 13px;
@@ -54,12 +54,12 @@
             gap: 6px;
             font-weight: 500;
         }
-        .nav-back:hover { color: #0F766E; }
+        .nav-back:hover { color: #2E3A6B; }
         .nav-back svg { width: 16px; height: 16px; }
 
         /* ── HERO ── */
         .hero {
-            background: linear-gradient(135deg, #064e3b 0%, #0F766E 100%);
+            background: linear-gradient(135deg, #171B3D 0%, #2E3A6B 100%);
             color: white;
             padding: 48px 24px;
             text-align: center;
@@ -76,6 +76,7 @@
             font-weight: 600;
             margin-bottom: 16px;
         }
+        .hero-badge svg { color: #F5A623; }
         .hero h1 {
             font-size: 32px;
             font-weight: 800;
@@ -103,7 +104,7 @@
         .toc h3 {
             font-size: 13px;
             font-weight: 700;
-            color: #0F766E;
+            color: #2E3A6B;
             text-transform: uppercase;
             letter-spacing: 0.06em;
             margin-bottom: 12px;
@@ -119,7 +120,7 @@
             color: #374151;
             text-decoration: none;
         }
-        .toc li a:hover { color: #0F766E; text-decoration: underline; }
+        .toc li a:hover { color: #2E3A6B; text-decoration: underline; }
 
         .section {
             margin-bottom: 36px;
@@ -127,10 +128,10 @@
         .section h2 {
             font-size: 18px;
             font-weight: 800;
-            color: #064e3b;
+            color: #171B3D;
             margin-bottom: 12px;
             padding-bottom: 8px;
-            border-bottom: 2px solid #d1fae5;
+            border-bottom: 2px solid #EEF0F8;
             display: flex;
             align-items: center;
             gap: 10px;
@@ -139,7 +140,7 @@
             width: 28px;
             height: 28px;
             border-radius: 50%;
-            background: #0F766E;
+            background: #2E3A6B;
             color: white;
             font-size: 13px;
             font-weight: 700;
@@ -168,13 +169,13 @@
         }
 
         .highlight-box {
-            background: #f0fdf4;
-            border-left: 4px solid #0F766E;
+            background: #FFF7EC;
+            border-left: 4px solid #F5A623;
             border-radius: 0 8px 8px 0;
             padding: 14px 16px;
             margin: 12px 0;
             font-size: 13.5px;
-            color: #064e3b;
+            color: #7a4d0f;
             line-height: 1.6;
         }
 
@@ -187,8 +188,8 @@
             font-size: 13px;
             color: #6b7280;
         }
-        .footer-note strong { color: #0F766E; }
-        .footer-note a { color: #0F766E; font-weight: 600; text-decoration: none; }
+        .footer-note strong { color: #2E3A6B; }
+        .footer-note a { color: #2E3A6B; font-weight: 600; text-decoration: none; }
 
         @media (max-width: 640px) {
             .hero h1 { font-size: 24px; }

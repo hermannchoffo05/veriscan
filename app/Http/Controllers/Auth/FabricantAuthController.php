@@ -89,8 +89,11 @@ class FabricantAuthController extends Controller
         }
 
         $code = rand(100000, 999999);
-        Cache::put('password_reset_' . $request->email, $code, now()->addSeconds(60));
 
+        // ✅ 10 minutes au lieu de 60 secondes
+        Cache::put('password_reset_' . $request->email, $code, now()->addMinutes(10));
+
+        // ✅ Sujet corrigé (espace ajouté)
         Mail::raw("Votre code de réinitialisation VeriScan : $code", function ($message) use ($request) {
             $message->to($request->email)->subject('Code de réinitialisation VeriScan');
         });

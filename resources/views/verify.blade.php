@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
@@ -8,7 +8,8 @@
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         :root {
-            --teal: #0F766E; --teal-dark: #064e3b; --teal-light: #f0fdfa;
+            --teal: #2E3A6B; --teal-dark: #212a52; --teal-light: #EEF0F8;
+            --accent: #F5A623; --accent-dark: #e0961d;
             --green: #007A4D; --yellow: #d97706; --red: #CE1126;
             --text: #1F2937; --light: #6b7280; --border: #e5e7eb; --bg: #f4f8f8;
         }
@@ -21,18 +22,18 @@
         .navbar-right { display: flex; gap: 8px; align-items: center; }
         .btn-nav-ghost { font-size: 13px; font-weight: 600; color: var(--light); text-decoration: none; padding: 7px 14px; border-radius: 8px; border: 1.5px solid var(--border); transition: all 0.2s; background: white; white-space: nowrap; }
         .btn-nav-ghost:hover { color: var(--teal); border-color: var(--teal); background: var(--teal-light); }
-        .btn-nav-solid { font-size: 13px; font-weight: 700; color: white; text-decoration: none; padding: 7px 14px; border-radius: 8px; background: var(--teal); transition: all 0.2s; display: flex; align-items: center; gap: 6px; white-space: nowrap; }
-        .btn-nav-solid:hover { background: var(--teal-dark); }
+        .btn-nav-solid { font-size: 13px; font-weight: 700; color: white; text-decoration: none; padding: 7px 14px; border-radius: 8px; background: var(--accent); transition: all 0.2s; display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+        .btn-nav-solid:hover { background: var(--accent-dark); }
         .btn-nav-solid svg { width: 14px; height: 14px; }
 
         /* ── HERO ── */
-        .hero { background: linear-gradient(135deg, #042f2e 0%, #0f766e 55%, #0d9488 100%); padding: 48px 16px 52px; text-align: center; position: relative; overflow: hidden; }
+        .hero { background: linear-gradient(135deg, #171B3D 0%, #2E3A6B 55%, #4A5899 100%); padding: 48px 16px 52px; text-align: center; position: relative; overflow: hidden; }
         .hero::before { content: ''; position: absolute; inset: 0; background-image: radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px); background-size: 22px 22px; pointer-events: none; }
         .hero-orb1 { position: absolute; width: 300px; height: 300px; border-radius: 50%; background: radial-gradient(circle, rgba(255,255,255,0.06), transparent 70%); top: -100px; right: -80px; pointer-events: none; }
-        .hero-orb2 { position: absolute; width: 200px; height: 200px; border-radius: 50%; background: radial-gradient(circle, rgba(252,209,22,0.08), transparent 70%); bottom: -60px; left: -40px; pointer-events: none; }
+        .hero-orb2 { position: absolute; width: 200px; height: 200px; border-radius: 50%; background: radial-gradient(circle, rgba(245,166,35,0.12), transparent 70%); bottom: -60px; left: -40px; pointer-events: none; }
         .hero-content { position: relative; z-index: 1; max-width: 540px; margin: 0 auto; width: 100%; }
         .hero-badge { display: inline-flex; align-items: center; gap: 7px; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); border-radius: 20px; padding: 5px 14px; font-size: 11.5px; font-weight: 700; color: rgba(255,255,255,0.9); margin-bottom: 16px; letter-spacing: 0.03em; }
-        .hero-badge::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: #5eead4; display: inline-block; animation: pulse 2s ease-in-out infinite; }
+        .hero-badge::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); display: inline-block; animation: pulse 2s ease-in-out infinite; }
         @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.8)} }
         .hero h1 { font-size: 26px; font-weight: 800; color: white; margin-bottom: 10px; line-height: 1.2; }
         .hero p { font-size: 14px; color: rgba(255,255,255,0.72); margin-bottom: 28px; padding: 0 8px; }
@@ -45,10 +46,10 @@
         .search-tab.active { background: var(--teal-light); border-color: var(--teal); color: var(--teal); font-weight: 700; }
         .search-form { display: flex; flex-direction: column; gap: 10px; }
         .search-input { width: 100%; padding: 12px 16px; border-radius: 10px; border: 1.5px solid var(--border); font-size: 14px; font-family: inherit; outline: none; transition: border 0.2s; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text); }
-        .search-input:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(15,118,110,0.08); }
+        .search-input:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(46,58,107,0.08); }
         .search-input::placeholder { text-transform: none; letter-spacing: 0; color: #9ca3af; font-size: 13px; }
-        .btn-search { width: 100%; background: var(--teal); color: white; border: none; border-radius: 10px; padding: 12px 24px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 7px; }
-        .btn-search:hover { background: var(--teal-dark); }
+        .btn-search { width: 100%; background: var(--accent); color: var(--teal-dark); border: none; border-radius: 10px; padding: 12px 24px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 7px; }
+        .btn-search:hover { background: var(--accent-dark); }
         .btn-search svg { width: 16px; height: 16px; }
         .search-hint { font-size: 12px; color: var(--light); margin-top: 10px; text-align: center; }
 
@@ -57,12 +58,12 @@
         .scan-instructions .scan-title { font-size: 13px; font-weight: 700; color: var(--teal); margin-bottom: 10px; }
         .scan-step { font-size: 12.5px; color: var(--text); padding: 5px 0; display: flex; gap: 8px; align-items: flex-start; }
         .scan-step strong { color: var(--text); }
-        .scan-note { font-size: 11.5px; color: var(--light); margin-top: 10px; border-top: 1px solid rgba(15,118,110,0.15); padding-top: 8px; }
+        .scan-note { font-size: 11.5px; color: var(--light); margin-top: 10px; border-top: 1px solid rgba(46,58,107,0.15); padding-top: 8px; }
 
         /* ── CONTENU ── */
         .container { max-width: 700px; margin: 0 auto; padding: 28px 16px; }
 
-        /* ── RÉSULTAT ── */
+        /* ── RÉSULTAT (couleurs sémantiques — inchangées) ── */
         .result-card { background: white; border-radius: 20px; border: 2px solid var(--border); overflow: hidden; margin-bottom: 20px; animation: fadeUp 0.4s ease; }
         @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
         .result-header { padding: 18px 20px; display: flex; align-items: center; gap: 14px; }
@@ -116,18 +117,25 @@
         .form-group label { display: block; font-size: 12px; font-weight: 700; color: var(--light); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 5px; }
         .form-control { width: 100%; padding: 10px 14px; border-radius: 10px; border: 1.5px solid var(--border); font-size: 13.5px; font-family: inherit; color: var(--text); outline: none; transition: border 0.2s; }
         .form-control:focus { border-color: var(--teal); }
+        .form-control.is-invalid { border-color: var(--red); }
         textarea.form-control { resize: vertical; min-height: 90px; }
         .form-row { display: grid; grid-template-columns: 1fr; gap: 12px; }
+        .invalid-feedback { font-size: 11.5px; color: var(--red); margin-top: 4px; font-weight: 600; }
         .btn-signaler { background: #fef2f2; color: var(--red); border: 1.5px solid #fecaca; border-radius: 10px; padding: 10px 22px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; transition: all 0.2s; display: flex; align-items: center; gap: 7px; }
         .btn-signaler:hover { background: #fee2e2; }
+        .btn-signaler:disabled { opacity: 0.6; cursor: not-allowed; }
         .btn-signaler svg { width: 14px; height: 14px; }
 
-        /* ── ALERT ── */
-        .alert-success { background: #f0fdf4; border: 1.5px solid #bbf7d0; border-left: 4px solid #4ade80; border-radius: 12px; padding: 14px 18px; margin-bottom: 20px; font-size: 13px; color: #065f46; font-weight: 500; }
+        /* ── ALERTS ── */
+        .alert-success { background: #f0fdf4; border: 1.5px solid #bbf7d0; border-left: 4px solid #4ade80; border-radius: 12px; padding: 14px 18px; margin-bottom: 20px; font-size: 13px; color: #065f46; font-weight: 600; display: flex; align-items: flex-start; gap: 10px; }
+        .alert-error { background: #fef2f2; border: 1.5px solid #fecaca; border-left: 4px solid var(--red); border-radius: 12px; padding: 14px 18px; margin-bottom: 20px; font-size: 13px; color: #7f1d1d; font-weight: 500; }
+        .alert-error strong { display: block; margin-bottom: 6px; font-size: 13px; }
+        .alert-error ul { margin: 0; padding-left: 18px; }
+        .alert-error ul li { margin-bottom: 3px; }
 
         /* ── EMPTY STATE ── */
         .empty-state { text-align: center; padding: 48px 20px; }
-        .empty-state svg { width: 56px; height: 56px; color: #ccfbf1; margin: 0 auto 16px; display: block; }
+        .empty-state svg { width: 56px; height: 56px; color: #d5d9ef; margin: 0 auto 16px; display: block; }
         .empty-state h2 { font-size: 18px; font-weight: 800; color: var(--text); margin-bottom: 8px; }
         .empty-state p { font-size: 13.5px; color: var(--light); max-width: 360px; margin: 0 auto; line-height: 1.6; }
 
@@ -223,8 +231,32 @@
 
 <div class="container">
 
+    {{-- Message de succès du signalement --}}
     @if(session('success_signalement'))
-    <div class="alert-success">✓ {{ session('success_signalement') }}</div>
+    <div class="alert-success">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" style="width:18px;height:18px;flex-shrink:0;margin-top:1px"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+        <span>{{ session('success_signalement') }}</span>
+    </div>
+    @endif
+
+    {{-- Message d'erreur serveur --}}
+    @if(session('error_signalement'))
+    <div class="alert-error">
+        <strong>⚠ Erreur</strong>
+        {{ session('error_signalement') }}
+    </div>
+    @endif
+
+    {{-- Erreurs de validation --}}
+    @if($errors->any())
+    <div class="alert-error">
+        <strong>⚠ Le signalement n'a pas pu être envoyé :</strong>
+        <ul>
+            @foreach($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
     @endif
 
     @if(isset($statut) && $statut)
@@ -307,33 +339,60 @@
                 <span>Signaler ce produit comme suspect</span>
                 <button class="signalement-toggle" onclick="toggleSignalement()">Signaler</button>
             </div>
-            <div class="signalement-form" id="signalementForm">
+            {{-- Le formulaire s'ouvre automatiquement s'il y a des erreurs de validation --}}
+            <div class="signalement-form{{ $errors->any() ? ' open' : '' }}" id="signalementForm">
                 <form method="POST" action="{{ route('verify.signaler') }}" enctype="multipart/form-data" id="signalementFormData">
-    @csrf
-    <input type="hidden" name="qr_code_id" value="{{ $qrCode->id }}">
-    <input type="hidden" name="latitude" id="lat_input">
-    <input type="hidden" name="longitude" id="lng_input">
-    <input type="hidden" name="localisation" id="loc_input">
+                    @csrf
+                    <input type="hidden" name="qr_code_id" value="{{ $qrCode->id }}">
+                    <input type="hidden" name="latitude" id="lat_input">
+                    <input type="hidden" name="longitude" id="lng_input">
+                    <input type="hidden" name="localisation" id="loc_input">
+
                     <div class="form-group">
                         <label>Description du problème *</label>
-                        <textarea name="description" class="form-control" required
-                            placeholder="Décrivez ce qui vous semble suspect (emballage, couleur, odeur, effet indésirable...)"></textarea>
+                        <textarea name="description"
+                            class="form-control{{ $errors->has('description') ? ' is-invalid' : '' }}"
+                            required
+                            placeholder="Décrivez ce qui vous semble suspect (emballage, couleur, odeur, effet indésirable...)">{{ old('description') }}</textarea>
+                        @error('description')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
+
                     <div class="form-row">
                         <div class="form-group">
                             <label>Votre nom (optionnel)</label>
-                            <input type="text" name="nom_signalant" class="form-control" placeholder="Nom ou pseudonyme">
+                            <input type="text" name="nom_signalant"
+                                class="form-control{{ $errors->has('nom_signalant') ? ' is-invalid' : '' }}"
+                                placeholder="Nom ou pseudonyme"
+                                value="{{ old('nom_signalant') }}">
+                            @error('nom_signalant')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                         <div class="form-group">
                             <label>Contact (optionnel)</label>
-                            <input type="text" name="contact_signalant" class="form-control" placeholder="Téléphone ou email">
+                            <input type="text" name="contact_signalant"
+                                class="form-control{{ $errors->has('contact_signalant') ? ' is-invalid' : '' }}"
+                                placeholder="Téléphone ou email"
+                                value="{{ old('contact_signalant') }}">
+                            @error('contact_signalant')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
+
                     <div class="form-group">
-                        <label>Photo preuve (optionnel)</label>
-                        <input type="file" name="photo_preuve" class="form-control" accept="image/*">
+                        <label>Photo preuve (optionnel · max 8 Mo)</label>
+                        <input type="file" name="photo_preuve"
+                            class="form-control{{ $errors->has('photo_preuve') ? ' is-invalid' : '' }}"
+                            accept="image/*">
+                        @error('photo_preuve')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
-                    <button type="submit" class="btn-signaler">
+
+                    <button type="submit" class="btn-signaler" id="btnSignaler">
                         <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01"/></svg>
                         Soumettre le signalement
                     </button>
@@ -365,10 +424,7 @@ function switchTab(tab) {
     document.getElementById('tab-code').classList.toggle('active', tab === 'code');
     document.getElementById('tab-scan').classList.toggle('active', tab === 'scan');
 }
-function toggleSignalement() {
-    const form = document.getElementById('signalementForm');
-    form.classList.toggle('open');
-}
+
 function toggleSignalement() {
     const form = document.getElementById('signalementForm');
     form.classList.toggle('open');
@@ -380,6 +436,21 @@ function toggleSignalement() {
         });
     }
 }
+
+// Désactiver le bouton pendant l'envoi pour éviter le double clic
+const form = document.getElementById('signalementFormData');
+if (form) {
+    form.addEventListener('submit', function() {
+        const btn = document.getElementById('btnSignaler');
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;animation:spin 1s linear infinite"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> Envoi en cours...';
+        }
+    });
+}
 </script>
+<style>
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+</style>
 </body>
 </html>

@@ -37,7 +37,6 @@
     .carte-icon { width: 36px; height: 36px; border-radius: 10px; background: var(--teal-light); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .carte-icon svg { width: 18px; height: 18px; color: var(--teal); }
 
-    /* Recherche dans le header */
     .header-search-wrap { position: relative; }
     .header-search-box {
         display: flex; align-items: center; gap: 7px;
@@ -103,10 +102,9 @@
     .popup-score-label { font-size: 11px; color: #6b7280; font-weight: 500; }
     .popup-score-val { font-size: 13px; font-weight: 800; }
     .carte-loading { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; gap: 12px; z-index: 1000; background: white; padding: 24px 32px; border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.12); }
-    .spinner { width: 32px; height: 32px; border: 3px solid #e5e7eb; border-top-color: #0F766E; border-radius: 50%; animation: spin 0.8s linear infinite; }
+    .spinner { width: 32px; height: 32px; border: 3px solid #e5e7eb; border-top-color: #2E3A6B; border-radius: 50%; animation: spin 0.8s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* Résultats dropdown */
     .map-search-result-item {
         padding: 10px 14px;
         cursor: pointer;
@@ -114,7 +112,7 @@
         transition: background 0.15s;
     }
     .map-search-result-item:last-child { border-bottom: none; }
-    .map-search-result-item:hover { background: #f0fdfa; }
+    .map-search-result-item:hover { background: #EEF0F8; }
     .map-search-result-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
     .map-search-result-name { font-weight: 700; color: #1F2937; font-size: 12.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .map-search-result-sub { font-size: 11px; color: #9ca3af; margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -130,11 +128,10 @@
     .map-search-loading { padding: 10px 14px; color: #9ca3af; font-size: 11px; display: flex; align-items: center; gap: 6px; }
     .map-search-spinner-sm {
         width: 11px; height: 11px; border: 2px solid #e5e7eb;
-        border-top-color: #0F766E; border-radius: 50%;
+        border-top-color: #2E3A6B; border-radius: 50%;
         animation: spin 0.6s linear infinite; flex-shrink: 0;
     }
 
-    /* Contrôles zoom + géoloc regroupés */
     .map-zoom-stack {
         background: white;
         border-radius: 10px;
@@ -150,11 +147,10 @@
         border-bottom: 1px solid #f3f4f6;
         transition: background 0.15s;
     }
-    .map-zoom-btn:hover { background: #f0fdfa; }
-    .map-zoom-btn.geoloc { border-bottom: none; color: #0F766E; }
+    .map-zoom-btn:hover { background: #EEF0F8; }
+    .map-zoom-btn.geoloc { border-bottom: none; color: #2E3A6B; }
     .map-zoom-btn.geoloc svg { width: 15px; height: 15px; }
 
-    /* Sélecteur de couches custom */
     .map-layers-panel {
         background: white;
         border-radius: 10px;
@@ -173,10 +169,9 @@
     }
     .map-layer-option:last-child { border-bottom: none; }
     .map-layer-option:hover { background: #f9fafb; }
-    .map-layer-option.active { color: #0F766E; background: #f0fdfa; }
+    .map-layer-option.active { color: #2E3A6B; background: #EEF0F8; }
     .map-layer-option svg { width: 13px; height: 13px; flex-shrink: 0; }
 
-    /* ── Responsive mobile ────────────────────────────────────────────────────── */
     @media (max-width: 768px) {
         .carte-layout {
             grid-template-columns: 1fr;
@@ -230,7 +225,6 @@
 
 <div class="carte-layout">
 
-    {{-- CARTE PRINCIPALE --}}
     <div class="carte-card">
         <div class="carte-header">
             <div class="carte-header-left">
@@ -269,7 +263,6 @@
         </div>
     </div>
 
-    {{-- PANNEAU DROIT --}}
     <div class="filtres-card">
 
         <div class="filtres-header">
@@ -326,7 +319,6 @@
             </button>
         </div>
 
-        {{-- Légende --}}
         <div class="legende-section">
             <div class="legende-title">{{ __('messages.legende') }}</div>
             <div class="legende-item"><div class="legende-dot rouge"></div>{{ __('messages.legende_contrefait') }}</div>
@@ -335,7 +327,6 @@
             <div class="legende-item"><div class="legende-dot vert"></div>{{ __('messages.legende_authentique') }}</div>
         </div>
 
-        {{-- Stats rapides dynamiques --}}
         <div class="stats-rapides">
             <div class="stat-mini">
                 <div class="stat-mini-val rouge" id="statContrefait">0</div>
@@ -381,7 +372,6 @@ function getStatutLabel(statut) {
     return labels[statut] || statut;
 }
 
-// ── Couches de tuiles ──────────────────────────────────────────────────────────
 const tuilePlan = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap contributors', maxZoom: 19,
 });
@@ -396,7 +386,6 @@ const map = L.map('map', {
     center: [5.5, 12.5], zoom: 6, zoomControl: false, layers: [tuilePlan],
 });
 
-// ── Zoom + Géolocalisation regroupés (haut gauche) ────────────────────────────
 const zoomGeoControl = L.control({ position: 'topleft' });
 zoomGeoControl.onAdd = function() {
     const div = L.DomUtil.create('div', 'map-zoom-stack');
@@ -422,11 +411,10 @@ setTimeout(() => {
 }, 400);
 
 map.on('locationfound', function(e) {
-    L.circleMarker(e.latlng, { radius: 8, fillColor: '#0F766E', color: '#fff', weight: 2, fillOpacity: 1 })
+    L.circleMarker(e.latlng, { radius: 8, fillColor: '#2E3A6B', color: '#fff', weight: 2, fillOpacity: 1 })
         .addTo(map).bindPopup('Vous êtes ici').openPopup();
 });
 
-// ── Sélecteur Plan / Satellite / Topo custom (haut droite) ───────────────────
 let coucheActive = 'plan';
 const couchesParNom = { plan: tuilePlan, satellite: tuileSatellite, topo: tuileTopo };
 
@@ -466,7 +454,6 @@ setTimeout(() => {
     });
 }, 400);
 
-// ── Recherche unifiée (dans le header) ────────────────────────────────────────
 let unifiedSearchMarker = null;
 let nominatimDebounceTimer = null;
 window._unifiedResultats = [];
@@ -583,7 +570,6 @@ setTimeout(() => {
     document.getElementById('carteLoading').style.display = 'none';
 }, 1500);
 
-// ── Marqueurs + heatmap ───────────────────────────────────────────────────────
 let heatLayer = null;
 let marqueurs = [];
 

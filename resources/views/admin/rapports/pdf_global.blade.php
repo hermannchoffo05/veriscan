@@ -6,24 +6,24 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: DejaVu Sans, sans-serif; font-size: 12px; color: #1F2937; background: white; }
 
-    .header { background: linear-gradient(135deg, #042f2e, #0f766e); color: white; padding: 28px 32px; margin-bottom: 24px; }
+    .header { background: linear-gradient(135deg, #171B3D, #2E3A6B); color: white; padding: 28px 32px; margin-bottom: 24px; }
     .header-top { display: flex; justify-content: space-between; align-items: flex-start; }
     .logo { font-size: 22px; font-weight: 800; color: white; }
-    .logo span { color: #5eead4; }
+    .logo span { color: #8B93D1; }
     .header-date { font-size: 11px; color: rgba(255,255,255,0.7); text-align: right; }
     .header h1 { font-size: 16px; font-weight: 700; margin-top: 12px; color: rgba(255,255,255,0.9); }
 
     .section { margin: 0 32px 24px; }
-    .section-title { font-size: 13px; font-weight: 800; color: #0f766e; border-bottom: 2px solid #0f766e; padding-bottom: 6px; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .section-title { font-size: 13px; font-weight: 800; color: #2E3A6B; border-bottom: 2px solid #2E3A6B; padding-bottom: 6px; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.05em; }
 
     .stats-grid { display: table; width: 100%; border-spacing: 10px; }
     .stats-row { display: table-row; }
-    .stat-box { display: table-cell; width: 25%; background: #f0fdfa; border: 1.5px solid #ccfbf1; border-radius: 8px; padding: 14px; text-align: center; }
-    .stat-value { font-size: 28px; font-weight: 800; color: #0f766e; }
+    .stat-box { display: table-cell; width: 25%; background: #EEF0F8; border: 1.5px solid #D3D8ED; border-radius: 8px; padding: 14px; text-align: center; }
+    .stat-value { font-size: 28px; font-weight: 800; color: #2E3A6B; }
     .stat-label { font-size: 10px; color: #6b7280; margin-top: 3px; text-transform: uppercase; letter-spacing: 0.04em; }
 
     table { width: 100%; border-collapse: collapse; }
-    th { background: #f0fdfa; padding: 9px 12px; text-align: left; font-size: 10px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 2px solid #e5e7eb; }
+    th { background: #EEF0F8; padding: 9px 12px; text-align: left; font-size: 10px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 2px solid #e5e7eb; }
     td { padding: 9px 12px; font-size: 11px; border-bottom: 1px solid #f3f4f6; }
     tr:hover td { background: #f9fafb; }
 
@@ -64,7 +64,7 @@
     <table>
         <tr>
             <td style="width:25%;padding:10px;">
-                <div class="stat-box" style="display:block;background:#f0fdfa;border:1.5px solid #ccfbf1;border-radius:8px;padding:14px;text-align:center;">
+                <div class="stat-box" style="display:block;background:#EEF0F8;border:1.5px solid #D3D8ED;border-radius:8px;padding:14px;text-align:center;">
                     <div class="stat-value">{{ $fabricants }}</div>
                     <div class="stat-label">Fabricants</div>
                 </div>
@@ -137,7 +137,7 @@
                 <td style="font-weight:700;">{{ $fab->nom_entreprise }}</td>
                 <td>{{ $fab->email }}</td>
                 <td><span class="badge {{ $fab->statut ?? 'en_attente' }}">{{ ucfirst($fab->statut ?? 'en_attente') }}</span></td>
-                <td style="font-weight:700;color:#0f766e;">{{ $fab->produits_count }}</td>
+                <td style="font-weight:700;color:#2E3A6B;">{{ $fab->produits_count }}</td>
                 <td>{{ $fab->created_at->format('d/m/Y') }}</td>
             </tr>
             @endforeach

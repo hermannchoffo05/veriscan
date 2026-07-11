@@ -1,14 +1,10 @@
 <?php
-
 namespace App\Models;
-
 use Illuminate\Database\Eloquent\Model;
-
 class ParametreSysteme extends Model
 {
     protected $table    = 'parametres_systeme';
     protected $fillable = ['cle', 'valeur', 'type', 'description'];
-
     /**
      * Récupère la valeur d'un paramètre par sa clé
      */
@@ -17,7 +13,6 @@ class ParametreSysteme extends Model
         $param = static::where('cle', $cle)->first();
         return $param ? $param->valeur : $default;
     }
-
     /**
      * Définit la valeur d'un paramètre
      */
@@ -25,7 +20,6 @@ class ParametreSysteme extends Model
     {
         static::updateOrCreate(['cle' => $cle], ['valeur' => $valeur]);
     }
-
     /**
      * Retourne tous les paramètres sous forme clé => valeur
      */

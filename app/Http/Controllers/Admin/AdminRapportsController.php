@@ -16,7 +16,7 @@ class AdminRapportsController extends Controller
         $stats = [
             'fabricants'   => Fabricant::count(),
             'produits'     => Produit::count(),
-            'scans'        => \App\Models\Verification::count(),
+            'scans'        => QrCode::sum('nb_scans'),
             'signalements' => Signalement::count(),
             'en_cours'     => Signalement::where('statut', 'en_cours')->count(),
             'traites'      => Signalement::where('statut', 'traite')->count(),
@@ -45,15 +45,17 @@ class AdminRapportsController extends Controller
     private function exportGlobal()
     {
         $data = [
-            'titre'        => 'Rapport Global VeriScan',
-            'date'         => now()->format('d/m/Y à H:i'),
-            'fabricants'   => Fabricant::count(),
-            'produits'     => Produit::count(),
-            'scans'        => \App\Models\Verification::count(),
-            'signalements' => Signalement::count(),
-            'en_cours'     => Signalement::where('statut', 'en_cours')->count(),
-            'traites'      => Signalement::where('statut', 'traite')->count(),
-            'rejetes'      => Signalement::where('statut', 'rejete')->count(),
+            // ✅ Espace ajouté : "Rapport Global"
+            'titre'          => 'Rapport Global VeriScan',
+            // ✅ Format date corrigé
+            'date'           => now()->format('d/m/Y à H:i'),
+            'fabricants'     => Fabricant::count(),
+            'produits'       => Produit::count(),
+            'scans'          => QrCode::sum('nb_scans'),
+            'signalements'   => Signalement::count(),
+            'en_cours'       => Signalement::where('statut', 'en_cours')->count(),
+            'traites'        => Signalement::where('statut', 'traite')->count(),
+            'rejetes'        => Signalement::where('statut', 'rejete')->count(),
             'top_fabricants' => Fabricant::withCount('produits')->orderByDesc('produits_count')->take(10)->get(),
         ];
 
@@ -66,6 +68,7 @@ class AdminRapportsController extends Controller
     private function exportSignalements()
     {
         $data = [
+            // ✅ Espace ajouté : "Rapport des Signalements"
             'titre'        => 'Rapport des Signalements',
             'date'         => now()->format('d/m/Y à H:i'),
             'signalements' => Signalement::with('qrCode.lot.produit.fabricant')->latest()->get(),
@@ -80,9 +83,9 @@ class AdminRapportsController extends Controller
     private function exportFabricants()
     {
         $data = [
-            'titre'       => 'Liste des Fabricants',
-            'date'        => now()->format('d/m/Y à H:i'),
-            'fabricants'  => Fabricant::withCount('produits')->latest()->get(),
+            'titre'      => 'Liste des Fabricants',
+            'date'       => now()->format('d/m/Y à H:i'),
+            'fabricants' => Fabricant::withCount('produits')->latest()->get(),
         ];
 
         $pdf = Pdf::loadView('admin.rapports.pdf_fabricants', $data)

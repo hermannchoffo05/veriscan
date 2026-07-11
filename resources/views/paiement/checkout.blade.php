@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        :root { --teal: #0F766E; --teal-dark: #0a5c55; --teal-light: #F0FDFA; --text: #1F2937; --text-light: #6b7280; --border: #e5e7eb; --mtn: #FFCC00; --orange: #FF6600; }
+        :root { --teal: #2E3A6B; --teal-dark: #232C54; --teal-light: #EEF0F8; --text: #1F2937; --text-light: #6b7280; --border: #e5e7eb; --mtn: #FFCC00; --orange: #FF6600; }
         body { font-family: 'Inter', sans-serif; background: #f8fafc; min-height: 100vh; display: flex; flex-direction: column; }
         nav { background: white; border-bottom: 1px solid var(--border); padding: 0 32px; height: 64px; display: flex; align-items: center; justify-content: space-between; }
         .nav-logo { display: flex; align-items: center; gap: 8px; text-decoration: none; }
@@ -39,7 +39,7 @@
         .field { margin-bottom: 20px; }
         .field label { display: block; font-size: 12px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 6px; }
         .tel-input-wrap { display: flex; border: 1.5px solid var(--border); border-radius: 10px; overflow: hidden; transition: border-color 0.2s; }
-        .tel-input-wrap:focus-within { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(15,118,110,0.1); }
+        .tel-input-wrap:focus-within { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(46,58,107,0.1); }
         .tel-prefix { padding: 12px 14px; background: #f9fafb; border-right: 1.5px solid var(--border); font-size: 14px; font-weight: 600; color: var(--text-light); white-space: nowrap; }
         .tel-input { flex: 1; padding: 12px 14px; border: none; outline: none; font-size: 15px; font-family: inherit; letter-spacing: 0.05em; color: var(--text); }
         .tel-hint { font-size: 11px; color: var(--text-light); margin-top: 6px; }

@@ -34,19 +34,16 @@ Route::get("/langue/{locale}", function ($locale) {
     return redirect()->back();
 })->name("langue.changer");
 
-Route::get("/verify-home", [VerificationController::class, "index"])->name("verify.home");
-
-// -- Pages publiques ------------------------------------------------------------
+// -- Pages publiques ----------------------------------------------------------
 Route::get("/", function () { return view("welcome"); })->name("home");
 Route::get("/tarifs", [TarifsController::class, "index"])->name("tarifs");
 Route::get("/conditions", function () { return view("public.conditions"); })->name("conditions");
 Route::get("/politique", function () { return view("public.politique"); })->name("politique");
 
-// -- Vérification produit (public) ----------------------------------------------
-Route::get("/verify/{token}", [VerificationController::class, "verify"])->name("verify.token");
-Route::get("/verify-product/{id}", [VerificationController::class, "verifyProduct"])->name("verify.product");
-Route::post("/verify/report", [VerificationController::class, "report"])->name("verify.report");
-Route::get("/verify", [VerificationController::class, "index"])->name("verify.index");
+// -- Vérification produit (public) --------------------------------------------
+Route::get("/verify-home", [VerificationController::class, "home"])->name("verify.home");
+Route::get("/verify", [VerificationController::class, "home"])->name("verify.index");
+Route::get("/verify/{token}", [VerificationController::class, "verifyToken"])->name("verify.token");
 Route::post("/verify-code", [VerificationController::class, "verifyCode"])->name("verify.code");
 Route::post("/verify/signaler", [VerificationController::class, "signaler"])->name("verify.signaler");
 
@@ -86,7 +83,7 @@ Route::middleware(["auth:fabricant"])->prefix("fabricant")->name("fabricant.")->
     Route::get("/dashboard/search", [FabricantDashboardController::class, "search"])->name("dashboard.search");
     Route::post("/dashboard/chat", [FabricantProduitsController::class, "chat"])->name("dashboard.chat");
 
-    // Chatbot Gemini / Assistant virtuel
+    // Chatbot / Assistant virtuel
     Route::post("/chatbot/ask", [FabricantProduitsController::class, "chat"])->name("chatbot.ask");
 
     // Profil
@@ -111,6 +108,7 @@ Route::middleware(["auth:fabricant"])->prefix("fabricant")->name("fabricant.")->
     Route::put("/produits/{id}", [FabricantProduitsController::class, "update"])->name("produits.update");
     Route::delete("/produits/{id}", [FabricantProduitsController::class, "destroy"])->name("produits.destroy");
     Route::post("/produits/generate-description", [FabricantProduitsController::class, "generateDescription"])->name("produits.generate-description");
+    Route::post("/produits/classify-category", [FabricantProduitsController::class, "classifyCategory"])->name("produits.classify-category");
 
     // Lots
     Route::get("/produits/{produitId}/lots", [FabricantLotsController::class, "index"])->name("lots.index");

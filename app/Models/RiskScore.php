@@ -1,9 +1,6 @@
 <?php
-
 namespace App\Models;
-
 use Illuminate\Database\Eloquent\Model;
-
 class RiskScore extends Model
 {
     protected $fillable = [
@@ -19,17 +16,14 @@ class RiskScore extends Model
         'niveau',
         'computed_at',
     ];
-
     protected $casts = [
         'computed_at' => 'datetime',
         'score'       => 'float',
     ];
-
     public function produit()
     {
         return $this->belongsTo(Produit::class);
     }
-
     /**
      * Retourne la couleur CSS associée au niveau de risque
      */

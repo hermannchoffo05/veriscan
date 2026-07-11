@@ -19,7 +19,7 @@
     .profil-card { background: white; border: 1.5px solid var(--border); border-radius: 16px; padding: 24px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
     .identity-card { text-align: center; }
     .logo-wrap { width: 90px; height: 90px; border-radius: 16px; background: var(--teal-light); border: 2px dashed var(--teal); display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; overflow: hidden; cursor: pointer; transition: all 0.2s; }
-    .logo-wrap:hover { background: #e6f7f5; border-style: solid; }
+    .logo-wrap:hover { background: #e2e6f5; border-style: solid; }
     .logo-wrap img { width: 100%; height: 100%; object-fit: cover; }
     .logo-placeholder { display: flex; flex-direction: column; align-items: center; gap: 5px; }
     .logo-placeholder svg { width: 26px; height: 26px; color: var(--teal); opacity: 0.6; }
@@ -52,16 +52,15 @@
     .section-card-header h2 { font-size: 17px; font-weight: 800; color: var(--text); margin-bottom: 4px; }
     .section-card-header p { font-size: 13px; color: var(--text-light); }
 
-    /* ── Grille formulaire : 1 colonne partout ── */
     .form-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
     .field { display: flex; flex-direction: column; gap: 6px; }
     .field label { font-size: 13px; font-weight: 600; color: #374151; }
     .field input { padding: 11px 14px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 14px; color: var(--text); outline: none; font-family: inherit; transition: border-color 0.2s, box-shadow 0.2s; background: white; width: 100%; box-sizing: border-box; }
-    .field input:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(15,118,110,0.12); }
+    .field input:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(46,58,107,0.12); }
     .field input:disabled { background: #f9fafb; color: #9ca3af; }
 
     .btn-save { padding: 11px 24px; background: var(--teal); color: white; border: none; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px; margin-top: 20px; }
-    .btn-save:hover { background: #0a5c55; transform: translateY(-1px); }
+    .btn-save:hover { background: var(--teal-dark); transform: translateY(-1px); }
     .alert { padding: 12px 16px; border-radius: 10px; font-size: 13.5px; display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
     .alert-success { background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d; }
     .alert-error { background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; }
@@ -73,7 +72,6 @@
     .pwd-bar.strong { background: #10b981; }
     .pwd-label { font-size: 11px; color: var(--text-light); }
 
-    /* ── Responsive ── */
     @media (max-width: 768px) {
         .profil-layout { grid-template-columns: 1fr; }
         .section-card { padding: 20px 16px; }
@@ -95,7 +93,6 @@
 
     <div class="profil-layout">
 
-        {{-- COLONNE GAUCHE --}}
         <div class="profil-sidebar-col">
             <div class="profil-card identity-card">
                 <div class="logo-wrap" id="logoPreviewWrap">
@@ -151,10 +148,8 @@
             </div>
         </div>
 
-        {{-- COLONNE DROITE --}}
         <div class="profil-main">
 
-            {{-- TAB INFOS --}}
             <div class="tab-panel active" id="tab-infos">
                 <div class="section-card">
                     <div class="section-card-header">
@@ -209,7 +204,6 @@
                 </div>
             </div>
 
-            {{-- TAB PASSWORD --}}
             <div class="tab-panel" id="tab-password">
                 <div class="section-card">
                     <div class="section-card-header">

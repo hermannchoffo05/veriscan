@@ -6,7 +6,7 @@
 <style>
 .breadcrumb{display:flex;align-items:center;gap:6px;margin-bottom:20px;font-size:13px;}
 .breadcrumb a{color:#6b7280;text-decoration:none;font-weight:600;display:inline-flex;align-items:center;gap:5px;transition:color 0.2s;}
-.breadcrumb a:hover{color:#0f766e;}
+.breadcrumb a:hover{color:#2E3A6B;}
 .breadcrumb a svg{width:13px;height:13px;}
 .breadcrumb span{color:#d1d5db;}
 .breadcrumb strong{color:#1f2937;font-weight:600;}
@@ -16,19 +16,19 @@
 .form-label{display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:6px;}
 .form-label .required{color:#ef4444;}
 .form-control{width:100%;padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:14px;color:#1f2937;background:#f9fafb;transition:.2s;box-sizing:border-box;}
-.form-control:focus{outline:none;border-color:#0f766e;box-shadow:0 0 0 3px rgba(15,118,110,.1);background:#fff;}
+.form-control:focus{outline:none;border-color:#2E3A6B;box-shadow:0 0 0 3px rgba(46,58,107,.1);background:#fff;}
 .form-control.is-invalid{border-color:#ef4444;}
 .invalid-feedback{font-size:12px;color:#ef4444;margin-top:4px;}
 select.form-control{appearance:none;cursor:pointer;}
-.info-box{background:#f0fdfa;border:1px solid #99f6e4;border-radius:10px;padding:14px 16px;font-size:13px;color:#0f766e;margin-bottom:20px;}
+.info-box{background:#EEF0F8;border:1px solid #c7cce6;border-radius:10px;padding:14px 16px;font-size:13px;color:#2E3A6B;margin-bottom:20px;}
 .form-actions{display:flex;gap:12px;justify-content:flex-end;margin-top:28px;padding-top:20px;border-top:1px solid #f3f4f6;}
-.btn-primary{padding:10px 24px;background:#0f766e;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;}
-.btn-primary:hover{background:#0d6560;}
+.btn-primary{padding:10px 24px;background:#F5A623;color:#171B3D;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;}
+.btn-primary:hover{background:#e0961d;}
 .btn-secondary{padding:10px 24px;background:#f3f4f6;color:#374151;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;text-decoration:none;}
 .btn-secondary:hover{background:#e5e7eb;}
 .alert-error{background:#fef2f2;border:1px solid #fecaca;color:#dc2626;padding:12px 16px;border-radius:10px;font-size:13px;margin-bottom:20px;}
 .alert-error ul{margin:6px 0 0 16px;}
-.range-display{font-size:13px;color:#0f766e;font-weight:600;margin-top:6px;}
+.range-display{font-size:13px;color:#2E3A6B;font-weight:600;margin-top:6px;}
 </style>
 @endsection
 @section('content')
@@ -42,7 +42,7 @@ select.form-control{appearance:none;cursor:pointer;}
 </div>
 <div class="form-card">
     <div class="form-title">
-        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="20" height="20" style="vertical-align:middle;margin-right:8px;color:#0f766e"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 3.5V16M4 4h6v6H4V4zm10 0h6v6h-6V4zM4 14h6v6H4v-6z"/></svg>
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="20" height="20" style="vertical-align:middle;margin-right:8px;color:#2E3A6B"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 3.5V16M4 4h6v6H4V4zm10 0h6v6h-6V4zM4 14h6v6H4v-6z"/></svg>
         {{ __('messages.params_generation') }}
     </div>
     <div class="info-box">💡 {{ __('messages.info_qr_unique') }}</div>

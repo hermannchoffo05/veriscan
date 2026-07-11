@@ -44,7 +44,6 @@ class AdminSignalementsController extends Controller
         return back()->with('success', 'Signalement escaladé vers MINCOMMERCE/ANOR.');
     }
 
-    // ── Résumé IA des signalements (Renommé pour correspondre à la route) ───
     public function resume()
     {
         $signalements = Signalement::with('qrCode.lot.produit.fabricant')
@@ -57,7 +56,6 @@ class AdminSignalementsController extends Controller
         $traites = $signalements->where('statut', 'traite')->count();
         $rejetes = $signalements->where('statut', 'rejete')->count();
 
-        // On prépare l'objet stats initial attendu directement par l'interface en cas de vide ou d'erreur
         $statsFormattees = [
             'total'    => $total,
             'en_cours' => $enCours,
@@ -68,13 +66,14 @@ class AdminSignalementsController extends Controller
         if ($signalements->isEmpty()) {
             return response()->json([
                 'resume' => 'Aucun signalement à analyser pour le moment.',
-                'stats'  => $statsFormattees
+                'stats'  => $statsFormattees,
             ]);
         }
 
+        // ✅ Opérateur ?-> pour éviter les TypeError sur relations nulles
         $data = $signalements->map(function ($sig) {
-            $produit = $sig->qrCode->lot->produit ?? null;
-            $fab     = $produit->fabricant ?? null;
+            $produit = $sig->qrCode?->lot?->produit ?? null;
+            $fab     = $produit?->fabricant ?? null;
             return [
                 'produit'     => $produit->nom ?? 'Inconnu',
                 'fabricant'   => $fab->nom_entreprise ?? 'Inconnu',
@@ -85,14 +84,16 @@ class AdminSignalementsController extends Controller
         })->toArray();
 
         $produitsCount = $signalements->groupBy(function ($sig) {
-            return $sig->qrCode->lot->produit->nom ?? 'Inconnu';
+            // ✅ Opérateur ?-> pour éviter les TypeError sur relations nulles
+            return $sig->qrCode?->lot?->produit?->nom ?? 'Inconnu';
         })->map->count()->sortDesc()->take(3);
 
         $produitsTop = $produitsCount->map(function ($count, $nom) {
             return "$nom ($count signalement(s))";
         })->implode(', ');
 
-        $prompt = "Tu es un analyste anti-contrefaçon pour VeriScan au Cameroun. 
+        // ✅ Espaces corrigés dans le prompt
+        $prompt = "Tu es un analyste anti-contrefaçon pour VeriScan au Cameroun.
 Voici les données des $total derniers signalements de produits suspects :
 
 - En cours : $enCours | Traités : $traites | Rejetés : $rejetes
@@ -124,19 +125,19 @@ Ne commence pas par 'Voici' ou 'Bien sûr'. Va directement au résumé.";
                 $resume = $response->json('choices.0.message.content') ?? 'Résumé indisponible.';
                 return response()->json([
                     'resume' => $resume,
-                    'stats'  => $statsFormattees, // Alignement exact pour data.stats.en_cours etc.
+                    'stats'  => $statsFormattees,
                 ]);
             }
 
             return response()->json([
                 'resume' => 'Erreur lors de la génération du résumé par Groq.',
-                'stats'  => $statsFormattees
+                'stats'  => $statsFormattees,
             ], 500);
 
         } catch (\Exception $e) {
             return response()->json([
                 'resume' => 'Service IA temporairement indisponible.',
-                'stats'  => $statsFormattees
+                'stats'  => $statsFormattees,
             ], 500);
         }
     }

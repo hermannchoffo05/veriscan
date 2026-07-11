@@ -59,7 +59,7 @@
     .fab-cell { display: flex; align-items: center; gap: 10px; }
     .fab-avatar {
         width: 36px; height: 36px; border-radius: 10px;
-        background: linear-gradient(135deg, #0f766e, #14b8a6);
+        background: linear-gradient(135deg, #2E3A6B, #4A5899);
         display: flex; align-items: center; justify-content: center;
         font-size: 13px; font-weight: 800; color: white; flex-shrink: 0;
     }
@@ -83,8 +83,8 @@
         border: none; transition: all 0.2s; display: inline-flex; align-items: center; gap: 4px;
         white-space: nowrap;
     }
-    .btn-action.view     { background: #f0fdfa; color: #0F766E; }
-    .btn-action.view:hover { background: #ccfbf1; }
+    .btn-action.view     { background: #EEF0F8; color: #2E3A6B; }
+    .btn-action.view:hover { background: #dde2f5; }
     .btn-action.validate { background: #f0fdf4; color: #007A4D; }
     .btn-action.validate:hover { background: #dcfce7; }
     .btn-action.suspend  { background: #fefce8; color: #a16207; }

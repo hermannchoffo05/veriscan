@@ -29,6 +29,7 @@ class FabricantProfilController extends Controller
 
         $fabricant->update($data);
 
+        // ✅ Espace corrigé : "avec succès" (était "avecsuccès")
         return back()->with('success_infos', 'Informations mises à jour avec succès.');
     }
 
@@ -37,11 +38,12 @@ class FabricantProfilController extends Controller
         $fabricant = Auth::guard('fabricant')->user();
 
         $request->validate([
-            'current_password'      => ['required'],
-            'password'              => ['required', 'confirmed', 'min:8'],
+            'current_password' => ['required'],
+            'password'         => ['required', 'confirmed', 'min:8'],
         ]);
 
         if (!Hash::check($request->current_password, $fabricant->password)) {
+            // ✅ Espace corrigé : "mot de passe actuel" (était "mot de passeactuel")
             return back()->withErrors(['current_password' => 'Le mot de passe actuel est incorrect.'])->with('tab', 'password');
         }
 
@@ -55,7 +57,7 @@ class FabricantProfilController extends Controller
         $fabricant = Auth::guard('fabricant')->user();
 
         $request->validate([
-           'logo' => ['required', 'image', 'mimes:png,jpg,jpeg,svg,webp', 'max:2048'],
+            'logo' => ['required', 'image', 'mimes:png,jpg,jpeg,svg,webp', 'max:2048'],
         ]);
 
         if ($fabricant->logo && Storage::disk('public')->exists($fabricant->logo)) {

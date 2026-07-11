@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\Produit;
@@ -18,18 +19,19 @@ class FabricantDashboardController extends Controller
         $lotIds     = Lot::whereIn('produit_id', $produitIds)->pluck('id');
         $qrcodeIds  = QrCode::whereIn('lot_id', $lotIds)->pluck('id');
 
-        $totalProduits    = $produitIds->count();
-        $totalQrcodes     = $qrcodeIds->count();
-        $totalScans       = Verification::whereIn('qr_code_id', $qrcodeIds)->count();
-        $scansAujourdHui  = Verification::whereIn('qr_code_id', $qrcodeIds)->whereDate('created_at', today())->count();
+        $totalProduits   = $produitIds->count();
+        $totalQrcodes    = $qrcodeIds->count();
 
-        $totalSignalements = Signalement::where(function ($q) use ($qrcodeIds) {
-            $q->whereIn('qr_code_id', $qrcodeIds)->orWhereNull('qr_code_id');
-        })->count();
+        // ✅ Utilise nb_scans sur qr_codes (cohérent avec VerificationController)
+        $totalScans      = QrCode::whereIn('id', $qrcodeIds)->sum('nb_scans');
+        $scansAujourdHui = Verification::whereIn('qr_code_id', $qrcodeIds)
+                            ->whereDate('created_at', today())->count();
 
-        $signalementsEnCours = Signalement::where(function ($q) use ($qrcodeIds) {
-            $q->whereIn('qr_code_id', $qrcodeIds)->orWhereNull('qr_code_id');
-        })->where('statut', 'en_cours')->count();
+        // ✅ Suppression de orWhereNull : on ne montre que les signalements de ce fabricant
+        $totalSignalements = Signalement::whereIn('qr_code_id', $qrcodeIds)->count();
+
+        $signalementsEnCours = Signalement::whereIn('qr_code_id', $qrcodeIds)
+            ->where('statut', 'en_cours')->count();
 
         $produitsRecents = Produit::where('fabricant_id', $fabricant->id)
             ->with(['lots' => fn($q) => $q->latest()->limit(1)])
@@ -39,9 +41,9 @@ class FabricantDashboardController extends Controller
             }])
             ->latest()->limit(4)->get();
 
-        $signalementsRecents = Signalement::where(function ($q) use ($qrcodeIds) {
-            $q->whereIn('qr_code_id', $qrcodeIds)->orWhereNull('qr_code_id');
-        })->with(['qrCode.lot'])->latest()->limit(3)->get();
+        // ✅ Suppression de orWhereNull
+        $signalementsRecents = Signalement::whereIn('qr_code_id', $qrcodeIds)
+            ->with(['qrCode.lot'])->latest()->limit(3)->get();
 
         $derniersLots = Lot::whereIn('id', $lotIds)
             ->with('produit')->withCount('qrcodes')->latest()->limit(3)->get();
@@ -49,14 +51,17 @@ class FabricantDashboardController extends Controller
         $scans7jours = $suspects7jours = [];
         for ($i = 6; $i >= 0; $i--) {
             $date = now()->subDays($i);
-            $scans7jours[]    = Verification::whereIn('qr_code_id', $qrcodeIds)->whereDate('created_at', $date)->count();
-            $suspects7jours[] = Verification::whereIn('qr_code_id', $qrcodeIds)->where('resultat', 'suspect')->whereDate('created_at', $date)->count();
+            $scans7jours[]    = Verification::whereIn('qr_code_id', $qrcodeIds)
+                                    ->whereDate('created_at', $date)->count();
+            $suspects7jours[] = Verification::whereIn('qr_code_id', $qrcodeIds)
+                                    ->where('resultat', 'suspect')
+                                    ->whereDate('created_at', $date)->count();
         }
 
-        // Notifications : signalements non lus
-        $notifications = Signalement::where(function ($q) use ($qrcodeIds) {
-            $q->whereIn('qr_code_id', $qrcodeIds)->orWhereNull('qr_code_id');
-        })->where('statut', 'en_cours')->with('qrCode.lot.produit')->latest()->limit(5)->get();
+        // ✅ Suppression de orWhereNull
+        $notifications = Signalement::whereIn('qr_code_id', $qrcodeIds)
+            ->where('statut', 'en_cours')
+            ->with('qrCode.lot.produit')->latest()->limit(5)->get();
 
         $nbNotifications = $notifications->count();
 
@@ -70,8 +75,8 @@ class FabricantDashboardController extends Controller
 
     public function search(Request $request)
     {
-        $fabricant  = Auth::guard('fabricant')->user();
-        $q          = $request->get('q', '');
+        $fabricant = Auth::guard('fabricant')->user();
+        $q         = $request->get('q', '');
 
         $produits = Produit::where('fabricant_id', $fabricant->id)
             ->where(function ($query) use ($q) {

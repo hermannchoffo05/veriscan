@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -72,36 +73,36 @@ class FabricantQRCodesController extends Controller
     {
         $logoPath = public_path('images/logo.png');
 
-        // Charger le logo original
-        $src = imagecreatefrompng($logoPath);
+        // ✅ Vérification existence du logo
+        if (!file_exists($logoPath)) {
+            throw new \RuntimeException('Logo introuvable : ' . $logoPath);
+        }
+
+        $src  = imagecreatefrompng($logoPath);
         $srcW = imagesx($src);
         $srcH = imagesy($src);
 
-        // Créer le canvas carré avec fond transparent
         $canvas = imagecreatetruecolor($size, $size);
         imagealphablending($canvas, false);
         imagesavealpha($canvas, true);
         $transparent = imagecolorallocatealpha($canvas, 0, 0, 0, 127);
         imagefill($canvas, 0, 0, $transparent);
 
-        // Ombre portée (cercle gris décalé légèrement)
         imagealphablending($canvas, true);
         $padding   = (int)($size * 0.08);
-        $shadowOff = (int)($size * 0.06); // décalage ombre
-        $shadow    = imagecolorallocatealpha($canvas, 0, 0, 0, 90); // noir semi-transparent
+        $shadowOff = (int)($size * 0.06);
+        $shadow    = imagecolorallocatealpha($canvas, 0, 0, 0, 90);
         imagefilledellipse($canvas, $size / 2 + $shadowOff, $size / 2 + $shadowOff, $size - $padding, $size - $padding, $shadow);
 
-        // Cercle blanc principal
         $white = imagecolorallocate($canvas, 255, 255, 255);
         imagefilledellipse($canvas, $size / 2, $size / 2, $size - $padding, $size - $padding, $white);
 
-        // Redimensionner et coller le logo au centre (75% du cercle)
         $logoSize = (int)($size * 0.62);
         $offset   = (int)(($size - $logoSize) / 2);
         imagecopyresampled($canvas, $src, $offset, $offset, 0, 0, $logoSize, $logoSize, $srcW, $srcH);
 
-        // Sauvegarder dans un fichier temporaire
-        $tmpPath = sys_get_temp_dir() . '/veriscan_logo_circle_' . $size . '.png';
+        // ✅ Nom unique pour éviter les conflits entre requêtes concurrentes
+        $tmpPath = sys_get_temp_dir() . '/veriscan_logo_' . $size . '_' . uniqid() . '.png';
         imagesavealpha($canvas, true);
         imagepng($canvas, $tmpPath);
 
@@ -121,9 +122,7 @@ class FabricantQRCodesController extends Controller
                     ->findOrFail($id);
 
         $verifyUrl = route('verify.token', $qrcode->token);
-
-        // Logo avec cercle blanc (taille adaptée au QR 300px)
-        $logoTmp = $this->buildLogoWithWhiteCircle(80);
+        $logoTmp   = $this->buildLogoWithWhiteCircle(80);
 
         $qrImage = base64_encode(
             QrGen::format('png')
@@ -133,6 +132,9 @@ class FabricantQRCodesController extends Controller
                 ->merge($logoTmp, 0.28, true)
                 ->generate($verifyUrl)
         );
+
+        // ✅ Nettoyage du fichier temporaire
+        @unlink($logoTmp);
 
         return view('fabricant.qrcodes.show', compact('qrcode', 'qrImage', 'fabricant'));
     }
@@ -145,9 +147,7 @@ class FabricantQRCodesController extends Controller
                     })->findOrFail($id);
 
         $verifyUrl = route('verify.token', $qrcode->token);
-
-        // Logo avec cercle blanc (taille adaptée au QR 600px)
-        $logoTmp = $this->buildLogoWithWhiteCircle(160);
+        $logoTmp   = $this->buildLogoWithWhiteCircle(160);
 
         $image = QrGen::format('png')
             ->size(600)
@@ -156,10 +156,14 @@ class FabricantQRCodesController extends Controller
             ->merge($logoTmp, 0.28, true)
             ->generate($verifyUrl);
 
+        // ✅ Nettoyage du fichier temporaire
+        @unlink($logoTmp);
+
         return response($image)
             ->header('Content-Type', 'image/png')
             ->header('Content-Disposition', 'attachment; filename="veriscan-qr-' . $qrcode->token . '.png"');
     }
+
     public function downloadLotPdf($lotId)
     {
         $fabricant = Auth::guard('fabricant')->user();
@@ -173,7 +177,7 @@ class FabricantQRCodesController extends Controller
         $etiquettes = '';
         foreach ($qrcodes as $qrcode) {
             $verifyUrl = route('verify.token', $qrcode->token);
-            $qrImage = base64_encode(
+            $qrImage   = base64_encode(
                 QrGen::format('png')
                     ->size(600)
                     ->margin(2)
@@ -181,6 +185,7 @@ class FabricantQRCodesController extends Controller
                     ->merge($logoTmp, 0.28, true)
                     ->generate($verifyUrl)
             );
+            // ✅ Utilise float au lieu de display:table pour compatibilité DomPDF
             $etiquettes .= '
                 <div class="etiquette">
                     <img src="data:image/png;base64,' . $qrImage . '" alt="QR">
@@ -188,6 +193,10 @@ class FabricantQRCodesController extends Controller
                 </div>';
         }
 
+        // ✅ Nettoyage du fichier temporaire
+        @unlink($logoTmp);
+
+        // ✅ CSS float-based pour DomPDF (meilleure compatibilité que display:table)
         $html = '<!DOCTYPE html>
         <html>
         <head>
@@ -195,16 +204,12 @@ class FabricantQRCodesController extends Controller
             <style>
                 * { margin: 0; padding: 0; box-sizing: border-box; }
                 body { font-family: DejaVu Sans, sans-serif; background: #fff; }
-                .grille { display: table; width: 100%; }
-                .ligne { display: table-row; }
-                .etiquette { display: table-cell; width: 113px; height: 120px; padding: 4px; text-align: center; vertical-align: middle; border: 0.5px dashed #e5e7eb; }
+                .etiquette { float: left; width: 113px; height: 120px; padding: 4px; text-align: center; border: 0.5px dashed #e5e7eb; }
                 .etiquette img { width: 96px; height: 96px; }
                 .token { font-family: monospace; font-size: 7px; color: #4b5563; margin-top: 2px; }
             </style>
         </head>
-        <body>
-            <div class="grille">' . $etiquettes . '</div>
-        </body>
+        <body>' . $etiquettes . '</body>
         </html>';
 
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadHTML($html)
@@ -234,30 +239,23 @@ class FabricantQRCodesController extends Controller
                 ->generate($verifyUrl)
         );
 
-        $html = '
-        <!DOCTYPE html>
+        // ✅ Nettoyage du fichier temporaire
+        @unlink($logoTmp);
+
+        $html = '<!DOCTYPE html>
         <html>
         <head>
             <meta charset="UTF-8">
             <style>
                 * { margin: 0; padding: 0; box-sizing: border-box; }
-                html, body { width: 100%; height: 100%; font-family: DejaVu Sans, sans-serif; background: #fff; }
-                .outer { width: 100%; display: table; margin-top: 18px; }
-                .middle { display: table-cell; vertical-align: middle; text-align: center; }
-                .label { display: inline-block; text-align: center; }
-                .label img { width: 96px; height: 96px; }
+                body { font-family: DejaVu Sans, sans-serif; background: #fff; text-align: center; padding-top: 10px; }
+                img { width: 96px; height: 96px; }
                 .token { font-family: monospace; font-size: 8px; color: #4b5563; margin-top: 4px; }
             </style>
         </head>
         <body>
-            <div class="outer">
-                <div class="middle">
-                    <div class="label">
-                        <img src="data:image/png;base64,' . $qrImage . '" alt="QR Code">
-                        <div class="token">' . $qrcode->token . '</div>
-                    </div>
-                </div>
-            </div>
+            <img src="data:image/png;base64,' . $qrImage . '" alt="QR Code">
+            <div class="token">' . $qrcode->token . '</div>
         </body>
         </html>';
 

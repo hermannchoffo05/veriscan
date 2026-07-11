@@ -21,16 +21,16 @@ class FabricantStatistiquesController extends Controller
         $lotIds     = Lot::whereIn('produit_id', $produitIds)->pluck('id');
         $qrcodeIds  = QrCode::whereIn('lot_id', $lotIds)->pluck('id');
 
-        // ── Totaux corrects ──────────────────────────────────────────────────
-        $totalProduits     = $produitIds->count();
-        $totalLots         = $lotIds->count();
-        $totalQrcodes      = $qrcodeIds->count();
-        $totalScans        = Verification::whereIn('qr_code_id', $qrcodeIds)->count();
-       $totalSignalements = Signalement::where(function($q) use ($qrcodeIds) {
-    $q->whereIn('qr_code_id', $qrcodeIds)->orWhereNull('qr_code_id');
-})->count();
+        // -- Totaux -----------------------------------------------------------
+        $totalProduits = $produitIds->count();
+        $totalLots     = $lotIds->count();
+        $totalQrcodes  = $qrcodeIds->count();
+        $totalScans    = Verification::whereIn('qr_code_id', $qrcodeIds)->count();
 
-        // ── Signalements des 6 derniers mois ─────────────────────────────────
+        // ✅ Suppression du orWhereNull : uniquement les signalements de ce fabricant
+        $totalSignalements = Signalement::whereIn('qr_code_id', $qrcodeIds)->count();
+
+        // -- Signalements des 6 derniers mois ---------------------------------
         $signalementsParMois = [];
         for ($i = 5; $i >= 0; $i--) {
             $mois = Carbon::now()->subMonths($i);
@@ -43,25 +43,25 @@ class FabricantStatistiquesController extends Controller
             ];
         }
 
-        // ── Top 5 produits par scans ──────────────────────────────────────────
+        // -- Top 5 produits par scans -----------------------------------------
         $topProduits = Produit::where('fabricant_id', $fabricant->id)
             ->get()
             ->map(function ($p) {
-                $lotIds    = $p->lots()->pluck('id');
-                $qrIds     = QrCode::whereIn('lot_id', $lotIds)->pluck('id');
+                $lotIds         = $p->lots()->pluck('id');
+                $qrIds          = QrCode::whereIn('lot_id', $lotIds)->pluck('id');
                 $p->total_scans = Verification::whereIn('qr_code_id', $qrIds)->count();
                 return $p;
             })
             ->sortByDesc('total_scans')
             ->take(5);
 
-        // ── Répartition par catégorie ─────────────────────────────────────────
+        // -- Répartition par catégorie ----------------------------------------
         $repartitionCategories = Produit::where('fabricant_id', $fabricant->id)
-                                        ->selectRaw('categorie, count(*) as total')
-                                        ->groupBy('categorie')
-                                        ->get();
+            ->selectRaw('categorie, count(*) as total')
+            ->groupBy('categorie')
+            ->get();
 
-        // ── Scans 7 derniers jours ────────────────────────────────────────────
+        // -- Scans 7 derniers jours -------------------------------------------
         $scans7jours    = [];
         $suspects7jours = [];
         for ($i = 6; $i >= 0; $i--) {
