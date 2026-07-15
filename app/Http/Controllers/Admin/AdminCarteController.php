@@ -48,14 +48,18 @@ class AdminCarteController extends Controller
             ->map(function ($s) {
                 $produit   = $s->qrCode?->lot?->produit;
                 $fabricant = $produit?->fabricant;
+                $score     = $s->score_ia ?? 50;
+
                 return [
                     'lat'          => $s->latitude,
                     'lng'          => $s->longitude,
                     'produit'      => $produit?->nom ?? 'Produit non associé',
                     'fabricant'    => $fabricant?->nom_entreprise ?? 'Mobile',
                     'categorie'    => $produit?->categorie ?? '—',
-                    'score'        => $s->score_ia ?? 50,
-                    'niveau'       => ($s->score_ia ?? 50) >= 70 ? 'critique' : (($s->score_ia ?? 50) >= 50 ? 'eleve' : 'modere'),
+                    'score'        => $score,
+                    // ✅ Seuils alignés sur la légende affichée :
+                    // Faible 0–30 / Modéré 31–60 / Élevé 61–80 / Critique 81–100
+                    'niveau'       => $this->niveauDepuisScore($score),
                     'signalements' => 1,
                     'qrcodes'      => 0,
                     'description'  => $s->description ?? '',
@@ -95,5 +99,18 @@ class AdminCarteController extends Controller
             'topRisques',
             'totalSignalementsGps'
         ));
+    }
+
+    /**
+     * ✅ NOUVEAU : Détermine le niveau à partir d'un score, avec les mêmes
+     * seuils que la légende affichée dans admin/carte.blade.php :
+     * Faible 0–30 · Modéré 31–60 · Élevé 61–80 · Critique 81–100
+     */
+    private function niveauDepuisScore(float $score): string
+    {
+        if ($score >= 81) return 'critique';
+        if ($score >= 61) return 'eleve';
+        if ($score >= 31) return 'modere';
+        return 'faible';
     }
 }

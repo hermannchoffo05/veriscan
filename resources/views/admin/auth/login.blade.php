@@ -45,8 +45,8 @@
         .remember { display: flex; align-items: center; gap: 7px; font-size: 12.5px; color: #6b7280; cursor: pointer; }
         input[type=checkbox] { accent-color: #2E3A6B; width: 14px; height: 14px; }
 
-        .btn { width: 100%; padding: 12px; background: #2E3A6B; color: white; border: none; border-radius: 11px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; transition: background 0.2s, transform 0.1s, box-shadow 0.2s; box-shadow: 0 4px 14px rgba(46,58,107,0.35); display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .btn:hover { background: #232C54; box-shadow: 0 6px 20px rgba(46,58,107,0.45); }
+        .btn { width: 100%; padding: 12px; background: #F5A623; color: white; border: none; border-radius: 11px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; transition: background 0.2s, transform 0.1s, box-shadow 0.2s; box-shadow: 0 4px 14px rgba(245,166,35,0.35); display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn:hover { background: #DB9016; box-shadow: 0 6px 20px rgba(245,166,35,0.45); }
         .btn:active { transform: scale(0.99); }
         .btn svg { width: 15px; height: 15px; }
 

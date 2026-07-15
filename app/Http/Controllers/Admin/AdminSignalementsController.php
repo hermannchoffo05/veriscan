@@ -44,6 +44,71 @@ class AdminSignalementsController extends Controller
         return back()->with('success', 'Signalement escaladé vers MINCOMMERCE/ANOR.');
     }
 
+    public function analyserPhoto(Request $request)
+    {
+        $request->validate(['signalement_id' => 'required|exists:signalements,id']);
+
+        $signalement = Signalement::findOrFail($request->signalement_id);
+
+        if (!$signalement->photo_preuve) {
+            return response()->json(['error' => 'Aucune photo disponible.'], 400);
+        }
+
+        if ($signalement->analyse_ia) {
+            return response()->json(['analyse' => $signalement->analyse_ia, 'cached' => true]);
+        }
+
+        try {
+            $apiKey    = env('GROQ_API_KEY');
+            $photoPath = storage_path('app/public/' . $signalement->photo_preuve);
+
+            if (!file_exists($photoPath)) {
+                return response()->json(['error' => 'Photo introuvable.'], 404);
+            }
+
+            $imageData = base64_encode(file_get_contents($photoPath));
+            $mimeType  = mime_content_type($photoPath);
+
+            $prompt = "Tu es un expert en détection de contrefaçon pour VeriScan au Cameroun.
+Description : \"{$signalement->description}\"
+Analyse cette image et fournis : niveau de suspicion, observations, signes de contrefaçon, recommandation. Maximum 4-5 phrases.";
+
+            $response = Http::timeout(30)
+                ->withHeaders([
+                    'Authorization' => 'Bearer ' . $apiKey,
+                    'Content-Type'  => 'application/json',
+                ])
+                ->post('https://api.groq.com/openai/v1/chat/completions', [
+                    'model'       => 'meta-llama/llama-4-scout-17b-16e-instruct',
+                    'messages'    => [
+                        [
+                            'role'    => 'user',
+                            'content' => [
+                                [
+                                    'type'      => 'image_url',
+                                    'image_url' => ['url' => "data:{$mimeType};base64,{$imageData}"],
+                                ],
+                                ['type' => 'text', 'text' => $prompt],
+                            ],
+                        ],
+                    ],
+                    'max_tokens'  => 300,
+                    'temperature' => 0.3,
+                ]);
+
+            if ($response->successful()) {
+                $analyse = $response->json('choices.0.message.content');
+                $signalement->update(['analyse_ia' => $analyse]);
+                return response()->json(['analyse' => $analyse]);
+            }
+
+            return response()->json(['error' => 'Erreur lors de l\'analyse IA.'], 500);
+
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Service IA indisponible.'], 500);
+        }
+    }
+
     public function resume()
     {
         $signalements = Signalement::with('qrCode.lot.produit.fabricant')

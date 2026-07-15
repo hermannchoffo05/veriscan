@@ -94,7 +94,7 @@
         <span id="expiry-text">Code valide encore 60s</span>
     </div>
 
-    <form method="POST" action="{{ route('fabricant.password.verify') }}" style="width:100%" id="otp-form">
+    <form method="POST" action="{{ route('fabricant.password.verify.submit') }}" style="width:100%" id="otp-form">
         @csrf
         <input type="hidden" name="code" id="hidden-code">
 

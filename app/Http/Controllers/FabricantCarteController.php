@@ -20,7 +20,9 @@ class FabricantCarteController extends Controller
         $lotIds     = Lot::whereIn('produit_id', $produitIds)->pluck('id');
         $qrcodeIds  = QrCode::whereIn('lot_id', $lotIds)->pluck('id');
 
-        // Signalements avec GPS — liés au fabricant OU sans QR (mobile)
+        // ✅ Signalements avec GPS — champs renommés pour correspondre exactement
+        // à ce qu'attend le JavaScript de fabricant/carte.blade.php
+        // (lat, lng, score, statut, produit, secteur, lieu, lot, description, region, date)
         $signalements = Signalement::where(function ($q) use ($qrcodeIds) {
                             $q->whereIn('qr_code_id', $qrcodeIds)
                               ->orWhereNull('qr_code_id');
@@ -28,22 +30,29 @@ class FabricantCarteController extends Controller
                         ->whereNotNull('latitude')
                         ->whereNotNull('longitude')
                         ->with('qrCode.lot.produit')
+                        ->latest()
                         ->get()
                         ->map(function ($s) {
+                            $produit = $s->qrCode?->lot?->produit;
+
                             return [
-                                'id'          => $s->id,
-                                'latitude'    => $s->latitude,
-                                'longitude'   => $s->longitude,
-                                'description' => $s->description,
+                                'lat'         => (float) $s->latitude,
+                                'lng'         => (float) $s->longitude,
+                                // Score IA du signalement (même logique que AdminCarteController)
+                                'score'       => $s->score_ia ?? 50,
                                 'statut'      => $s->statut,
-                                'localisation'=> $s->localisation ?? 'Localisation inconnue',
+                                'produit'     => $produit?->nom ?? 'Produit non associé',
+                                'secteur'     => $produit?->categorie ?? '',
+                                'lieu'        => $s->localisation ?? 'Localisation inconnue',
                                 'region'      => $s->region ?? '',
-                                'produit'     => $s->qrCode?->lot?->produit?->nom ?? 'Produit non associé',
+                                'lot'         => $s->qrCode?->lot?->numero_lot ?? '',
+                                'description' => $s->description,
                                 'date'        => $s->created_at->format('d/m/Y H:i'),
                             ];
-                        });
+                        })
+                        ->values();
 
-        // Vérifications avec GPS
+        // Vérifications avec GPS (conservées pour un usage futur éventuel)
         $verifications = Verification::whereIn('qr_code_id', $qrcodeIds)
                         ->whereNotNull('latitude')
                         ->whereNotNull('longitude')
@@ -51,19 +60,20 @@ class FabricantCarteController extends Controller
                         ->get()
                         ->map(function ($v) {
                             return [
-                                'latitude'  => $v->latitude,
-                                'longitude' => $v->longitude,
+                                'lat'       => (float) $v->latitude,
+                                'lng'       => (float) $v->longitude,
                                 'resultat'  => $v->resultat,
                                 'produit'   => $v->qrCode?->lot?->produit?->nom ?? '',
                                 'date'      => $v->created_at->format('d/m/Y H:i'),
                             ];
                         });
 
-        // Stats pour la sidebar de la carte
-        $totalSignalements  = $signalements->count();
-        $totalContrefaits   = $signalements->where('statut', 'en_cours')->count();
-        $totalScans         = $verifications->count();
-        $totalRegions       = $signalements->pluck('region')->filter()->unique()->count();
+        // ✅ Stats pour la sidebar — cohérentes avec les seuils de la légende
+        // (rouge >=70, orange 50-70, jaune 30-50, vert <30)
+        $totalSignalements = $signalements->count();
+        $totalContrefaits  = $signalements->where('score', '>=', 70)->count();
+        $totalScans        = QrCode::whereIn('id', $qrcodeIds)->sum('nb_scans');
+        $totalRegions      = $signalements->pluck('region')->filter()->unique()->count();
 
         return view('fabricant.carte', compact(
             'fabricant',

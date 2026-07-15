@@ -181,6 +181,7 @@ $categoriesList = json_decode($categoriesJson, true) ?? [];
             <div class="section-body">
                 <form method="POST" action="{{ route('admin.parametres.update') }}">
                     @csrf
+                    @method('PUT')
                     <div class="form-row">
                         <div class="form-group">
                             <label>Nom complet</label>
@@ -208,6 +209,7 @@ $categoriesList = json_decode($categoriesJson, true) ?? [];
             <div class="section-body">
                 <form method="POST" action="{{ route('admin.parametres.update') }}">
                     @csrf
+                    @method('PUT')
                     <input type="hidden" name="nom" value="{{ $admin->nom }}">
                     <input type="hidden" name="email" value="{{ $admin->email }}">
                     <div class="form-row">

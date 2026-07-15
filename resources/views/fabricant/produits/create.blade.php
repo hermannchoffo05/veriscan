@@ -34,6 +34,8 @@ textarea.form-control{resize:vertical;min-height:100px;}
 .ai-badge{display:none;align-items:center;gap:6px;font-size:11px;font-weight:600;color:#2E3A6B;background:#EEF0F8;border:1px solid #c7cce6;border-radius:6px;padding:4px 10px;margin-top:6px;width:fit-content;}
 .ai-badge svg{width:13px;height:13px;}
 .ai-badge.visible{display:flex;}
+.ai-badge-desc{margin-top:0;}
+#aiGeneratedBadge.visible{display:inline-flex;margin-left:8px;}
 .ai-loading{display:none;align-items:center;gap:8px;font-size:12px;color:#6b7280;margin-top:6px;}
 .ai-loading.visible{display:flex;}
 .ai-loading .spinner{width:14px;height:14px;border:2px solid #e5e7eb;border-top-color:#2E3A6B;border-radius:50%;animation:spin .7s linear infinite;}
@@ -43,6 +45,14 @@ textarea.form-control{resize:vertical;min-height:100px;}
 .desc-regen-btn:hover{background:#212a52;}
 .desc-regen-btn.visible{display:flex;}
 .desc-regen-btn svg{width:12px;height:12px;}
+.ai-error{display:none;font-size:12px;color:#dc2626;background:#fef2f2;border:1px solid #fecaca;border-radius:7px;padding:8px 12px;margin-top:6px;}
+.ai-error.visible{display:block;}
+.ai-quota{display:none;font-size:12px;color:#92400e;background:#fffbeb;border:1px solid #fde68a;border-radius:7px;padding:8px 12px;margin-top:6px;}
+.ai-quota.visible{display:block;}
+.ai-warning{display:none;align-items:center;justify-content:space-between;gap:10px;font-size:12px;color:#92400e;background:#fffbeb;border:1px solid #fde68a;border-radius:7px;padding:8px 12px;margin-top:6px;}
+.ai-warning.visible{display:flex;}
+.ai-warning button{background:#2E3A6B;color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;}
+.ai-warning button:hover{background:#212a52;}
 </style>
 @endsection
 @section('content')
@@ -83,7 +93,7 @@ textarea.form-control{resize:vertical;min-height:100px;}
             </label>
             <select id="categorieProduit" name="categorie" class="form-control @error('categorie') is-invalid @enderror">
                 <option value="">-- {{ __('messages.selectionner_categorie') }} --</option>
-                @foreach(['Médicaments'=>__('messages.medicaments'),'Alimentation'=>__('messages.alimentation'),'Cosmétiques'=>__('messages.cosmetiques'),'Pièces automobiles'=>__('messages.pieces_automobiles'),'Électronique'=>__('messages.electronique'),'Autre'=>__('messages.autre')] as $val=>$label)
+                @foreach(['Pharmaceutique'=>__('Pharmaceutique'),'Alimentation'=>__('messages.alimentation'),'Cosmétiques'=>__('messages.cosmetiques'),'Pièces automobiles'=>__('messages.pieces_automobiles'),'Électronique'=>__('messages.electronique'),'Autre'=>__('messages.autre')] as $val=>$label)
                     <option value="{{ $val }}" {{ old('categorie')==$val?'selected':'' }}>{{ $label }}</option>
                 @endforeach
             </select>
@@ -95,6 +105,9 @@ textarea.form-control{resize:vertical;min-height:100px;}
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.347.347a3.76 3.76 0 01-1.05 2.59A4.016 4.016 0 0112 21a4.016 4.016 0 01-2.841-1.163 3.76 3.76 0 01-1.05-2.59l-.347-.347z"/></svg>
                 Catégorie suggérée par IA — modifiable
             </span>
+            <div id="catError" class="ai-error"></div>
+            <div id="catQuota" class="ai-quota"></div>
+            <div id="catCoherenceWarning" class="ai-warning"></div>
             @error('categorie') <div class="invalid-feedback">{{ $message }}</div> @enderror
         </div>
 
@@ -102,7 +115,7 @@ textarea.form-control{resize:vertical;min-height:100px;}
         <div class="form-group">
             <label class="form-label">
                 {{ __('messages.description') }}
-                <span id="aiGeneratedBadge" class="ai-badge" style="display:inline-flex;margin-top:0;margin-left:8px;">
+                <span id="aiGeneratedBadge" class="ai-badge ai-badge-desc">
                     <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.347.347a3.76 3.76 0 01-1.05 2.59A4.016 4.016 0 0112 21a4.016 4.016 0 01-2.841-1.163 3.76 3.76 0 01-1.05-2.59l-.347-.347z"/></svg>
                     Générée par IA — modifiable
                 </span>
@@ -120,6 +133,8 @@ textarea.form-control{resize:vertical;min-height:100px;}
                 <div class="spinner"></div>
                 <span>Génération de la description en cours...</span>
             </div>
+            <div id="descError" class="ai-error"></div>
+            <div id="descQuota" class="ai-quota"></div>
             @error('description') <div class="invalid-feedback">{{ $message }}</div> @enderror
         </div>
 
@@ -147,7 +162,7 @@ const ROUTE_CLASSIFY = '{{ route("fabricant.produits.classify-category") }}';
 const ROUTE_DESC     = '{{ route("fabricant.produits.generate-description") }}';
 
 const CAT_MAP = {
-    'medicament': 'Médicaments', 'médicaments': 'Médicaments', 'medicaments': 'Médicaments', 'pharmaceut': 'Médicaments',
+    'medicament': 'Pharmaceutique', 'médicaments': 'Pharmaceutique', 'medicaments': 'Pharmaceutique', 'pharmaceut': 'Pharmaceutique',
     'alimentat': 'Alimentation', 'food': 'Alimentation', 'boisson': 'Alimentation', 'nourriture': 'Alimentation',
     'cosmet': 'Cosmétiques', 'beaut': 'Cosmétiques', 'hygiene': 'Cosmétiques', 'hygiène': 'Cosmétiques',
     'automobile': 'Pièces automobiles', 'auto': 'Pièces automobiles', 'pièces': 'Pièces automobiles', 'pieces': 'Pièces automobiles',
@@ -175,13 +190,27 @@ function previewImage(input) {
     }
 }
 
+function afficherMessage(container, message) {
+    container.textContent = message;
+    container.classList.add('visible');
+}
+
+function masquerMessage(container) {
+    container.classList.remove('visible');
+    container.textContent = '';
+}
+
 async function classifierCategorie(nom) {
     const catSelect  = document.getElementById('categorieProduit');
     const catLoading = document.getElementById('catLoading');
     const catBadge   = document.getElementById('catAiBadge');
+    const catError   = document.getElementById('catError');
+    const catQuota   = document.getElementById('catQuota');
 
     catLoading.classList.add('visible');
     catBadge.classList.remove('visible');
+    masquerMessage(catError);
+    masquerMessage(catQuota);
 
     try {
         const res  = await fetch(ROUTE_CLASSIFY, {
@@ -189,10 +218,21 @@ async function classifierCategorie(nom) {
             headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN },
             body: JSON.stringify({ nom })
         });
+
+        if (res.status === 429) {
+            const data = await res.json();
+            afficherMessage(catQuota, data.message || "Quota IA mensuel atteint.");
+            return;
+        }
+        if (!res.ok) {
+            afficherMessage(catError, "Une erreur est survenue, réessayez.");
+            return;
+        }
+
         const data = await res.json();
 
-        if (data.categorie) {
-            const normalized = normalizeCategory(data.categorie);
+        if (data.category) {
+            const normalized = normalizeCategory(data.category);
             if (normalized) {
                 catSelect.value = normalized;
                 catBadge.classList.add('visible');
@@ -201,6 +241,7 @@ async function classifierCategorie(nom) {
         }
     } catch(e) {
         console.error('Erreur classification:', e);
+        afficherMessage(catError, "Une erreur est survenue, réessayez.");
     } finally {
         catLoading.classList.remove('visible');
     }
@@ -213,12 +254,16 @@ async function genererDescription() {
     const loading   = document.getElementById('descLoading');
     const badge     = document.getElementById('aiGeneratedBadge');
     const regenBtn  = document.getElementById('regenBtn');
+    const descError = document.getElementById('descError');
+    const descQuota = document.getElementById('descQuota');
 
     if (!nom || !categorie) return;
 
     loading.classList.add('visible');
     badge.classList.remove('visible');
     regenBtn.classList.remove('visible');
+    masquerMessage(descError);
+    masquerMessage(descQuota);
     descTA.disabled = true;
 
     try {
@@ -227,6 +272,17 @@ async function genererDescription() {
             headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN },
             body: JSON.stringify({ nom, categorie })
         });
+
+        if (res.status === 429) {
+            const data = await res.json();
+            afficherMessage(descQuota, data.message || "Quota IA mensuel atteint.");
+            return;
+        }
+        if (!res.ok) {
+            afficherMessage(descError, "Une erreur est survenue lors de la génération, réessayez.");
+            return;
+        }
+
         const data = await res.json();
 
         if (data.description) {
@@ -236,10 +292,47 @@ async function genererDescription() {
         }
     } catch(e) {
         console.error('Erreur description:', e);
+        afficherMessage(descError, "Une erreur est survenue lors de la génération, réessayez.");
     } finally {
         loading.classList.remove('visible');
         descTA.disabled = false;
     }
+}
+
+async function verifierCoherenceCategorie() {
+    const nom          = document.getElementById('nomProduit').value.trim();
+    const categorieSel = document.getElementById('categorieProduit').value;
+    const warningBox   = document.getElementById('catCoherenceWarning');
+
+    if (!nom || !categorieSel) { warningBox.classList.remove('visible'); return; }
+
+    try {
+        const res = await fetch(ROUTE_CLASSIFY, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN },
+            body: JSON.stringify({ nom })
+        });
+
+        if (!res.ok) { warningBox.classList.remove('visible'); return; }
+
+        const data = await res.json();
+        const suggestion = normalizeCategory(data.category);
+
+        if (suggestion && suggestion !== categorieSel) {
+            warningBox.innerHTML = `⚠️ "${nom}" correspond généralement à la catégorie <strong>${suggestion}</strong>, pas ${categorieSel}. <button type="button" onclick="corrigerCategorie('${suggestion}')">Corriger</button>`;
+            warningBox.classList.add('visible');
+        } else {
+            warningBox.classList.remove('visible');
+        }
+    } catch(e) {
+        console.error('Erreur vérification cohérence:', e);
+    }
+}
+
+function corrigerCategorie(categorie) {
+    document.getElementById('categorieProduit').value = categorie;
+    document.getElementById('catCoherenceWarning').classList.remove('visible');
+    genererDescription();
 }
 
 document.getElementById('nomProduit').addEventListener('blur', function() {
@@ -248,6 +341,7 @@ document.getElementById('nomProduit').addEventListener('blur', function() {
     if (!nom) return;
     if (categorie) {
         genererDescription();
+        verifierCoherenceCategorie();
     } else {
         classifierCategorie(nom);
     }
@@ -255,7 +349,10 @@ document.getElementById('nomProduit').addEventListener('blur', function() {
 
 document.getElementById('categorieProduit').addEventListener('change', function() {
     const nom = document.getElementById('nomProduit').value.trim();
-    if (nom && this.value) genererDescription();
+    if (nom && this.value) {
+        genererDescription();
+        verifierCoherenceCategorie();
+    }
 });
 </script>
 @endsection

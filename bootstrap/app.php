@@ -11,11 +11,25 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->trustProxies(at: '*');
+        // ✅ CORRIGÉ : 'fabricant/*' retiré. Cette exception désactivait le
+        // CSRF sur absolument toutes les routes fabricant (changement de
+        // mot de passe, suppression de produit, génération de QR codes,
+        // etc.) — n'importe quel site tiers pouvait faire soumettre un
+        // formulaire caché à un fabricant connecté et déclencher ces
+        // actions à son insu. Audit fait sur tous les <form> et fetch()
+        // des vues fabricant : tous protégés par @csrf ou X-CSRF-TOKEN,
+        // rien ne casse au retrait de cette ligne.
+        //
+        // ✅ CORRIGÉ : 'admin/signalements/*' retiré pour la même raison.
+        // Les actions traiter/escalader (formulaires @csrf) et
+        // resume/analyser-photo (fetch + header X-CSRF-TOKEN) sont toutes
+        // déjà protégées côté vue — vérifié dans show.blade.php et
+        // index.blade.php. Sans CSRF, un site tiers pouvait faire
+        // marquer un signalement comme traité/rejeté ou l'escalader à
+        // MINCOMMERCE à l'insu d'un admin connecté.
         $middleware->validateCsrfTokens(except: [
             'admin/login',
             'fabricant/login',
-            'admin/signalements/*',
-            'fabricant/*',
             'verify/signaler',
             'verify-code',
         ]);
@@ -24,6 +38,10 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
         $middleware->web(append: [
             \App\Http\Middleware\SetLocale::class,
+        ]);
+        // ✅ AJOUTÉ : alias pour le gating de plan (carte des risques, IA)
+        $middleware->alias([
+            'plan.feature' => \App\Http\Middleware\CheckPlanFeature::class,
         ]);
         $middleware->redirectGuestsTo(function ($request) {
             if ($request->is('admin/*')) {

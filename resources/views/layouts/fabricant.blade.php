@@ -258,6 +258,46 @@
             background: var(--teal-light); border: 1px solid rgba(46,58,107,0.15);
             padding: 5px 12px; border-radius: 8px; font-weight: 600;
         }
+        .plan-badge {
+            display: flex; align-items: center; gap: 6px;
+            font-size: 11.5px; font-weight: 700;
+            padding: 6px 12px; border-radius: 20px;
+            white-space: nowrap;
+            border: 1px solid transparent;
+        }
+        .plan-badge.plan-gratuit {
+            color: #6b7280; background: var(--bg); border-color: var(--border);
+        }
+        .plan-badge.plan-pro {
+            color: #171B3D; background: linear-gradient(135deg, #F5A623, #e0961d);
+        }
+        .plan-badge svg { width: 13px; height: 13px; }
+
+        .quota-badge {
+            display: flex; align-items: center; gap: 6px;
+            font-size: 11.5px; font-weight: 600;
+            padding: 6px 12px; border-radius: 20px;
+            white-space: nowrap;
+            background: var(--bg); border: 1px solid var(--border);
+            color: var(--text-light);
+        }
+        .quota-badge.quota-low {
+            color: #92400e; background: #fffbeb; border-color: #fde68a;
+        }
+        .quota-badge.quota-exhausted {
+            color: #dc2626; background: #fef2f2; border-color: #fecaca;
+        }
+        .quota-badge svg { width: 12px; height: 12px; flex-shrink: 0; }
+        .quota-bar-track {
+            width: 32px; height: 5px; border-radius: 3px;
+            background: #e5e7eb; overflow: hidden; flex-shrink: 0;
+        }
+        .quota-bar-fill {
+            height: 100%; border-radius: 3px;
+            background: var(--teal); transition: width 0.3s;
+        }
+        .quota-badge.quota-low .quota-bar-fill { background: #f59e0b; }
+        .quota-badge.quota-exhausted .quota-bar-fill { background: #dc2626; }
 
         .lang-switcher {
             display: flex; align-items: center; gap: 4px;
@@ -660,6 +700,45 @@
             @yield('topbar-actions')
         </div>
 
+        @php
+            $fabricant = Auth::guard('fabricant')->user();
+            $isPro = $fabricant->plan === 'pro';
+
+            if (!$isPro) {
+                $quotaMax = config('plans.plans.gratuit.ia_quota_mensuel', 10);
+                $quotaUtilise = $fabricant->ia_requetes_mois ?? 0;
+                $quotaRestant = max(0, $quotaMax - $quotaUtilise);
+                $pourcentage = $quotaMax > 0 ? round(($quotaUtilise / $quotaMax) * 100) : 0;
+
+                $quotaClass = 'quota-badge';
+                if ($quotaRestant <= 0) {
+                    $quotaClass .= ' quota-exhausted';
+                } elseif ($pourcentage >= 70) {
+                    $quotaClass .= ' quota-low';
+                }
+            }
+        @endphp
+        <div class="plan-badge {{ $isPro ? 'plan-pro' : 'plan-gratuit' }}">
+            @if($isPro)
+                <svg fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.958a1 1 0 00.95.69h4.162c.969 0 1.371 1.24.588 1.81l-3.368 2.447a1 1 0 00-.363 1.118l1.287 3.957c.3.922-.755 1.688-1.538 1.118l-3.367-2.447a1 1 0 00-1.176 0l-3.367 2.447c-.783.57-1.838-.196-1.538-1.118l1.287-3.957a1 1 0 00-.363-1.118L2.062 9.385c-.783-.57-.38-1.81.588-1.81h4.162a1 1 0 00.95-.69l1.286-3.958z"/></svg>
+                Plan Pro
+            @else
+                Plan Gratuit
+            @endif
+        </div>
+
+        @if(!$isPro)
+        <div class="{{ $quotaClass }}" title="{{ $quotaUtilise }}/{{ $quotaMax }} requêtes IA utilisées ce mois">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.347.347a3.76 3.76 0 01-1.05 2.59A4.016 4.016 0 0112 21a4.016 4.016 0 01-2.841-1.163 3.76 3.76 0 01-1.05-2.59l-.347-.347z"/>
+            </svg>
+            <span>{{ $quotaRestant }}/{{ $quotaMax }} IA</span>
+            <div class="quota-bar-track">
+                <div class="quota-bar-fill" style="width: {{ $pourcentage }}%"></div>
+            </div>
+        </div>
+        @endif
+
         <div class="lang-switcher">
             <a href="{{ route('langue.changer', 'fr') }}" class="lang-btn {{ app()->getLocale() === 'fr' ? 'active' : '' }}">FR</a>
             <span class="lang-sep">|</span>
@@ -679,17 +758,20 @@
 
     <div class="content">
         @if(session('warning'))
-            <div class="warning-banner" id="warningBanner">
-                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-                </svg>
-                <span><strong>Accès refusé –</strong> {{ session('warning') }}</span>
-                <button class="close-btn" onclick="document.getElementById('warningBanner').remove()">
-                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
-                </button>
-            </div>
+          <div class="warning-banner" id="warningBanner">
+    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+    </svg>
+    <span><strong>Accès refusé –</strong> {{ session('warning') }}</span>
+    <a href="{{ route('tarifs') }}" style="margin-left:12px;flex-shrink:0;background:#F5A623;color:#171B3D;font-size:12px;font-weight:700;padding:6px 14px;border-radius:8px;text-decoration:none;white-space:nowrap;">
+        Voir les plans
+    </a>
+    <button class="close-btn" onclick="document.getElementById('warningBanner').remove()">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+    </button>
+</div>
         @endif
         @yield('content')
     </div>
@@ -924,26 +1006,34 @@
         return null;
     }
 
-    async function vsAskGemini(question) {
-        try {
-            const response = await fetch('{{ route("fabricant.chatbot.ask") }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': VS_CSRF
-                },
-                body: JSON.stringify({ question, locale: VS_LOCALE })
-            });
-            const data = await response.json();
-            return data.answer || (VS_LOCALE === 'fr'
-                ? "Je n'ai pas pu trouver une réponse précise. Consultez notre documentation ou contactez le support."
-                : "I couldn't find a precise answer. Please check our documentation or contact support.");
-        } catch(e) {
+  async function vsAskGemini(question) {
+    try {
+       const response = await fetch('{{ route("fabricant.chatbot.ask") }}', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'X-CSRF-TOKEN': VS_CSRF
+    },
+    body: JSON.stringify({ question, locale: VS_LOCALE })
+});
+
+        if (response.status === 403) {
             return VS_LOCALE === 'fr'
-                ? "Je rencontre un problème de connexion. Réessayez dans quelques instants."
-                : "I'm having a connection issue. Please try again in a moment.";
+                ? `🔒 Cet assistant IA avancé n'est pas inclus dans votre plan actuel. <a href="{{ route('tarifs') }}" style="color:#F5A623;font-weight:700;text-decoration:underline;">Voir les plans →</a>`
+                : `🔒 This advanced AI assistant isn't included in your current plan. <a href="{{ route('tarifs') }}" style="color:#F5A623;font-weight:700;text-decoration:underline;">View plans →</a>`;
         }
+
+        const data = await response.json();
+        return data.answer || (VS_LOCALE === 'fr'
+            ? "Je n'ai pas pu trouver une réponse précise. Consultez notre documentation ou contactez le support."
+            : "I couldn't find a precise answer. Please check our documentation or contact support.");
+    } catch(e) {
+        return VS_LOCALE === 'fr'
+            ? "Je rencontre un problème de connexion. Réessayez dans quelques instants."
+            : "I'm having a connection issue. Please try again in a moment.";
     }
+}
 
     async function vsSend() {
         const input = document.getElementById('vsChatInput');

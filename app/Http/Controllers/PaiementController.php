@@ -41,6 +41,55 @@ class PaiementController extends Controller
         }
     }
 
+    /**
+     * Vérifie le statut réel d'une transaction directement auprès de CamPay.
+     * Ne fait JAMAIS confiance à un statut fourni par le client ou par un webhook :
+     * on interroge nous-mêmes l'API avec notre propre token.
+     */
+    private function verifierStatutAupresDeCampay(string $campayReference): ?string
+    {
+        $token = $this->getCampayToken();
+        if (!$token) return null;
+
+        try {
+            $response = Http::timeout(15)
+                ->withHeaders(['Authorization' => 'Token ' . $token])
+                ->get(config('services.campay.base_url') . 'transaction/' . $campayReference . '/');
+        } catch (\Exception $e) {
+            Log::error('CamPay verification exception: ' . $e->getMessage());
+            return null;
+        }
+
+        if (!$response->successful()) {
+            Log::error('CamPay verification failed', ['status' => $response->status(), 'body' => $response->body()]);
+            return null;
+        }
+
+        return strtoupper($response->json()['status'] ?? 'PENDING');
+    }
+
+    private function appliquerStatut(Abonnement $abonnement, string $statutVerifie): void
+    {
+        if ($statutVerifie === 'SUCCESSFUL' && $abonnement->statut !== 'successful') {
+            $abonnement->update(['statut' => 'successful']);
+            if ($abonnement->fabricant_id && $abonnement->fabricant) {
+                $abonnement->fabricant->update(['plan' => $abonnement->plan]);
+            }
+        } elseif ($statutVerifie === 'FAILED' && $abonnement->statut !== 'failed') {
+            $abonnement->update(['statut' => 'failed']);
+        }
+    }
+
+    /**
+     * Vérifie que l'abonnement demandé appartient bien au fabricant connecté.
+     * Bloque l'accès (404, pour ne pas confirmer l'existence de la ressource) sinon.
+     */
+    private function autoriserAccesAbonnement(Abonnement $abonnement): void
+    {
+        $fabricantId = Auth::guard('fabricant')->id();
+        abort_if($abonnement->fabricant_id !== $fabricantId, 404);
+    }
+
     public function show(Request $request, string $plan)
     {
         if (!array_key_exists($plan, $this->plans)) abort(404);
@@ -51,6 +100,9 @@ class PaiementController extends Controller
 
     public function initier(Request $request)
     {
+        // Sans compte fabricant authentifié, pas d'appel CamPay ni d'Abonnement créé.
+        abort_if(!Auth::guard('fabricant')->check(), 403);
+
         $request->validate([
             'plan'      => 'required|in:starter,pro,entreprise',
             'telephone' => 'required|string|min:9|max:9',
@@ -114,7 +166,9 @@ class PaiementController extends Controller
     {
         $reference  = $request->reference;
         $abonnement = Abonnement::where('reference', $reference)->firstOrFail();
-        $locale     = app()->getLocale();
+        $this->autoriserAccesAbonnement($abonnement);
+
+        $locale = app()->getLocale();
         return view('paiement.attente', compact('abonnement', 'locale'));
     }
 
@@ -122,60 +176,45 @@ class PaiementController extends Controller
     {
         $reference  = $request->reference;
         $abonnement = Abonnement::where('reference', $reference)->firstOrFail();
+        $this->autoriserAccesAbonnement($abonnement);
 
         if ($abonnement->statut === 'successful') return response()->json(['statut' => 'SUCCESSFUL']);
         if ($abonnement->statut === 'failed')     return response()->json(['statut' => 'FAILED']);
         if (!$abonnement->campay_reference)       return response()->json(['statut' => 'PENDING']);
 
-        $token = $this->getCampayToken();
-        if (!$token) return response()->json(['statut' => 'PENDING']);
+        $statutVerifie = $this->verifierStatutAupresDeCampay($abonnement->campay_reference);
+        if (!$statutVerifie) return response()->json(['statut' => 'PENDING']);
 
-        try {
-            $response = Http::timeout(15)
-                ->withHeaders(['Authorization' => 'Token ' . $token])
-                ->get(config('services.campay.base_url') . 'transaction/' . $abonnement->campay_reference . '/');
-        } catch (\Exception $e) {
-            Log::error('CamPay statut exception: ' . $e->getMessage());
-            return response()->json(['statut' => 'PENDING']);
-        }
+        $this->appliquerStatut($abonnement, $statutVerifie);
 
-        if ($response->successful()) {
-            $statut = strtoupper($response->json()['status'] ?? 'PENDING');
-            if ($statut === 'SUCCESSFUL') {
-                $abonnement->update(['statut' => 'successful']);
-                if ($abonnement->fabricant_id && $abonnement->fabricant) {
-                    $abonnement->fabricant->update(['plan' => $abonnement->plan]);
-                }
-            } elseif ($statut === 'FAILED') {
-                $abonnement->update(['statut' => 'failed']);
-            }
-            return response()->json(['statut' => $statut]);
-        }
-
-        return response()->json(['statut' => 'PENDING']);
+        return response()->json(['statut' => $statutVerifie]);
     }
 
+    /**
+     * Webhook CamPay.
+     *
+     * IMPORTANT : on ne fait JAMAIS confiance au champ "status" envoyé dans le corps
+     * de la requête — n'importe qui peut poster ici avec un statut forgé. Le webhook
+     * sert uniquement de déclencheur : on va nous-mêmes revérifier le statut réel
+     * auprès de CamPay avec notre propre token avant de mettre quoi que ce soit à jour.
+     */
     public function webhook(Request $request)
     {
         Log::info('CamPay webhook reçu', $request->all());
-        $data      = $request->all();
-        $reference = $data['external_reference'] ?? null;
 
+        $reference = $request->input('external_reference');
         if (!$reference) return response()->json(['ok' => false], 400);
 
         $abonnement = Abonnement::where('reference', $reference)->first();
         if (!$abonnement) return response()->json(['ok' => false], 404);
 
-        $statut = strtoupper($data['status'] ?? 'PENDING');
+        $campayReference = $abonnement->campay_reference ?? $request->input('reference');
+        if (!$campayReference) return response()->json(['ok' => false], 400);
 
-        if ($statut === 'SUCCESSFUL') {
-            $abonnement->update(['statut' => 'successful', 'campay_reference' => $data['reference'] ?? $abonnement->campay_reference]);
-            if ($abonnement->fabricant_id && $abonnement->fabricant) {
-                $abonnement->fabricant->update(['plan' => $abonnement->plan]);
-            }
-        } elseif ($statut === 'FAILED') {
-            $abonnement->update(['statut' => 'failed']);
-        }
+        $statutVerifie = $this->verifierStatutAupresDeCampay($campayReference);
+        if (!$statutVerifie) return response()->json(['ok' => false], 502);
+
+        $this->appliquerStatut($abonnement, $statutVerifie);
 
         return response()->json(['ok' => true]);
     }
@@ -184,7 +223,9 @@ class PaiementController extends Controller
     {
         $reference  = $request->reference;
         $abonnement = Abonnement::where('reference', $reference)->firstOrFail();
-        $locale     = app()->getLocale();
+        $this->autoriserAccesAbonnement($abonnement);
+
+        $locale = app()->getLocale();
         return view('paiement.succes', compact('abonnement', 'locale'));
     }
 }

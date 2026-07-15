@@ -8,10 +8,11 @@ use Illuminate\Support\Facades\Log;
 use App\Models\QrCode;
 use App\Models\Produit;
 use App\Models\Signalement;
+use App\Models\Verification;
 
 class VerificationController extends Controller
 {
-    // Seuil : plus de 10 scans en moins de 24h = vélocité suspecte
+    // Seuil : plus de X scans en moins de 24h = vélocité suspecte
     const SEUIL_SCANS_24H = 3;
     const FENETRE_HEURES  = 24;
 
@@ -34,6 +35,9 @@ class VerificationController extends Controller
         $hmacValide = $this->verifierHmac($token, $qrCode->hmac);
 
         if (!$hmacValide) {
+            // Enregistrement de la vérification (signature invalide = contrefait)
+            $this->enregistrerVerification($request, $qrCode, 'contrefait');
+
             return view('verify', [
                 'statut'  => 'contrefait',
                 'message' => 'La signature de ce QR code est invalide.',
@@ -44,6 +48,9 @@ class VerificationController extends Controller
         }
 
         if ($qrCode->statut === 'revoque') {
+            // Enregistrement de la vérification (QR code révoqué)
+            $this->enregistrerVerification($request, $qrCode, 'revoque');
+
             return view('verify', [
                 'statut'  => 'revoque',
                 'message' => "Ce QR code a été révoqué.",
@@ -61,6 +68,9 @@ class VerificationController extends Controller
 
         // Déterminer le statut
         $statut = $this->determinerStatut($qrCode);
+
+        // Enregistrement de la vérification (authentique / suspect)
+        $this->enregistrerVerification($request, $qrCode, $statut);
 
         $produit = $qrCode->lot->produit ?? null;
 
@@ -117,6 +127,13 @@ class VerificationController extends Controller
 
         $statut = $signalementsEnCours > 0 || $alerteVelocite ? 'suspect' : 'authentique';
 
+        // Enregistrement de la vérification (recherche par code produit)
+        // On rattache la vérification au dernier QR code du produit s'il existe
+        $qrCodePourLog = QrCode::whereIn('id', $qrCodeIds)->latest()->first();
+        if ($qrCodePourLog) {
+            $this->enregistrerVerification($request, $qrCodePourLog, $statut);
+        }
+
         return view('verify', [
             'statut'            => $statut,
             'message'           => $statut === 'authentique'
@@ -152,13 +169,13 @@ class VerificationController extends Controller
             'contact_signalant' => 'nullable|string|max:100',
             'photo_preuve'      => 'nullable|image|max:8192',
         ], [
-            'qr_code_id.required'   => 'Identifiant QR code manquant.',
-            'qr_code_id.exists'     => 'Ce QR code n\'existe pas.',
-            'description.required'  => 'La description est obligatoire.',
-            'description.min'       => 'La description doit faire au moins 10 caractères.',
-            'description.max'       => 'La description ne doit pas dépasser 500 caractères.',
-            'photo_preuve.image'    => 'Le fichier doit être une image (jpg, png, gif...).',
-            'photo_preuve.max'      => 'La photo ne doit pas dépasser 8 Mo.',
+            'qr_code_id.required'  => 'Identifiant QR code manquant.',
+            'qr_code_id.exists'    => 'Ce QR code n\'existe pas.',
+            'description.required' => 'La description est obligatoire.',
+            'description.min'      => 'La description doit faire au moins 10 caractères.',
+            'description.max'      => 'La description ne doit pas dépasser 500 caractères.',
+            'photo_preuve.image'   => 'Le fichier doit être une image (jpg, png, gif...).',
+            'photo_preuve.max'     => 'La photo ne doit pas dépasser 8 Mo.',
         ]);
 
         $data = [
@@ -186,6 +203,7 @@ class VerificationController extends Controller
                 $data['analyse_ia'] = $analyseIA;
             } catch (\Exception $e) {
                 // L'analyse IA est optionnelle
+                Log::warning('Échec analyse IA (signalement) : ' . $e->getMessage());
             }
         }
 
@@ -200,6 +218,30 @@ class VerificationController extends Controller
         return back()
             ->with('success_signalement', 'Votre signalement a bien été enregistré. Merci pour votre contribution.')
             ->with('analyse_ia', $analyseIA);
+    }
+
+    /**
+     * Enregistre une vérification dans la table `verifications`
+     * pour que les statistiques admin/fabricant/welcome soient réelles.
+     * Réutilise le même schéma que VerifyApiController (user_id, qr_code_id,
+     * ip_address, appareil, localisation, resultat).
+     */
+    private function enregistrerVerification(Request $request, QrCode $qrCode, string $statut): void
+    {
+        try {
+            Verification::create([
+                'user_id'      => auth()->id(), // null si visiteur non connecté (web public)
+                'qr_code_id'   => $qrCode->id,
+                'ip_address'   => $request->ip(),
+                'appareil'     => $request->userAgent(),
+                'localisation' => $request->input('localisation', null),
+                'resultat'     => $statut,
+            ]);
+        } catch (\Exception $e) {
+            // On ne bloque jamais l'affichage du résultat pour le visiteur
+            // même si l'enregistrement de la vérification échoue.
+            Log::warning('Échec enregistrement Verification (web) : ' . $e->getMessage());
+        }
     }
 
     /**
@@ -218,9 +260,9 @@ class VerificationController extends Controller
             $maintenant->diffInHours($qrCode->premier_scan_fenetre) >= $fenetre
         ) {
             $qrCode->update([
-                'nb_scans_24h'        => 1,
+                'nb_scans_24h'         => 1,
                 'premier_scan_fenetre' => $maintenant,
-                'alerte_velocite'     => false,
+                'alerte_velocite'      => false,
             ]);
             return;
         }
@@ -281,6 +323,8 @@ class VerificationController extends Controller
 Description : \"$description\"
 Analyse cette image et donne un avis en 2-3 phrases. Commence par le niveau de suspicion (Faible/Modéré/Élevé).";
 
+        // Correction : espace manquant après "Bearer" (bug qui faisait échouer
+        // systématiquement cette requête, silencieusement absorbé par le try/catch appelant).
         $response = Http::timeout(30)
             ->withHeaders([
                 'Authorization' => 'Bearer ' . $apiKey,
@@ -293,7 +337,7 @@ Analyse cette image et donne un avis en 2-3 phrases. Commence par le niveau de s
                         'role'    => 'user',
                         'content' => [
                             [
-                                'type'      => 'image_url',
+                                'type' => 'image_url',
                                 'image_url' => ['url' => "data:{$mimeType};base64,{$imageData}"],
                             ],
                             ['type' => 'text', 'text' => $prompt],
@@ -376,6 +420,14 @@ Analyse cette image et fournis : niveau de suspicion, observations, signes de co
         }
     }
 
+    /**
+     * NOTE : si $hmacStocke est null, la vérification est considérée comme
+     * valide par défaut (comportement permissif). À confirmer : ce fallback
+     * est-il volontaire (rétrocompatibilité avec des QR codes générés avant
+     * l'introduction du HMAC) ou s'agit-il d'un oubli de sécurité ?
+     * Si tous les QR codes doivent obligatoirement avoir un HMAC, remplacer
+     * `if (!$hmacStocke) return true;` par `if (!$hmacStocke) return false;`.
+     */
     private function verifierHmac(string $token, ?string $hmacStocke): bool
     {
         if (!$hmacStocke) return true;

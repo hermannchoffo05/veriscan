@@ -27,7 +27,6 @@ class FabricantStatistiquesController extends Controller
         $totalQrcodes  = $qrcodeIds->count();
         $totalScans    = Verification::whereIn('qr_code_id', $qrcodeIds)->count();
 
-        // ✅ Suppression du orWhereNull : uniquement les signalements de ce fabricant
         $totalSignalements = Signalement::whereIn('qr_code_id', $qrcodeIds)->count();
 
         // -- Signalements des 6 derniers mois ---------------------------------
@@ -35,7 +34,11 @@ class FabricantStatistiquesController extends Controller
         for ($i = 5; $i >= 0; $i--) {
             $mois = Carbon::now()->subMonths($i);
             $signalementsParMois[] = [
-                'mois'  => $mois->format('M Y'),
+                // ✅ CORRIGÉ : ->format('M Y') ignorait la locale de l'app et
+                // sortait toujours en anglais (ex. "Jul 2026") même en session
+                // française. isoFormat + locale() est la convention déjà
+                // utilisée ailleurs (dashboard) pour ce genre de libellé.
+                'mois'  => $mois->locale(app()->getLocale())->isoFormat('MMM YYYY'),
                 'total' => Signalement::whereIn('qr_code_id', $qrcodeIds)
                                       ->whereYear('created_at', $mois->year)
                                       ->whereMonth('created_at', $mois->month)
@@ -44,16 +47,20 @@ class FabricantStatistiquesController extends Controller
         }
 
         // -- Top 5 produits par scans -----------------------------------------
-        $topProduits = Produit::where('fabricant_id', $fabricant->id)
-            ->get()
-            ->map(function ($p) {
-                $lotIds         = $p->lots()->pluck('id');
-                $qrIds          = QrCode::whereIn('lot_id', $lotIds)->pluck('id');
-                $p->total_scans = Verification::whereIn('qr_code_id', $qrIds)->count();
-                return $p;
-            })
-            ->sortByDesc('total_scans')
-            ->take(5);
+        // ✅ CORRIGÉ : remplace la boucle N+1 (2 requêtes par produit : lots
+        // puis verifications) par une seule requête jointe.
+    $topProduits = Produit::where('fabricant_id', $fabricant->id)
+    ->select('produits.*')
+    ->selectSub(function ($query) {
+        $query->selectRaw('COUNT(verifications.id)')
+            ->from('lots')
+            ->join('qr_codes', 'qr_codes.lot_id', '=', 'lots.id')
+            ->join('verifications', 'verifications.qr_code_id', '=', 'qr_codes.id')
+            ->whereColumn('lots.produit_id', 'produits.id');
+    }, 'total_scans')
+    ->orderByDesc('total_scans')
+    ->take(5)
+    ->get();
 
         // -- Répartition par catégorie ----------------------------------------
         $repartitionCategories = Produit::where('fabricant_id', $fabricant->id)

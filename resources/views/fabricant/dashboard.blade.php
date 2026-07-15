@@ -105,7 +105,7 @@
     .signal-item:hover { border-color: #2E3A6B; background: var(--teal-light); }
     .signal-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .signal-icon svg { width: 16px; height: 16px; }
-    .signal-icon.yellow{background:#fefce8;color:#a16207} .signal-icon.red{background:#fef2f2;color:#CE1126}
+    .signal-icon.yellow{background:#fefce8;color:#a16207} .signal-icon.red{background:#fef2f2;color:#CE1126} .signal-icon.green{background:#f0fdf4;color:#007A4D}
     .signal-content { flex: 1; min-width: 0; }
     .signal-content strong { display: block; font-size: 12.5px; font-weight: 700; color: var(--text); }
     .signal-content span { font-size: 11.5px; color: var(--text-light); }
@@ -264,8 +264,26 @@
             <div class="card-body">
                 <div class="signal-list">
                     @forelse($signalementsRecents as $signalement)
+                        {{--
+                            ✅ CORRIGÉ : la couleur reflète désormais le statut réel plutôt
+                            que d'être un simple "en_cours ? jaune : rouge" (qui affichait un
+                            signalement traité/résolu avec succès de la même couleur qu'un
+                            signalement rejeté).
+                            HYPOTHÈSE À VÉRIFIER : je ne connais pas l'enum exact utilisé pour
+                            Signalement.statut au-delà de 'en_cours' (confirmé dans le
+                            contrôleur). J'ai supposé 'rejete'/'rejeté'/'contrefait' pour le
+                            rouge et tout le reste (traité, résolu, validé...) pour le vert.
+                            Si les vraies valeurs diffèrent, dis-les-moi et j'ajuste le match.
+                        --}}
+                        @php
+                            $signalIconClass = match($signalement->statut) {
+                                'en_cours' => 'yellow',
+                                'rejete', 'rejeté', 'contrefait' => 'red',
+                                default => 'green',
+                            };
+                        @endphp
                         <a href="{{ route('fabricant.signalements.show', $signalement->id) }}" class="signal-item">
-                            <div class="signal-icon {{ $signalement->statut === 'en_cours' ? 'yellow' : 'red' }}">
+                            <div class="signal-icon {{ $signalIconClass }}">
                                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01"/></svg>
                             </div>
                             <div class="signal-content">
@@ -316,7 +334,13 @@
                                     </td>
                                     <td><span class="product-sector">{{ $produit->categorie }}</span></td>
                                     <td style="font-weight:700;">{{ $produit->nb_scans ?? 0 }}</td>
-                                    <td><span class="status-badge actif">{{ __('messages.authentique') }}</span></td>
+                                    <td>
+                                        @if($produit->est_suspect)
+                                            <span class="status-badge suspect">{{ __('messages.suspect') }}</span>
+                                        @else
+                                            <span class="status-badge actif">{{ __('messages.authentique') }}</span>
+                                        @endif
+                                    </td>
                                 </tr>
                             @empty
                                 <tr><td colspan="4" class="empty-state">Aucun produit enregistré</td></tr>

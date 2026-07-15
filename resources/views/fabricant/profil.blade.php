@@ -126,12 +126,12 @@
                     @else {{ __('messages.compte_suspendu') }}
                     @endif
                 </span>
-                <div class="quick-stats">
-                    <div class="quick-stat"><div class="quick-stat-val">0</div><div class="quick-stat-lbl">{{ __('messages.mes_produits') }}</div></div>
-                    <div class="quick-stat"><div class="quick-stat-val">0</div><div class="quick-stat-lbl">QR Codes</div></div>
-                    <div class="quick-stat"><div class="quick-stat-val">0</div><div class="quick-stat-lbl">{{ __('messages.scans') }}</div></div>
-                    <div class="quick-stat"><div class="quick-stat-val">0</div><div class="quick-stat-lbl">{{ __('messages.signalements') }}</div></div>
-                </div>
+<div class="quick-stats">
+    <div class="quick-stat"><div class="quick-stat-val">{{ $totalProduits }}</div><div class="quick-stat-lbl">{{ __('messages.mes_produits') }}</div></div>
+    <div class="quick-stat"><div class="quick-stat-val">{{ $totalQrCodes }}</div><div class="quick-stat-lbl">QR Codes</div></div>
+    <div class="quick-stat"><div class="quick-stat-val">{{ $totalScans }}</div><div class="quick-stat-lbl">{{ __('messages.scans') }}</div></div>
+    <div class="quick-stat"><div class="quick-stat-val">{{ $totalSignalements }}</div><div class="quick-stat-lbl">{{ __('messages.signalements') }}</div></div>
+</div>
             </div>
 
             <div class="profil-card" style="padding:10px;">

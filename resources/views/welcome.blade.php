@@ -28,6 +28,8 @@
         .btn-nav-teal:hover { background: #dde1f5; }
         .btn-nav-outline { background: none; color: var(--teal); border: 1.5px solid var(--teal); }
         .btn-nav-outline:hover { background: var(--teal-light); }
+        .btn-nav-orange { background: var(--yellow); color: var(--teal-dark); border: 1.5px solid var(--yellow); box-shadow: 0 2px 8px rgba(245,166,35,0.35); }
+        .btn-nav-orange:hover { background: var(--yellow-dark); border-color: var(--yellow-dark); }
         .btn-nav-solid { background: var(--teal); color: white; border: 1.5px solid var(--teal); box-shadow: 0 2px 8px rgba(46,58,107,0.25); }
         .btn-nav-solid:hover { background: var(--teal-dark); }
 
@@ -243,7 +245,7 @@
             <a href="{{ route('langue.changer', 'en') }}" class="lang-btn {{ $locale === 'en' ? 'active' : '' }}">EN</a>
         </div>
         <a href="{{ route('verify.home') }}" class="btn-nav btn-nav-teal">✓ {{ $locale === 'en' ? 'Verify' : 'Vérifier' }}</a>
-        <a href="{{ route('fabricant.login') }}" class="btn-nav btn-nav-outline">{{ $locale === 'en' ? 'Log in' : 'Connexion' }}</a>
+        <a href="{{ route('fabricant.login') }}" class="btn-nav btn-nav-orange">{{ $locale === 'en' ? 'Log in' : 'Connexion' }}</a>
         <a href="{{ route('fabricant.register') }}" class="btn-nav btn-nav-solid">{{ $locale === 'en' ? 'Sign up' : "S'inscrire" }}</a>
     </div>
     <button class="nav-hamburger" onclick="toggleMobileMenu()" aria-label="Menu">
@@ -256,7 +258,7 @@
     <a href="#fonctionnalites" onclick="toggleMobileMenu()">{{ $locale === 'en' ? 'Features' : 'Fonctionnalités' }}</a>
     <a href="#tarifs" onclick="toggleMobileMenu()">{{ $locale === 'en' ? 'Pricing' : 'Tarifs' }}</a>
     <a href="{{ route('verify.home') }}" style="color:var(--teal);">✓ {{ $locale === 'en' ? 'Verify a product' : 'Vérifier un produit' }}</a>
-    <a href="{{ route('fabricant.login') }}">{{ $locale === 'en' ? 'Log in' : 'Se connecter' }}</a>
+    <a href="{{ route('fabricant.login') }}" style="color:var(--yellow-dark);font-weight:700;">{{ $locale === 'en' ? 'Log in' : 'Se connecter' }}</a>
     <a href="{{ route('fabricant.register') }}" style="color:var(--teal);font-weight:700;">{{ $locale === 'en' ? 'Sign up free' : "S'inscrire gratuitement" }}</a>
     <div class="nav-mobile-lang">
         <a href="{{ route('langue.changer', 'fr') }}" style="{{ $locale === 'fr' ? 'background:var(--teal);color:white;border-color:var(--teal);' : 'color:var(--text-light);' }}">FR</a>
@@ -294,10 +296,10 @@
 </section>
 
 <div class="stats-band">
-    <div class="band-stat"><div class="band-stat-value">47</div><div class="band-stat-label">{{ $locale === 'en' ? 'Verified products' : 'Produits vérifiés' }}</div></div>
-    <div class="band-stat"><div class="band-stat-value">12</div><div class="band-stat-label">{{ $locale === 'en' ? 'Registered manufacturers' : 'Fabricants inscrits' }}</div></div>
-    <div class="band-stat"><div class="band-stat-value">3</div><div class="band-stat-label">{{ $locale === 'en' ? 'Counterfeits detected' : 'Contrefaçons détectées' }}</div></div>
-    <div class="band-stat"><div class="band-stat-value">98<span class="accent">%</span></div><div class="band-stat-label">{{ $locale === 'en' ? 'Detection reliability' : 'Fiabilité de détection' }}</div></div>
+    <div class="band-stat"><div class="band-stat-value">{{ $stats['produits_verifies'] }}</div><div class="band-stat-label">{{ $locale === 'en' ? 'Verified products' : 'Produits vérifiés' }}</div></div>
+    <div class="band-stat"><div class="band-stat-value">{{ $stats['fabricants_inscrits'] }}</div><div class="band-stat-label">{{ $locale === 'en' ? 'Registered manufacturers' : 'Fabricants inscrits' }}</div></div>
+    <div class="band-stat"><div class="band-stat-value">{{ $stats['contrefacons'] }}</div><div class="band-stat-label">{{ $locale === 'en' ? 'Counterfeits detected' : 'Contrefaçons détectées' }}</div></div>
+    <div class="band-stat"><div class="band-stat-value">{{ $stats['fiabilite'] }}<span class="accent">%</span></div><div class="band-stat-label">{{ $locale === 'en' ? 'Detection reliability' : 'Fiabilité de détection' }}</div></div>
 </div>
 
 <section id="comment" class="how-section">

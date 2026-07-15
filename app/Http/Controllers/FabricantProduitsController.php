@@ -53,6 +53,13 @@ class FabricantProduitsController extends Controller
         ]);
         $validated['fabricant_id'] = $fabricant->id;
         $validated['code_produit'] = 'VS-' . strtoupper(Str::random(8));
+
+        $restant = $fabricant->quotaProduitsRestant();
+        if ($restant !== null && $restant <= 0) {
+           return back()->withInput()->with('warning',
+    "Vous avez atteint la limite de produits de votre plan ({$fabricant->limites()['label']}). Passez à un plan supérieur pour en ajouter davantage.");
+        }
+
         if ($request->hasFile('image')) {
             $validated['image'] = $request->file('image')->store('produits', 'public');
         }
@@ -122,8 +129,32 @@ class FabricantProduitsController extends Controller
         return $response->json('choices.0.message.content');
     }
 
+    /**
+     * Réponse JSON standard quand le quota mensuel de l'assistant IA produit
+     * (description + classification, compté ensemble) est épuisé.
+     */
+    private function reponseQuotaAtteint(): \Illuminate\Http\JsonResponse
+    {
+        $fabricant = Auth::guard('fabricant')->user();
+        $limite    = $fabricant->quotaIAAssistantMensuel();
+        $resetLe   = $fabricant->prochaineReinitialisationIA()->format('d/m/Y');
+
+        return response()->json([
+            'error'    => 'quota_atteint',
+            'message'  => "Vous avez atteint votre quota mensuel de {$limite} requêtes IA pour l'assistant produit. Il sera réinitialisé le {$resetLe}.",
+            'reset_le' => $resetLe,
+        ], 429);
+    }
+
     public function generateDescription(Request $request)
     {
+        $fabricant = Auth::guard('fabricant')->user();
+
+        // ✅ Quota mensuel (gratuit/starter) au lieu d'un blocage total
+        if (!$fabricant->peutUtiliserAssistantProduitIA()) {
+            return $this->reponseQuotaAtteint();
+        }
+
         $request->validate([
             'nom'       => 'required|string|max:255',
             'categorie' => 'required|string',
@@ -133,7 +164,11 @@ class FabricantProduitsController extends Controller
         $prompt    = "Tu es un expert en rédaction de fiches produits professionnelles pour une plateforme de vérification d'authenticité appelée VeriScan. Génère une description produit concise, professionnelle et informative (3 à 4 phrases maximum) pour le produit suivant :\n\nNom du produit : {$nom}\nCatégorie : {$categorie}\n\nLa description doit :\n- Être rédigée en français\n- Présenter le produit de façon claire et rassurante\n- Mettre en avant la qualité et l'authenticité\n- Être adaptée à la catégorie du produit\n- Ne pas inventer de caractéristiques techniques précises\n\nRéponds uniquement avec la description, sans titre ni guillemets.";
         try {
             $description = $this->groqCall($prompt, 200);
-            if ($description) return response()->json(['description' => trim($description)]);
+            if ($description) {
+                // ✅ On ne consomme le quota qu'en cas de succès réel
+                $fabricant->incrementerAssistantProduitIA();
+                return response()->json(['description' => trim($description)]);
+            }
             return response()->json(['error' => 'Génération échouée'], 500);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
@@ -142,6 +177,13 @@ class FabricantProduitsController extends Controller
 
     public function classifyCategory(Request $request)
     {
+        $fabricant = Auth::guard('fabricant')->user();
+
+        // ✅ Quota mensuel (gratuit/starter) au lieu d'un blocage total
+        if (!$fabricant->peutUtiliserAssistantProduitIA()) {
+            return $this->reponseQuotaAtteint();
+        }
+
         $request->validate([
             'nom'       => 'required|string|max:255',
             'categorie' => 'nullable|string',
@@ -160,6 +202,7 @@ class FabricantProduitsController extends Controller
         try {
             $category = $this->groqCall($prompt, 20);
             if ($category) {
+                $fabricant->incrementerAssistantProduitIA();
                 return response()->json(['category' => trim($category)]);
             }
             return response()->json(['error' => 'Classification échouée'], 500);
@@ -170,6 +213,12 @@ class FabricantProduitsController extends Controller
 
     public function chat(Request $request)
     {
+        // Chatbot conversationnel — reste réservé Pro/Entreprise (décision distincte)
+        $fabricant = Auth::guard('fabricant')->user();
+        if (!$fabricant->aAccesIA()) {
+            return response()->json(['answer' => "L'assistant IA est réservé aux plans Pro et Entreprise."], 403);
+        }
+
         $request->validate([
             'question' => 'required|string|max:500',
             'locale'   => 'nullable|string|in:fr,en',

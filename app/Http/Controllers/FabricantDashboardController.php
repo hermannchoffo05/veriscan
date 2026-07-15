@@ -22,12 +22,15 @@ class FabricantDashboardController extends Controller
         $totalProduits   = $produitIds->count();
         $totalQrcodes    = $qrcodeIds->count();
 
-        // ✅ Utilise nb_scans sur qr_codes (cohérent avec VerificationController)
-        $totalScans      = QrCode::whereIn('id', $qrcodeIds)->sum('nb_scans');
+        // ✅ CORRIGÉ : QrCode.nb_scans n'est incrémenté que sur le parcours "scan QR"
+        // (VerificationController@verifyToken), pas sur la saisie manuelle de code
+        // (verifyCode). Verification est la seule source qui capture les deux parcours,
+        // donc c'est elle qui doit servir de vérité unique ici — comme pour
+        // $produitsRecents plus bas, qui compte déjà via un join sur verifications.
+        $totalScans      = Verification::whereIn('qr_code_id', $qrcodeIds)->count();
         $scansAujourdHui = Verification::whereIn('qr_code_id', $qrcodeIds)
                             ->whereDate('created_at', today())->count();
 
-        // ✅ Suppression de orWhereNull : on ne montre que les signalements de ce fabricant
         $totalSignalements = Signalement::whereIn('qr_code_id', $qrcodeIds)->count();
 
         $signalementsEnCours = Signalement::whereIn('qr_code_id', $qrcodeIds)
@@ -41,7 +44,17 @@ class FabricantDashboardController extends Controller
             }])
             ->latest()->limit(4)->get();
 
-        // ✅ Suppression de orWhereNull
+        // ✅ CORRIGÉ : badge "Statut" dynamique. Logique identique à
+        // FabricantProduitsController::index() (est_suspect = a au moins un
+        // signalement en_cours) pour ne pas introduire une deuxième définition
+        // divergente de "suspect" entre les deux pages.
+        foreach ($produitsRecents as $produit) {
+            $produitLotIds = $produit->lots()->pluck('id');
+            $produitQrIds  = QrCode::whereIn('lot_id', $produitLotIds)->pluck('id');
+            $produit->est_suspect = Signalement::whereIn('qr_code_id', $produitQrIds)
+                ->where('statut', 'en_cours')->count() > 0;
+        }
+
         $signalementsRecents = Signalement::whereIn('qr_code_id', $qrcodeIds)
             ->with(['qrCode.lot'])->latest()->limit(3)->get();
 
@@ -58,7 +71,6 @@ class FabricantDashboardController extends Controller
                                     ->whereDate('created_at', $date)->count();
         }
 
-        // ✅ Suppression de orWhereNull
         $notifications = Signalement::whereIn('qr_code_id', $qrcodeIds)
             ->where('statut', 'en_cours')
             ->with('qrCode.lot.produit')->latest()->limit(5)->get();

@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\RateLimiter;
 
 class FabricantAuthController extends Controller
 {
@@ -24,10 +25,24 @@ class FabricantAuthController extends Controller
             'password' => ['required'],
         ]);
 
+        // ✅ AJOUTÉ : aucune limite de tentatives n'existait avant — brute-force
+        // / credential stuffing possible sans friction sur /fabricant/login.
+        $throttleKey = 'login|' . strtolower($credentials['email']) . '|' . $request->ip();
+
+        if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
+            $seconds = RateLimiter::availableIn($throttleKey);
+            return back()->withErrors([
+                'email' => "Trop de tentatives. Réessayez dans {$seconds} secondes.",
+            ])->onlyInput('email');
+        }
+
         if (Auth::guard('fabricant')->attempt($credentials, $request->boolean('remember'))) {
+            RateLimiter::clear($throttleKey);
             $request->session()->regenerate();
             return redirect()->intended(route('fabricant.dashboard'));
         }
+
+        RateLimiter::hit($throttleKey, 60);
 
         return back()->withErrors([
             'email' => 'Ces identifiants ne correspondent à aucun compte fabricant.',
@@ -57,6 +72,9 @@ class FabricantAuthController extends Controller
             'telephone'      => $data['telephone'] ?? null,
             'adresse'        => $data['adresse'] ?? null,
             'pays'           => $data['pays'] ?? 'Cameroun',
+            // NOTE : auto-activation laissée telle quelle pour l'instant, en
+            // attendant un vrai workflow d'approbation admin (AdminFabricantsController
+            // n'a pas encore de méthode activer()). Point à revoir après la démo.
             'statut'         => 'actif',
         ]);
 
@@ -82,6 +100,19 @@ class FabricantAuthController extends Controller
     {
         $request->validate(['email' => ['required', 'email']]);
 
+        // ✅ AJOUTÉ : limite les demandes de code à 3 par 5 minutes par email.
+        // Sans ça, rien n'empêchait de spammer un fabricant de codes (email
+        // bombing) ou de réinitialiser sans cesse la fenêtre de 10 minutes
+        // pour prolonger une tentative de brute-force sur verifyCode().
+        $requestThrottleKey = 'reset-request|' . strtolower($request->email);
+        if (RateLimiter::tooManyAttempts($requestThrottleKey, 3)) {
+            $seconds = RateLimiter::availableIn($requestThrottleKey);
+            return back()->withErrors([
+                'email' => "Trop de demandes de code. Réessayez dans {$seconds} secondes.",
+            ]);
+        }
+        RateLimiter::hit($requestThrottleKey, 300);
+
         $fabricant = Fabricant::where('email', $request->email)->first();
 
         if (!$fabricant) {
@@ -90,36 +121,67 @@ class FabricantAuthController extends Controller
 
         $code = rand(100000, 999999);
 
-        // ✅ 10 minutes au lieu de 60 secondes
+        // 10 minutes de validité en cache
         Cache::put('password_reset_' . $request->email, $code, now()->addMinutes(10));
 
-        // ✅ Sujet corrigé (espace ajouté)
         Mail::raw("Votre code de réinitialisation VeriScan : $code", function ($message) use ($request) {
             $message->to($request->email)->subject('Code de réinitialisation VeriScan');
         });
+
+        // ✅ On garde l'email en session pour la page de vérification et le renvoi de code
+        session(['reset_email' => $request->email]);
 
         return redirect()->route('fabricant.password.verify');
     }
 
     public function showVerifyCode()
     {
+        // Si on arrive ici sans être passé par sendResetCode, on renvoie vers la demande d'email
+        if (!session('reset_email')) {
+            return redirect()->route('fabricant.password.request');
+        }
+
         return view('fabricant.auth.verify-code');
     }
 
     public function verifyCode(Request $request)
     {
         $request->validate([
-            'email' => ['required', 'email'],
-            'code'  => ['required'],
+            'code' => ['required'],
         ]);
 
-        $cachedCode = Cache::get('password_reset_' . $request->email);
+        $email = session('reset_email');
+
+        if (!$email) {
+            return redirect()->route('fabricant.password.request')
+                ->withErrors(['email' => 'Session expirée, veuillez recommencer.']);
+        }
+
+        // ✅ AJOUTÉ : c'est LE correctif critique de ce fichier. Un code à 6
+        // chiffres (900 000 combinaisons) sans aucune limite de tentatives
+        // était brute-forçable dans la fenêtre de 10 minutes par n'importe
+        // qui connaissant l'email de la victime — prise de contrôle de compte
+        // sans jamais avoir accès à sa boîte mail. On bloque après 5 essais
+        // incorrects et on invalide le code en cours, forçant une nouvelle
+        // demande.
+        $verifyThrottleKey = 'reset-verify|' . strtolower($email);
+
+        if (RateLimiter::tooManyAttempts($verifyThrottleKey, 5)) {
+            Cache::forget('password_reset_' . $email);
+            RateLimiter::clear($verifyThrottleKey);
+            return redirect()->route('fabricant.password.request')
+                ->withErrors(['email' => 'Trop de tentatives incorrectes. Veuillez redemander un nouveau code.']);
+        }
+
+        $cachedCode = Cache::get('password_reset_' . $email);
 
         if (!$cachedCode || $cachedCode !== (int) $request->code) {
+            RateLimiter::hit($verifyThrottleKey, 600);
             return back()->withErrors(['code' => 'Code invalide ou expiré.']);
         }
 
-        session(['reset_email' => $request->email, 'reset_code_verified' => true]);
+        RateLimiter::clear($verifyThrottleKey);
+        session(['reset_code_verified' => true]);
 
         return redirect()->route('fabricant.password.reset');
     }

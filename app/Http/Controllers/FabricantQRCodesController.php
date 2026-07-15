@@ -48,6 +48,32 @@ class FabricantQRCodesController extends Controller
                     $q->where('fabricant_id', $fabricant->id);
                 })->findOrFail($validated['lot_id']);
 
+        // ✅ Garde-fou quantite du lot vs QR déjà générés.
+        // Sans ça, un fabricant pouvait générer plus de QR codes que d'unités
+        // physiques réellement produites (quantite du lot), ce qui casse la
+        // garantie "1 QR = 1 produit traçable" au cœur de la plateforme.
+        $dejaGeneres = QrCode::where('lot_id', $lot->id)->count();
+        $restant     = max(0, $lot->quantite - $dejaGeneres);
+
+        if ($validated['quantite'] > $restant) {
+            // ✅ CORRIGÉ : 'error' → 'warning'. Le layout fabricant n'affiche
+            // que session('warning') dans son bandeau — avec 'error', ce
+            // message était calculé mais jamais visible à l'écran.
+            return back()->withInput()->with('warning', $restant > 0
+                ? "Ce lot ne peut recevoir que {$restant} QR code(s) supplémentaire(s) au maximum (quantité déclarée : {$lot->quantite}, déjà générés : {$dejaGeneres})."
+                : "Ce lot a déjà atteint sa quantité déclarée ({$lot->quantite}). Aucun QR code supplémentaire ne peut être généré.");
+        }
+
+        // ✅ AJOUTÉ : quota mensuel de QR codes selon le plan, indépendant
+        // de la limite physique du lot ci-dessus (gratuit=50/mois, starter=500/mois, pro/entreprise=illimité)
+        $restantPlan = $fabricant->quotaQrcodesRestant();
+        if ($restantPlan !== null && $validated['quantite'] > $restantPlan) {
+            // ✅ CORRIGÉ : 'error' → 'warning' (même raison que ci-dessus)
+            return back()->withInput()->with('warning', $restantPlan > 0
+                ? "Votre plan ({$fabricant->limites()['label']}) ne permet plus que {$restantPlan} QR code(s) ce mois-ci."
+                : "Vous avez atteint la limite mensuelle de QR codes de votre plan ({$fabricant->limites()['label']}). Passez à un plan supérieur pour continuer.");
+        }
+
         $generated = 0;
         for ($i = 0; $i < $validated['quantite']; $i++) {
             $token = strtoupper('VS-' . $lot->id . '-' . Str::random(12));
@@ -60,6 +86,9 @@ class FabricantQRCodesController extends Controller
             ]);
             $generated++;
         }
+
+        // ✅ AJOUTÉ : on consomme le quota mensuel une fois la génération réussie
+        $fabricant->increment('qrcodes_generes_mois', $generated);
 
         return redirect()->route('fabricant.qrcodes.index')
                          ->with('success', $generated . ' QR code(s) générés pour le lot ' . $lot->numero_lot . '.');
@@ -172,14 +201,22 @@ class FabricantQRCodesController extends Controller
                 })->with(['produit', 'qrcodes'])->findOrFail($lotId);
 
         $qrcodes = $lot->qrcodes;
-        $logoTmp = $this->buildLogoWithWhiteCircle(160);
+
+        // ✅ RÉDUIT : 600px → 200px (et logo 160 → 60). L'affichage final dans le
+        // PDF est en 96px ; générer en 600px pour ça n'apportait aucune qualité
+        // visible mais multipliait le poids de chaque image base64 embarquée.
+        // Sur un lot proche du maximum (500 QR), ça pouvait faire timeout ou
+        // saturer la mémoire de DomPDF en pleine démo. 200px reste largement
+        // net à l'impression pour une étiquette de cette taille.
+        $imgSize = 200;
+        $logoTmp = $this->buildLogoWithWhiteCircle(60);
 
         $etiquettes = '';
         foreach ($qrcodes as $qrcode) {
             $verifyUrl = route('verify.token', $qrcode->token);
             $qrImage   = base64_encode(
                 QrGen::format('png')
-                    ->size(600)
+                    ->size($imgSize)
                     ->margin(2)
                     ->errorCorrection('H')
                     ->merge($logoTmp, 0.28, true)
