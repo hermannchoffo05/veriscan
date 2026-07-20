@@ -13,11 +13,11 @@ class PaiementController extends Controller
 {
     // ── Montants des plans ────────────────────────────────────────────────
     // PRODUCTION
-    private array $plans = [
-        'starter'    => ['nom' => 'Starter',    'montant' => 5000,  'label' => '5 000 XAF/mois'],
-        'pro'        => ['nom' => 'Pro',         'montant' => 15000, 'label' => '15 000 XAF/mois'],
-        'entreprise' => ['nom' => 'Entreprise',  'montant' => 50000, 'label' => '50 000 XAF/mois'],
-    ];
+   private array $plans = [
+    'starter'    => ['nom' => 'Starter',    'montant' => 2000,  'label' => '2 000 XAF/mois'],
+    'pro'        => ['nom' => 'Pro',         'montant' => 5000,  'label' => '5 000 XAF/mois'],
+    'entreprise' => ['nom' => 'Entreprise',  'montant' => 10000, 'label' => '10 000 XAF/mois'],
+];
 
     private function getCampayToken(): ?string
     {

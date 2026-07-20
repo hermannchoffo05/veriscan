@@ -18,7 +18,6 @@ class Fabricant extends Authenticatable
         'verification_token',
         'plan', 'plan_expire_le', 'essai_deja_utilise',
         'qrcodes_generes_mois', 'rapports_generes_mois', 'usage_mois_reference',
-        // ✅ AJOUTÉ : quota assistant IA produit (description + classification)
         'ia_requetes_mois',
     ];
 
@@ -35,11 +34,6 @@ class Fabricant extends Authenticatable
         return $this->hasMany(Produit::class);
     }
 
-    /**
-     * Plan réellement actif. Si un plan payant ou un essai a dépassé sa
-     * date d'expiration, on retombe sur 'gratuit' à la volée — pas besoin
-     * de job planifié pour "downgrader" en base.
-     */
     public function planActif(): string
     {
         if ($this->plan && $this->plan !== 'gratuit'
@@ -54,11 +48,6 @@ class Fabricant extends Authenticatable
         return config('plans.' . $this->planActif(), config('plans.gratuit'));
     }
 
-    /**
-     * Remet les compteurs mensuels (QR codes, rapports, requêtes IA) à zéro
-     * dès qu'on change de mois civil. Appelée avant toute lecture/incrément
-     * de quota.
-     */
     public function resetUsageSiNouveauMois(): void
     {
         $moisActuel = now()->format('Y-m');
@@ -100,19 +89,26 @@ class Fabricant extends Authenticatable
         return (bool) $this->limites()['carte_risques'];
     }
 
+    public function aAccesStatistiques(): bool
+    {
+        return (bool) ($this->limites()['statistiques'] ?? false);
+    }
+
     /**
-     * Accès au chatbot/assistant conversationnel — reste booléen,
-     * réservé Pro/Entreprise (décision produit distincte du quota IA produit).
+     * Accès à la page Rapports (le plan inclut-il des rapports du tout ?).
+     * null = illimité (true), 0 = plan Gratuit (false), >0 = inclus (true).
      */
+    public function aAccesRapports(): bool
+    {
+        $limite = $this->limites()['rapports'] ?? 0;
+        return $limite === null || $limite > 0;
+    }
+
     public function aAccesIA(): bool
     {
         return (bool) $this->limites()['ia'];
     }
 
-    /**
-     * Quota mensuel pour l'assistant produit (génération de description +
-     * classification de catégorie). null = illimité.
-     */
     public function quotaIAAssistantMensuel(): ?int
     {
         return $this->limites()['ia_quota_mensuel'] ?? null;

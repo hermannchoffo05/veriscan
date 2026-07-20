@@ -17,6 +17,22 @@ class FabricantRapportsController extends Controller
     public function index()
     {
         $fabricant  = Auth::guard('fabricant')->user();
+
+        // ✅ AJOUTÉ : affiche la page "verrouillée" si le plan n'a droit à
+        // aucun rapport (quota = 0, càd plan Gratuit), au lieu de laisser
+        // l'utilisateur arriver sur une page de rapports qu'il ne pourra
+        // jamais générer sans explication claire à l'écran.
+        if ($fabricant->limites()['rapports'] === 0) {
+            return view('fabricant.plan-locked', [
+                'topbarTitre'         => __('messages.rapports'),
+                'titrePage'           => __('messages.rapports'),
+                'titreVerrouillage'   => app()->getLocale() === 'en' ? 'Reports locked' : 'Rapports bloqués',
+                'messageVerrouillage' => app()->getLocale() === 'en'
+                    ? 'Upgrade to Starter, Pro or Enterprise to generate PDF reports.'
+                    : 'Passez au plan Starter, Pro ou Entreprise pour générer des rapports PDF.',
+            ]);
+        }
+
         $produitIds = Produit::where('fabricant_id', $fabricant->id)->pluck('id');
         $lotIds     = Lot::whereIn('produit_id', $produitIds)->pluck('id');
         $qrcodeIds  = QrCode::whereIn('lot_id', $lotIds)->pluck('id');

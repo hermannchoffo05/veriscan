@@ -48,7 +48,24 @@
     .btn-save { display: inline-flex; align-items: center; gap: 8px; padding: 10px 22px; border-radius: 10px; background: var(--teal); color: white; border: none; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; transition: background 0.2s; margin-top: 20px; }
     .btn-save:hover { background: var(--teal-dark); }
     .btn-save svg { width: 15px; height: 15px; }
+    .btn-reset { display: inline-flex; align-items: center; gap: 8px; padding: 10px 22px; border-radius: 10px; background: transparent; color: var(--text-light); border: 1.5px solid var(--border); font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; transition: all 0.2s; margin-top: 20px; margin-left: 10px; }
+    .btn-reset:hover { border-color: var(--text-light); color: var(--text); }
+    .btn-reset svg { width: 15px; height: 15px; }
     .version-info { margin-top: 24px; font-size: 11px; color: var(--text-light); text-align: center; }
+
+    /* ── Modal de confirmation suppression de compte ── */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; align-items: center; justify-content: center; padding: 20px; }
+    .modal-overlay.open { display: flex; }
+    .modal-box { background: var(--white); border-radius: 16px; padding: 26px; max-width: 420px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.25); }
+    .modal-box h3 { font-size: 16px; font-weight: 800; color: var(--red); margin-bottom: 10px; }
+    .modal-box p { font-size: 13px; color: var(--text-light); line-height: 1.6; margin-bottom: 16px; }
+    .modal-box label { display: block; font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+    .modal-box input[type=password] { width: 100%; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 13px; font-family: inherit; outline: none; margin-bottom: 16px; }
+    .modal-box input[type=password]:focus { border-color: var(--red); }
+    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+    .modal-cancel { padding: 9px 18px; border-radius: 9px; background: var(--bg); color: var(--text); border: 1.5px solid var(--border); font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; }
+    .modal-confirm { padding: 9px 18px; border-radius: 9px; background: var(--red); color: white; border: none; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; }
+    .modal-confirm:hover { background: #a00e1f; }
 
     /* ── RESPONSIVE ── */
     @media (max-width: 768px) {
@@ -56,7 +73,8 @@
         .param-card-header { padding: 14px 16px; }
         .param-card-body { padding: 14px 16px; }
         .danger-card { padding: 16px; }
-        .btn-save { width: 100%; justify-content: center; }
+        .btn-save, .btn-reset { width: 100%; justify-content: center; margin-left: 0; }
+        .btn-reset { margin-top: 10px; }
     }
 </style>
 @endsection
@@ -69,8 +87,18 @@
 </div>
 @endif
 
+@if(session('error'))
+<div style="background:#fef2f2;border:1px solid #fecaca;color:#b91c1c;padding:12px 18px;border-radius:10px;margin-bottom:20px;font-size:13px;font-weight:600;">
+    {{ session('error') }}
+</div>
+@endif
+
+{{-- ✅ CORRIGÉ : @method('PUT') ajouté — la route fabricant.parametres.update
+     est déclarée en PUT dans web.php ; sans ce spoofing, Laravel rejetait la
+     requête en 405 Method Not Allowed et aucun enregistrement n'était possible. --}}
 <form method="POST" action="{{ route('fabricant.parametres.update') }}">
 @csrf
+@method('PUT')
 
 <div class="params-grid">
     {{-- Notifications --}}
@@ -130,4 +158,57 @@
 </button>
 
 </form>
+
+{{-- ✅ AJOUTÉ : le contrôleur a une méthode reset() fonctionnelle et
+     routée (fabricant.parametres.reset), mais rien dans la vue n'y menait
+     jusqu'ici. Formulaire séparé, POST simple (la route n'est pas en PUT/DELETE). --}}
+<form method="POST" action="{{ route('fabricant.parametres.reset') }}" style="display:inline;" onsubmit="return confirm('Réinitialiser tous vos paramètres aux valeurs par défaut ?');">
+    @csrf
+    <button type="submit" class="btn-reset">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+        {{ __('messages.reinitialiser_parametres') ?? 'Réinitialiser aux valeurs par défaut' }}
+    </button>
+</form>
+
+{{-- ✅ AJOUTÉ : zone dangereuse — la méthode deleteAccount() du contrôleur
+     existe (avec ses garde-fous signalement actif / QR déjà scanné) mais
+     n'était accessible depuis aucune vue. Confirmation par mot de passe
+     via une modale, cohérente avec la validation `password` exigée côté
+     contrôleur. --}}
+<div class="danger-card">
+    <div class="danger-header">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+        <strong>{{ __('messages.zone_dangereuse') ?? 'Zone dangereuse' }}</strong>
+    </div>
+    <div class="danger-row">
+        <div>
+            <div class="danger-label">{{ __('messages.supprimer_compte') ?? 'Supprimer mon compte' }}</div>
+            <div class="danger-desc">{{ __('messages.supprimer_compte_desc') ?? 'Action définitive et irréversible. Impossible si un signalement est en cours ou si vos QR codes ont déjà été scannés.' }}</div>
+        </div>
+        <button type="button" class="btn-danger" onclick="document.getElementById('deleteModal').classList.add('open')">
+            {{ __('messages.supprimer') ?? 'Supprimer' }}
+        </button>
+    </div>
+</div>
+
+<div class="version-info">VeriScan v1.0 · {{ __('messages.compte_cree_le') ?? 'Compte créé le' }} {{ Auth::guard('fabricant')->user()->created_at->format('d/m/Y') }}</div>
+
+{{-- Modale de confirmation suppression --}}
+<div class="modal-overlay" id="deleteModal">
+    <div class="modal-box">
+        <h3>{{ __('messages.confirmer_suppression') ?? 'Confirmer la suppression du compte' }}</h3>
+        <p>{{ __('messages.confirmer_suppression_desc') ?? 'Cette action est irréversible. Entrez votre mot de passe pour confirmer la suppression définitive de votre compte VeriScan.' }}</p>
+        <form method="POST" action="{{ route('fabricant.parametres.delete') }}">
+            @csrf
+            @method('DELETE')
+            <label>{{ __('messages.mot_de_passe') ?? 'Mot de passe' }}</label>
+            <input type="password" name="password" required placeholder="••••••••" autocomplete="current-password">
+            <div class="modal-actions">
+                <button type="button" class="modal-cancel" onclick="document.getElementById('deleteModal').classList.remove('open')">{{ __('messages.annuler') ?? 'Annuler' }}</button>
+                <button type="submit" class="modal-confirm">{{ __('messages.supprimer_definitivement') ?? 'Supprimer définitivement' }}</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 @endsection

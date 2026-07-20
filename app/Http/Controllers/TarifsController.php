@@ -2,31 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Souscription;
+use Illuminate\Support\Facades\Auth;
 
 class TarifsController extends Controller
 {
+    /**
+     * - Visiteur non connecté → route publique "tarifs" → vue tarifs.public
+     * - Fabricant connecté → route "fabricant.tarifs" → vue tarifs.fabricant
+     *   (accessible depuis la sidebar, pour changer de plan à tout moment).
+     * Les deux vues partagent le même partiel tarifs._plans pour la grille
+     * de plans + FAQ.
+     */
     public function index()
     {
-        return view('tarifs');
-    }
+        $locale    = app()->getLocale();
+        $fabricant = Auth::guard('fabricant')->check() ? Auth::guard('fabricant')->user() : null;
+        $planActif = $fabricant?->planActif();
 
-    public function souscrire(Request $request)
-    {
-        $validated = $request->validate([
-            'plan'            => 'required|in:Starter,Pro,Entreprise',
-            'nom_entreprise'  => 'required|string|max:255',
-            'nom_responsable' => 'required|string|max:255',
-            'telephone'       => 'required|string|max:20',
-            'email'           => 'nullable|email|max:255',
-            'ville'           => 'nullable|string|max:100',
-            'message'         => 'nullable|string|max:1000',
-        ]);
+        $vue = $fabricant ? 'tarifs.fabricant' : 'tarifs.public';
 
-        Souscription::create($validated);
-
-        return redirect()->route('tarifs.index')
-                         ->with('success_souscription', 'Votre demande a bien été reçue ! Nous vous contactons sous 24h au ' . $validated['telephone'] . ' pour activer votre plan ' . $validated['plan'] . '.');
+        return view($vue, compact('locale', 'fabricant', 'planActif'));
     }
 }

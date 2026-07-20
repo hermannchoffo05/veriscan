@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\RateLimiter;
+use Laravel\Socialite\Facades\Socialite;
+use Illuminate\Support\Str;
 
 class FabricantAuthController extends Controller
 {
@@ -60,16 +62,25 @@ class FabricantAuthController extends Controller
             'nom_entreprise' => ['required', 'string', 'max:255'],
             'email'          => ['required', 'email', 'unique:fabricants'],
             'password'       => ['required', 'confirmed', 'min:8'],
+            'indicatif'      => ['nullable', 'string', 'max:6'],
             'telephone'      => ['nullable', 'string', 'max:20'],
             'adresse'        => ['nullable', 'string', 'max:255'],
             'pays'           => ['nullable', 'string', 'max:100'],
         ]);
 
+        // ✅ AJOUTÉ : le formulaire envoie l'indicatif (ex: +237) et le numéro
+        // séparément (sélecteur avec drapeaux côté vue). On les concatène ici
+        // pour stocker un seul numéro complet en base, comme avant.
+        $telephoneComplet = null;
+        if (!empty($data['telephone'])) {
+            $telephoneComplet = trim(($data['indicatif'] ?? '') . ' ' . $data['telephone']);
+        }
+
         $fabricant = Fabricant::create([
             'nom_entreprise' => $data['nom_entreprise'],
             'email'          => $data['email'],
             'password'       => Hash::make($data['password']),
-            'telephone'      => $data['telephone'] ?? null,
+            'telephone'      => $telephoneComplet,
             'adresse'        => $data['adresse'] ?? null,
             'pays'           => $data['pays'] ?? 'Cameroun',
             // NOTE : auto-activation laissée telle quelle pour l'instant, en
@@ -89,6 +100,49 @@ class FabricantAuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         return redirect()->route('fabricant.login');
+    }
+
+    // ✅ AJOUTÉ : connexion via Google (Socialite). Redirige le fabricant vers
+    // l'écran de consentement Google.
+    public function redirectToGoogle()
+    {
+        return Socialite::driver('google')->redirect();
+    }
+
+    // ✅ AJOUTÉ : callback appelé par Google après consentement. Cherche un
+    // fabricant existant par google_id ou par email (cas d'un compte déjà créé
+    // manuellement avec le même email) ; sinon en crée un nouveau avec un mot
+    // de passe aléatoire (inutilisable directement, mais nécessaire car la
+    // colonne reste requise ailleurs dans le code — la migration l'a rendue
+    // nullable, ce bcrypt(Str::random(32)) est donc une sécurité en plus, pas
+    // une obligation stricte).
+    public function handleGoogleCallback()
+    {
+        $googleUser = Socialite::driver('google')->stateless()->user();
+
+        $fabricant = Fabricant::where('google_id', $googleUser->getId())
+            ->orWhere('email', $googleUser->getEmail())
+            ->first();
+
+        if ($fabricant) {
+            if (!$fabricant->google_id) {
+                $fabricant->update(['google_id' => $googleUser->getId()]);
+            }
+        } else {
+            $fabricant = Fabricant::create([
+                'nom_entreprise'    => $googleUser->getName(),
+                'email'             => $googleUser->getEmail(),
+                'google_id'         => $googleUser->getId(),
+                'password'          => bcrypt(Str::random(32)),
+                'pays'              => 'Cameroun',
+                'statut'            => 'actif',
+                'email_verified_at' => now(),
+            ]);
+        }
+
+        Auth::guard('fabricant')->login($fabricant, true);
+
+        return redirect()->intended(route('fabricant.dashboard'));
     }
 
     public function showForgotPassword()

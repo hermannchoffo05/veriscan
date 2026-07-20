@@ -210,6 +210,39 @@
             margin-left: var(--sidebar-w);
             flex: 1; display: flex;
             flex-direction: column; min-height: 100vh;
+            transition: margin-left 0.3s cubic-bezier(.4,0,.2,1);
+        }
+
+        /* ── Chevron de repli/dépli de la sidebar (desktop) ──────────────
+           Distinct du hamburger mobile : celui-ci reste visible en
+           permanence sur desktop, à cheval sur la frontière sidebar/main,
+           et permet de replier la sidebar pour libérer toute la largeur
+           de la page. */
+        .sidebar-collapse-btn {
+            position: fixed;
+            top: 78px;
+            left: calc(var(--sidebar-w) - 13px);
+            z-index: 150;
+            width: 26px; height: 26px;
+            border-radius: 50%;
+            background: var(--white);
+            border: 1.5px solid var(--border);
+            color: var(--text-light);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+            transition: left 0.3s cubic-bezier(.4,0,.2,1), background 0.2s, color 0.2s, border-color 0.2s;
+        }
+        .sidebar-collapse-btn:hover { background: var(--teal-light); color: var(--teal); border-color: var(--teal); }
+        .sidebar-collapse-btn svg { width: 13px; height: 13px; transition: transform 0.3s; }
+
+        body.sidebar-collapsed .sidebar { transform: translateX(-100%); }
+        body.sidebar-collapsed .main { margin-left: 0; }
+        body.sidebar-collapsed .sidebar-collapse-btn { left: 12px; }
+        body.sidebar-collapsed .sidebar-collapse-btn svg { transform: rotate(180deg); }
+
+        @media (max-width: 768px) {
+            .sidebar-collapse-btn { display: none; }
         }
 
         .topbar {
@@ -258,6 +291,8 @@
             background: var(--teal-light); border: 1px solid rgba(46,58,107,0.15);
             padding: 5px 12px; border-radius: 8px; font-weight: 600;
         }
+
+        /* ── Badge de plan (Gratuit / Pro) ──────────────────────── */
         .plan-badge {
             display: flex; align-items: center; gap: 6px;
             font-size: 11.5px; font-weight: 700;
@@ -273,6 +308,7 @@
         }
         .plan-badge svg { width: 13px; height: 13px; }
 
+        /* ── Badge de quota IA (visible uniquement en plan gratuit) ── */
         .quota-badge {
             display: flex; align-items: center; gap: 6px;
             font-size: 11.5px; font-weight: 600;
@@ -685,6 +721,13 @@
     </div>
 </aside>
 
+{{-- Chevron de repli/dépli de la sidebar (desktop) --}}
+<button class="sidebar-collapse-btn" id="sidebarCollapseBtn" onclick="toggleSidebarCollapse()" aria-label="Replier/déplier le menu" title="Replier le menu">
+    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+    </svg>
+</button>
+
 {{-- MAIN --}}
 <main class="main">
     <div class="topbar">
@@ -700,6 +743,7 @@
             @yield('topbar-actions')
         </div>
 
+        {{-- ── Badge de plan + quota IA ─────────────────────────────── --}}
         @php
             $fabricant = Auth::guard('fabricant')->user();
             $isPro = $fabricant->plan === 'pro';
@@ -758,20 +802,17 @@
 
     <div class="content">
         @if(session('warning'))
-          <div class="warning-banner" id="warningBanner">
-    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-    </svg>
-    <span><strong>Accès refusé –</strong> {{ session('warning') }}</span>
-    <a href="{{ route('tarifs') }}" style="margin-left:12px;flex-shrink:0;background:#F5A623;color:#171B3D;font-size:12px;font-weight:700;padding:6px 14px;border-radius:8px;text-decoration:none;white-space:nowrap;">
-        Voir les plans
-    </a>
-    <button class="close-btn" onclick="document.getElementById('warningBanner').remove()">
-        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
-        </svg>
-    </button>
-</div>
+            <div class="warning-banner" id="warningBanner">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                </svg>
+                <span><strong>Accès refusé –</strong> {{ session('warning') }}</span>
+                <button class="close-btn" onclick="document.getElementById('warningBanner').remove()">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
         @endif
         @yield('content')
     </div>
@@ -851,7 +892,18 @@
         if (localStorage.getItem('veriscan_theme') === 'dark') {
             document.body.classList.add('dark');
         }
+        if (localStorage.getItem('veriscan_sidebar_collapsed') === '1') {
+            document.body.classList.add('sidebar-collapsed');
+        }
     })();
+
+    function toggleSidebarCollapse() {
+        const collapsed = document.body.classList.toggle('sidebar-collapsed');
+        localStorage.setItem('veriscan_sidebar_collapsed', collapsed ? '1' : '0');
+        document.getElementById('sidebarCollapseBtn').setAttribute(
+            'title', collapsed ? 'Déplier le menu' : 'Replier le menu'
+        );
+    }
 
     function toggleDark() {
         const isDark = document.body.classList.toggle('dark');
@@ -1006,34 +1058,26 @@
         return null;
     }
 
-  async function vsAskGemini(question) {
-    try {
-       const response = await fetch('{{ route("fabricant.chatbot.ask") }}', {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'X-CSRF-TOKEN': VS_CSRF
-    },
-    body: JSON.stringify({ question, locale: VS_LOCALE })
-});
-
-        if (response.status === 403) {
+    async function vsAskGemini(question) {
+        try {
+            const response = await fetch('{{ route("fabricant.chatbot.ask") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': VS_CSRF
+                },
+                body: JSON.stringify({ question, locale: VS_LOCALE })
+            });
+            const data = await response.json();
+            return data.answer || (VS_LOCALE === 'fr'
+                ? "Je n'ai pas pu trouver une réponse précise. Consultez notre documentation ou contactez le support."
+                : "I couldn't find a precise answer. Please check our documentation or contact support.");
+        } catch(e) {
             return VS_LOCALE === 'fr'
-                ? `🔒 Cet assistant IA avancé n'est pas inclus dans votre plan actuel. <a href="{{ route('tarifs') }}" style="color:#F5A623;font-weight:700;text-decoration:underline;">Voir les plans →</a>`
-                : `🔒 This advanced AI assistant isn't included in your current plan. <a href="{{ route('tarifs') }}" style="color:#F5A623;font-weight:700;text-decoration:underline;">View plans →</a>`;
+                ? "Je rencontre un problème de connexion. Réessayez dans quelques instants."
+                : "I'm having a connection issue. Please try again in a moment.";
         }
-
-        const data = await response.json();
-        return data.answer || (VS_LOCALE === 'fr'
-            ? "Je n'ai pas pu trouver une réponse précise. Consultez notre documentation ou contactez le support."
-            : "I couldn't find a precise answer. Please check our documentation or contact support.");
-    } catch(e) {
-        return VS_LOCALE === 'fr'
-            ? "Je rencontre un problème de connexion. Réessayez dans quelques instants."
-            : "I'm having a connection issue. Please try again in a moment.";
     }
-}
 
     async function vsSend() {
         const input = document.getElementById('vsChatInput');

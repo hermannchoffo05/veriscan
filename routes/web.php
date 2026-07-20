@@ -20,6 +20,7 @@ use App\Http\Controllers\VerificationController;
 use App\Http\Controllers\TarifsController;
 use App\Http\Controllers\PaiementController;
 use App\Http\Controllers\EssaiGratuitController;
+use App\Http\Controllers\AvisController;
 
 // -- Importations des Contrôleurs Admin --
 use App\Http\Controllers\Admin\AdminAuthController;
@@ -38,9 +39,21 @@ Route::get("/langue/{locale}", function ($locale) {
 
 // -- Pages publiques ----------------------------------------------------------
 Route::get("/", [HomeController::class, "index"])->name("home");
+Route::get("/stats-live", [HomeController::class, "statsLive"])
+    ->name("stats.live")
+    ->middleware("throttle:20,1");
 Route::get("/tarifs", [TarifsController::class, "index"])->name("tarifs");
 Route::get("/conditions", function () { return view("public.conditions"); })->name("conditions");
 Route::get("/politique", function () { return view("public.politique"); })->name("politique");
+
+// -- Avis (public) --------------------------------------------------------------
+// ✅ CORRIGÉ : déplacé hors du groupe auth:fabricant (le formulaire est sur la
+// page welcome, accessible aux visiteurs non connectés) + ->name() réparé
+// (il était accidentellement placé après le // dans un commentaire, donc
+// jamais exécuté, ce qui cassait route('avis.store') dans la vue).
+Route::post("/avis", [AvisController::class, "store"])
+    ->middleware("throttle:5,1") // évite le spam : 5 soumissions/minute par IP
+    ->name("avis.store");
 
 // -- Vérification produit (public) --------------------------------------------
 Route::get("/verify-home", [VerificationController::class, "home"])->name("verify.home");
@@ -49,6 +62,7 @@ Route::get("/verify/{token}", [VerificationController::class, "verifyToken"])->n
 Route::post("/verify-code", [VerificationController::class, "verifyCode"])->name("verify.code");
 Route::post("/verify/signaler", [VerificationController::class, "signaler"])->name("verify.signaler");
 
+
 // -- Paiement -----------------------------------------------------------------
 Route::prefix("paiement")->name("paiement.")->group(function () {
     // Webhook : doit rester public — c'est CamPay qui l'appelle côté serveur,
@@ -56,15 +70,14 @@ Route::prefix("paiement")->name("paiement.")->group(function () {
     // totalement la confirmation de paiement.
     Route::post("/webhook", [PaiementController::class, "webhook"])->name("webhook");
 
-    // ✅ CORRIGÉ : tout le parcours d'achat exige désormais un fabricant connecté
-    // dès l'entrée sur la page. Avant, seule la méthode initier() vérifiait
-    // l'authentification (via abort_if), donc un visiteur non connecté pouvait
-    // arriver jusqu'au formulaire de paiement depuis /tarifs et ne recevait
-    // un 403 sec qu'au moment de cliquer "Payer", sans jamais être invité à se
-    // connecter. Le middleware auth:fabricant redirige proprement vers
+    // Tout le parcours d'achat exige un fabricant connecté dès l'entrée sur
+    // la page. Un visiteur non connecté est redirigé proprement vers
     // fabricant.login (cf. Authenticate::redirectTo et bootstrap/app.php), et
     // redirect()->intended() dans FabricantAuthController::login() ramène
     // automatiquement le fabricant vers le plan choisi une fois connecté.
+    // Un fabricant déjà connecté qui clique sur "Souscrire"/"Passer à X"
+    // (depuis /tarifs ou /fabricant/tarifs) arrive directement ici, ce qui
+    // permet de changer de plan à tout moment sans repasser par le login.
     Route::middleware("auth:fabricant")->group(function () {
         Route::get("/checkout/{plan}", [PaiementController::class, "show"])->name("checkout");
         Route::post("/initier", [PaiementController::class, "initier"])->name("initier");
@@ -86,6 +99,14 @@ Route::middleware("guest:fabricant")->prefix("fabricant")->name("fabricant.")->g
     Route::post("/verify-code", [FabricantAuthController::class, "verifyCode"])->name("password.verify.submit");
     Route::get("/reset-password", [FabricantAuthController::class, "showResetPassword"])->name("password.reset");
     Route::post("/reset-password", [FabricantAuthController::class, "resetPassword"])->name("password.update");
+
+    // ✅ AJOUTÉ : connexion Google (Socialite). Nécessite que
+    // FabricantAuthController possède les méthodes redirectToGoogle() et
+    // handleGoogleCallback(), que laravel/socialite soit installé, que
+    // config/services.php contienne le bloc 'google', et que la migration
+    // ajoutant google_id à la table fabricants ait été exécutée.
+    Route::get("/auth/google", [FabricantAuthController::class, "redirectToGoogle"])->name("auth.google");
+    Route::get("/auth/google/callback", [FabricantAuthController::class, "handleGoogleCallback"])->name("auth.google.callback");
 });
 
 // -- Fabricant (connecté, sans vérif statut actif) ---------------------------
@@ -100,6 +121,13 @@ Route::middleware(["auth:fabricant"])->prefix("fabricant")->name("fabricant.")->
     Route::get("/dashboard/search", [FabricantDashboardController::class, "search"])->name("dashboard.search");
 
     Route::post("/essai/{plan}", [EssaiGratuitController::class, "activer"])->name("essai.activer");
+
+    // ✅ AJOUTÉ : accès à la page tarifs depuis l'espace connecté (sidebar
+    // fabricant au lieu de la navbar marketing avec Se connecter/S'inscrire).
+    // Réutilise le même contrôleur/vue que la page publique — la vue détecte
+    // elle-même si un fabricant est connecté (Auth::guard('fabricant')) pour
+    // adapter la navbar et proposer "changer de plan" plutôt que "souscrire".
+    Route::get("/tarifs", [TarifsController::class, "index"])->name("tarifs");
 
     // Chatbot / Assistant virtuel — reste gaté Pro/Entreprise uniquement
     Route::post("/dashboard/chat", [FabricantProduitsController::class, "chat"])->name("dashboard.chat")->middleware("plan.feature:ia");
@@ -126,7 +154,6 @@ Route::middleware(["auth:fabricant"])->prefix("fabricant")->name("fabricant.")->
     Route::get("/produits/{id}/edit", [FabricantProduitsController::class, "edit"])->name("produits.edit");
     Route::put("/produits/{id}", [FabricantProduitsController::class, "update"])->name("produits.update");
     Route::delete("/produits/{id}", [FabricantProduitsController::class, "destroy"])->name("produits.destroy");
-    // ✅ Quota mensuel désormais géré dans le contrôleur — plus de middleware plan.feature:ia ici
     Route::post("/produits/generate-description", [FabricantProduitsController::class, "generateDescription"])->name("produits.generate-description");
     Route::post("/produits/classify-category", [FabricantProduitsController::class, "classifyCategory"])->name("produits.classify-category");
 
@@ -152,18 +179,22 @@ Route::middleware(["auth:fabricant"])->prefix("fabricant")->name("fabricant.")->
     Route::get("/signalements/{id}", [FabricantSignalementsController::class, "show"])->name("signalements.show");
     Route::patch("/signalements/{id}/traiter", [FabricantSignalementsController::class, "traiter"])->name("signalements.traiter");
 
-    // Statistiques
+    // Statistiques — ✅ le contrôleur gère lui-même l'affichage "verrouillé"
+    // si le plan (Gratuit) n'y a plus droit ; plus besoin de middleware ici.
     Route::get("/statistiques", [FabricantStatistiquesController::class, "index"])->name("statistiques.index");
 
-    // Rapports
+    // Rapports — ✅ idem, géré dans le contrôleur.
     Route::get("/rapports", [FabricantRapportsController::class, "index"])->name("rapports.index");
     Route::get("/rapports/pdf", [FabricantRapportsController::class, "downloadPdf"])->name("rapports.pdf");
     Route::get("/rapports/certificats", [FabricantRapportsController::class, "downloadCertificats"])->name("rapports.certificats");
     Route::get("/rapports/signalements", [FabricantRapportsController::class, "downloadSignalements"])->name("rapports.signalements");
     Route::get("/rapports/telecharger", [FabricantRapportsController::class, "telecharger"])->name("rapports.telecharger");
 
-    // Carte — réservée Pro/Entreprise
-    Route::get("/carte", [FabricantCarteController::class, "index"])->name("carte.index")->middleware("plan.feature:carte_risques");
+    // Carte — ✅ CORRIGÉ : middleware plan.feature:carte_risques retiré.
+    // La vérification d'accès se fait maintenant dans FabricantCarteController
+    // pour afficher la page "verrouillée" au lieu d'une redirection sèche
+    // vers le dashboard.
+    Route::get("/carte", [FabricantCarteController::class, "index"])->name("carte.index");
 });
 
 // -- Auth Admin (non connecté) -----------------------------------------------

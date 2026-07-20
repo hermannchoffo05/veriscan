@@ -238,6 +238,7 @@
         <a href="#comment">{{ $locale === 'en' ? 'How it works' : 'Comment ça marche' }}</a>
         <a href="#fonctionnalites">{{ $locale === 'en' ? 'Features' : 'Fonctionnalités' }}</a>
         <a href="#tarifs">{{ $locale === 'en' ? 'Pricing' : 'Tarifs' }}</a>
+        <a href="#avis">{{ $locale === 'en' ? 'Reviews' : 'Avis' }}</a>
     </div>
     <div class="nav-actions">
         <div class="lang-switch">
@@ -257,6 +258,7 @@
     <a href="#comment" onclick="toggleMobileMenu()">{{ $locale === 'en' ? 'How it works' : 'Comment ça marche' }}</a>
     <a href="#fonctionnalites" onclick="toggleMobileMenu()">{{ $locale === 'en' ? 'Features' : 'Fonctionnalités' }}</a>
     <a href="#tarifs" onclick="toggleMobileMenu()">{{ $locale === 'en' ? 'Pricing' : 'Tarifs' }}</a>
+    <a href="#avis" onclick="toggleMobileMenu()">{{ $locale === 'en' ? 'Reviews' : 'Avis' }}</a>
     <a href="{{ route('verify.home') }}" style="color:var(--teal);">✓ {{ $locale === 'en' ? 'Verify a product' : 'Vérifier un produit' }}</a>
     <a href="{{ route('fabricant.login') }}" style="color:var(--yellow-dark);font-weight:700;">{{ $locale === 'en' ? 'Log in' : 'Se connecter' }}</a>
     <a href="{{ route('fabricant.register') }}" style="color:var(--teal);font-weight:700;">{{ $locale === 'en' ? 'Sign up free' : "S'inscrire gratuitement" }}</a>
@@ -295,11 +297,11 @@
     </div>
 </section>
 
-<div class="stats-band">
-    <div class="band-stat"><div class="band-stat-value">{{ $stats['produits_verifies'] }}</div><div class="band-stat-label">{{ $locale === 'en' ? 'Verified products' : 'Produits vérifiés' }}</div></div>
-    <div class="band-stat"><div class="band-stat-value">{{ $stats['fabricants_inscrits'] }}</div><div class="band-stat-label">{{ $locale === 'en' ? 'Registered manufacturers' : 'Fabricants inscrits' }}</div></div>
-    <div class="band-stat"><div class="band-stat-value">{{ $stats['contrefacons'] }}</div><div class="band-stat-label">{{ $locale === 'en' ? 'Counterfeits detected' : 'Contrefaçons détectées' }}</div></div>
-    <div class="band-stat"><div class="band-stat-value">{{ $stats['fiabilite'] }}<span class="accent">%</span></div><div class="band-stat-label">{{ $locale === 'en' ? 'Detection reliability' : 'Fiabilité de détection' }}</div></div>
+<div class="stats-band" id="statsBand">
+    <div class="band-stat"><div class="band-stat-value"><span data-target="{{ $stats['produits_verifies'] }}">0</span></div><div class="band-stat-label">{{ $locale === 'en' ? 'Verified products' : 'Produits vérifiés' }}</div></div>
+    <div class="band-stat"><div class="band-stat-value"><span data-target="{{ $stats['fabricants_inscrits'] }}">0</span></div><div class="band-stat-label">{{ $locale === 'en' ? 'Registered manufacturers' : 'Fabricants inscrits' }}</div></div>
+    <div class="band-stat"><div class="band-stat-value"><span data-target="{{ $stats['contrefacons'] }}">0</span></div><div class="band-stat-label">{{ $locale === 'en' ? 'Counterfeits detected' : 'Contrefaçons détectées' }}</div></div>
+    <div class="band-stat"><div class="band-stat-value"><span data-target="{{ $stats['fiabilite'] }}">0</span><span class="accent">%</span></div><div class="band-stat-label">{{ $locale === 'en' ? 'Detection reliability' : 'Fiabilité de détection' }}</div></div>
 </div>
 
 <section id="comment" class="how-section">
@@ -351,7 +353,7 @@
         <div class="pp-card pp-popular">
             <div class="pp-badge">★ {{ $locale === 'en' ? 'POPULAR' : 'POPULAIRE' }}</div>
             <div class="pp-name">Pro</div>
-            <div class="pp-price">15 000 <span>FCFA/{{ $locale === 'en' ? 'month' : 'mois' }}</span></div>
+            <div class="pp-price">5 000 <span>FCFA/{{ $locale === 'en' ? 'month' : 'mois' }}</span></div>
             <div class="pp-features">
                 <span>{{ $locale === 'en' ? 'Unlimited products' : 'Produits illimités' }}</span>
                 <span>{{ $locale === 'en' ? 'Unlimited QR codes' : 'QR codes illimités' }}</span>
@@ -362,7 +364,7 @@
         </div>
         <div class="pp-card">
             <div class="pp-name">{{ $locale === 'en' ? 'Enterprise' : 'Entreprise' }}</div>
-            <div class="pp-price">50 000 <span>FCFA/{{ $locale === 'en' ? 'month' : 'mois' }}</span></div>
+            <div class="pp-price">10 000 <span>FCFA/{{ $locale === 'en' ? 'month' : 'mois' }}</span></div>
             <div class="pp-features">
                 <span>{{ $locale === 'en' ? 'Everything in Pro' : 'Tout le plan Pro' }}</span>
                 <span>{{ $locale === 'en' ? 'Dedicated API' : 'API dédiée' }}</span>
@@ -375,6 +377,92 @@
         <a href="{{ route('tarifs') }}" class="pp-voir-tout">{{ $locale === 'en' ? 'See all plans →' : 'Voir tous les plans →' }}</a>
     </div>
 </section>
+
+{{-- SECTION AVIS --}}
+<section id="avis" style="background: #fafafa;">
+    <div class="section-header">
+        <div class="section-badge">― {{ $locale === 'en' ? 'Reviews' : 'Avis' }}</div>
+        <div class="section-title">{{ $locale === 'en' ? 'What our' : 'Ce que pensent nos' }} <span>{{ $locale === 'en' ? 'users say' : 'utilisateurs' }}</span></div>
+        <div style="display:flex; align-items:center; gap:10px; margin-top:14px;">
+            <div style="display:flex; gap:2px;">
+                @for ($i = 1; $i <= 5; $i++)
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="{{ $i <= round($moyenneAvis) ? '#F5A623' : '#e5e7eb' }}"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>
+                @endfor
+            </div>
+            <span style="font-weight:800; color:#1F2937;">{{ $moyenneAvis }}/5</span>
+            <span style="color:#6b7280; font-size:13px;">({{ $totalAvis }} {{ $locale === 'en' ? 'reviews' : 'avis' }})</span>
+        </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:20px; margin-bottom:48px;">
+        @forelse ($avisListe as $avis)
+            <div style="background:white; border:1.5px solid #e5e7eb; border-radius:16px; padding:20px;">
+                <div style="display:flex; gap:2px; margin-bottom:10px;">
+                    @for ($i = 1; $i <= 5; $i++)
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="{{ $i <= $avis->note ? '#F5A623' : '#e5e7eb' }}"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>
+                    @endfor
+                </div>
+                <p style="font-size:13.5px; color:#374151; line-height:1.6; margin-bottom:12px;">{{ $avis->commentaire }}</p>
+                <p style="font-size:12px; font-weight:700; color:#2E3A6B;">— {{ $avis->nom }}</p>
+            </div>
+        @empty
+            <p style="color:#6b7280; grid-column:1/-1;">{{ $locale === 'en' ? 'No reviews yet. Be the first!' : 'Aucun avis pour le moment. Soyez le premier !' }}</p>
+        @endforelse
+    </div>
+
+    {{-- Formulaire de dépôt d'avis --}}
+    <div style="max-width:520px; margin:0 auto; background:white; border:1.5px solid #e5e7eb; border-radius:20px; padding:28px;">
+        <h3 style="font-size:18px; font-weight:800; color:#1F2937; margin-bottom:16px;">{{ $locale === 'en' ? 'Leave a review' : 'Laisser un avis' }}</h3>
+
+        @if (session('avis_success'))
+            <div style="background:#f0fdf4; border:1px solid #bbf7d0; color:#166534; padding:10px 14px; border-radius:10px; font-size:13px; margin-bottom:14px;">{{ session('avis_success') }}</div>
+        @endif
+
+        @if ($errors->any())
+            <div style="background:#fef2f2; border:1px solid #fecaca; color:#b91c1c; padding:10px 14px; border-radius:10px; font-size:13px; margin-bottom:14px;">
+                <ul style="margin:0; padding-left:18px;">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        <form method="POST" action="{{ route('avis.store') }}">
+            @csrf
+            <div style="margin-bottom:14px;">
+                <label style="display:block; font-size:12.5px; font-weight:600; color:#374151; margin-bottom:6px;">{{ $locale === 'en' ? 'Your name (optional)' : 'Votre nom (optionnel)' }}</label>
+                <input type="text" name="nom" maxlength="80" placeholder="{{ $locale === 'en' ? 'Anonymous' : 'Anonyme' }}" style="width:100%; padding:10px 12px; border:1.5px solid #e5e7eb; border-radius:10px; font-size:13px; font-family:inherit;">
+            </div>
+
+            <div style="margin-bottom:14px;">
+                <label style="display:block; font-size:12.5px; font-weight:600; color:#374151; margin-bottom:6px;">{{ $locale === 'en' ? 'Your rating' : 'Votre note' }}</label>
+                <div class="star-rating">
+                    @for ($i = 5; $i >= 1; $i--)
+                        <input type="radio" name="note" id="star{{ $i }}" value="{{ $i }}" {{ old('note') == $i ? 'checked' : '' }} required>
+                        <label for="star{{ $i }}">★</label>
+                    @endfor
+                </div>
+            </div>
+
+            <div style="margin-bottom:16px;">
+                <label style="display:block; font-size:12.5px; font-weight:600; color:#374151; margin-bottom:6px;">{{ $locale === 'en' ? 'Your comment' : 'Votre commentaire' }}</label>
+                <textarea name="commentaire" rows="3" maxlength="600" required placeholder="{{ $locale === 'en' ? 'Share your experience...' : 'Partagez votre expérience...' }}" style="width:100%; padding:10px 12px; border:1.5px solid #e5e7eb; border-radius:10px; font-size:13px; font-family:inherit; resize:vertical;"></textarea>
+            </div>
+
+            <button type="submit" style="width:100%; padding:12px; background:#F5A623; color:#171B3D; border:none; border-radius:10px; font-size:14px; font-weight:700; cursor:pointer; font-family:inherit;">{{ $locale === 'en' ? 'Submit review' : 'Envoyer mon avis' }}</button>
+        </form>
+    </div>
+</section>
+
+<style>
+    .star-rating { display: flex; flex-direction: row-reverse; justify-content: flex-end; gap: 4px; }
+    .star-rating input { display: none; }
+    .star-rating label { font-size: 28px; color: #e5e7eb; cursor: pointer; transition: color 0.15s; }
+    .star-rating input:checked ~ label,
+    .star-rating label:hover,
+    .star-rating label:hover ~ label { color: #F5A623; }
+</style>
 
 <section class="cta-section" id="a-propos">
     <div class="cta-orb-1"></div>
@@ -414,6 +502,85 @@
 function toggleMobileMenu() {
     document.getElementById('mobileMenu').classList.toggle('open');
 }
+document.addEventListener('DOMContentLoaded', function () {
+    const counters = document.querySelectorAll('.band-stat-value span[data-target]');
+    function animateCounter(el) {
+        const target = parseInt(el.dataset.target, 10) || 0;
+        const duration = 1400;
+        const start = performance.now();
+        function step(now) {
+            const progress = Math.min((now - start) / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            el.textContent = Math.floor(eased * target).toLocaleString('fr-FR');
+            if (progress < 1) requestAnimationFrame(step);
+            else el.textContent = target.toLocaleString('fr-FR');
+        }
+        requestAnimationFrame(step);
+    }
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                animateCounter(entry.target);
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.5 });
+    counters.forEach(el => observer.observe(el));
+});
+// ── AJOUT : mise à jour live des statistiques du bandeau ──────────────
+// Interroge /stats-live toutes les 25 secondes et anime chaque chiffre
+// de sa valeur actuelle vers la nouvelle, sans recharger la page.
+// N'affecte pas l'animation d'entrée existante (IntersectionObserver) :
+// utilise les mêmes éléments span[data-target] mais anime depuis la
+// valeur actuellement affichée plutôt que depuis 0.
+
+function animateCounterFromTo(el, from, to) {
+    if (from === to) return;
+    const duration = 900;
+    const start = performance.now();
+    function step(now) {
+        const progress = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const current = Math.round(from + (to - from) * eased);
+        el.textContent = current.toLocaleString('fr-FR');
+        if (progress < 1) requestAnimationFrame(step);
+        else el.textContent = to.toLocaleString('fr-FR');
+    }
+    requestAnimationFrame(step);
+}
+
+async function pollStatsLive() {
+    try {
+        const res = await fetch('{{ route("stats.live") }}', { headers: { 'Accept': 'application/json' } });
+        if (!res.ok) return;
+        const data = await res.json();
+
+        const map = {
+            produits_verifies:   document.querySelector('.band-stat:nth-child(1) span[data-target]'),
+            fabricants_inscrits: document.querySelector('.band-stat:nth-child(2) span[data-target]'),
+            contrefacons:        document.querySelector('.band-stat:nth-child(3) span[data-target]'),
+            fiabilite:           document.querySelector('.band-stat:nth-child(4) span[data-target]'),
+        };
+
+        Object.entries(map).forEach(([key, el]) => {
+            if (!el) return;
+            const currentValue = parseInt(el.dataset.target, 10) || 0;
+            const newValue = data[key];
+            if (newValue !== currentValue) {
+                const displayed = parseInt(el.textContent.replace(/[^0-9]/g, ''), 10) || 0;
+                animateCounterFromTo(el, displayed, newValue);
+                el.dataset.target = newValue;
+            }
+        });
+    } catch (e) {
+        // Silencieux : une erreur réseau ponctuelle ne doit pas gêner la page
+        console.error('Erreur stats-live:', e);
+    }
+}
+
+// Première vérification après 25s (le chargement initial affiche déjà les
+// valeurs correctes via le serveur), puis toutes les 25s en continu.
+setInterval(pollStatsLive, 25000);
 </script>
 </body>
 </html>

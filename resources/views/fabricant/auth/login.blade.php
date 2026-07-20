@@ -51,15 +51,18 @@
         .dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.35); cursor: pointer; transition: all 0.3s; border: none; padding: 0; }
         .dot.active { width: 22px; border-radius: 4px; background: #F5A623; }
 
-        /* ── RIGHT ── */
-        .right { width: 50%; padding: 28px 40px 22px; display: flex; flex-direction: column; justify-content: center; background: white; overflow: hidden; }
-
-        .form-card { background: #fffaf3; border: 1.5px solid rgba(245,166,35,0.22); border-radius: 18px; padding: 22px 24px 20px; box-shadow: 0 2px 16px rgba(27,24,84,0.06); }
+        /* ── RIGHT ──────────────────────────────────────────────────
+           Le formulaire occupe maintenant directement toute cette
+           section : plus de boîte crème encadrée (.form-card
+           supprimée), plus de padding/border/shadow autour du bloc.
+           Le padding est déplacé ici sur .right pour garder un peu
+           d'air par rapport aux bords du panneau. */
+        .right { width: 50%; padding: 24px 44px; display: flex; flex-direction: column; justify-content: center; background: #fffaf3; overflow: hidden; }
 
         /* ── Logo centré via background-image ── */
-        .brand-row { display: flex; flex-direction: column; align-items: center; margin-bottom: 12px; }
+        .brand-row { display: flex; flex-direction: column; align-items: center; margin-bottom: 8px; }
         .logo-circle {
-            width: 88px; height: 88px;
+            width: 68px; height: 68px;
             border-radius: 50%;
            background: white center 55% / 85% no-repeat;
             box-shadow: 0 4px 20px rgba(27,24,84,0.14);
@@ -68,41 +71,62 @@
         }
         .logo-circle:hover { transform: scale(1.04); }
 
-        h1 { font-size: 24px; font-weight: 800; color: #1B1854; margin-bottom: 3px; text-align: center; }
-        .sub { font-size: 12.5px; color: #6b7280; margin-bottom: 18px; text-align: center; }
-        .error-box { background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; border-radius: 11px; padding: 10px 14px; margin-bottom: 14px; font-size: 13px; }
-        .field { margin-bottom: 13px; }
-        .field label { display: block; font-size: 12px; font-weight: 500; color: #374151; margin-bottom: 5px; }
+        h1 { font-size: 22px; font-weight: 800; color: #1B1854; margin-bottom: 3px; text-align: center; }
+        .sub { font-size: 12.5px; color: #6b7280; margin-bottom: 14px; text-align: center; }
+        .error-box { background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; border-radius: 11px; padding: 8px 14px; margin-bottom: 12px; font-size: 13px; }
+        .field { margin-bottom: 11px; }
+        .field label { display: block; font-size: 12.5px; font-weight: 500; color: #374151; margin-bottom: 6px; }
         .iw { position: relative; }
         .iw > svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 14px; height: 14px; color: #9ca3af; pointer-events: none; }
-        input[type=email], input[type=password], input[type=text] { width: 100%; padding: 10px 13px 10px 36px; border: 1.5px solid #e5e7eb; border-radius: 10px; font-size: 13px; color: #111827; outline: none; font-family: inherit; transition: border-color 0.2s, box-shadow 0.2s; background: white; }
+        input[type=email], input[type=password], input[type=text] { width: 100%; padding: 9px 14px 9px 36px; border: 1.5px solid #e5e7eb; border-radius: 10px; font-size: 13.5px; color: #111827; outline: none; font-family: inherit; transition: border-color 0.2s, box-shadow 0.2s; background: white; }
         input:focus { border-color: #F5A623; box-shadow: 0 0 0 3px rgba(245,166,35,0.18); }
         .eye-btn { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: #9ca3af; padding: 0; display: flex; align-items: center; }
         .eye-btn:hover { color: #374151; }
-        .row-mid { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-        .remember { display: flex; align-items: center; gap: 7px; font-size: 12px; color: #6b7280; cursor: pointer; }
+        .row-mid { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+        .remember { display: flex; align-items: center; gap: 7px; font-size: 12.5px; color: #6b7280; cursor: pointer; }
         input[type=checkbox] { accent-color: #F5A623; width: 13px; height: 13px; }
-        .forgot { font-size: 12px; color: #1B1854; font-weight: 600; text-decoration: none; }
+        .forgot { font-size: 12.5px; color: #1B1854; font-weight: 600; text-decoration: none; }
         .forgot:hover { text-decoration: underline; }
-        .btn { width: 100%; padding: 11px; background: #F5A623; color: #1B1854; border: none; border-radius: 10px; font-size: 13.5px; font-weight: 700; cursor: pointer; font-family: inherit; transition: background 0.2s, box-shadow 0.2s; box-shadow: 0 4px 14px rgba(245,166,35,0.40); }
+        .btn { width: 100%; padding: 10px; background: #F5A623; color: #1B1854; border: none; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; transition: background 0.2s, box-shadow 0.2s; box-shadow: 0 4px 14px rgba(245,166,35,0.40); }
         .btn:hover { background: #e0961d; }
         .btn:active { transform: scale(0.99); }
-        .footer-link { text-align: center; font-size: 12px; color: #6b7280; margin-top: 13px; }
+        .footer-link { text-align: center; font-size: 12.5px; color: #6b7280; margin-top: 10px; }
         .footer-link a { color: #1B1854; font-weight: 700; text-decoration: none; }
-        .admin-link { text-align: right; margin-top: 12px; }
-        .admin-link a { font-size: 11px; color: #9ca3af; text-decoration: none; transition: color 0.25s; display: inline-flex; align-items: center; gap: 5px; font-weight: 600; }
+        .admin-link { text-align: right; margin-top: 10px; }
+        .admin-link a { font-size: 11.5px; color: #9ca3af; text-decoration: none; transition: color 0.25s; display: inline-flex; align-items: center; gap: 5px; font-weight: 600; }
         .admin-link a:hover { color: #F5A623; }
         .admin-link svg { width: 11px; height: 11px; }
+
+        /* ── Séparateur + bouton Google ── */
+        .divider { display: flex; align-items: center; gap: 10px; margin: 12px 0; }
+        .divider-line { flex: 1; height: 1px; background: #e5e7eb; }
+        .divider-text { font-size: 11px; color: #9ca3af; font-weight: 600; letter-spacing: 0.05em; }
+        .btn-google {
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            width: 100%; padding: 11px; border: 1.5px solid #e5e7eb; border-radius: 10px;
+            text-decoration: none; color: #374151; font-size: 13.5px; font-weight: 600;
+            background: white; font-family: inherit; transition: all 0.2s;
+        }
+        .btn-google:hover { border-color: #d1d5db; background: #fafafa; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+        .btn-google svg { flex-shrink: 0; }
 
         @media (max-width: 768px) {
             body { padding: 0; height: auto; overflow: auto; }
             .card { flex-direction: column; border-radius: 0; height: auto; max-height: none; box-shadow: none; }
             .left { width: 100%; min-height: 180px; border-radius: 0; padding: 24px; justify-content: flex-end; }
             .caption-text h2 { font-size: 20px; }
-            .right { width: 100%; border-radius: 0; padding: 20px 16px; }
-            .form-card { padding: 18px 14px; }
+            .right { width: 100%; border-radius: 0; padding: 28px 20px; }
             .logo-circle { width: 72px; height: 72px; }
             .admin-link { text-align: center; }
+        }
+             input[type="password"]::-ms-reveal,
+             input[type="password"]::-ms-clear {
+             display: none;
+        }
+            /* Chrome/Edge récents utilisent aussi cette pseudo-classe */
+             input[type="password"]::-webkit-credentials-auto-fill-button,
+             input[type="password"]::-webkit-strong-password-auto-fill-button {
+             display: none !important;
         }
     </style>
 </head>
@@ -135,46 +159,59 @@
         </div>
     </div>
 
+    {{-- ── RIGHT : contenu du formulaire directement dans .right,
+         plus de wrapper .form-card autour ── --}}
     <div class="right">
-        <div class="form-card">
-            <div class="brand-row">
-                <div class="logo-circle" style="background-image: url('{{ asset('images/logo.png') }}');"></div>
-            </div>
-            <h1>Connexion</h1>
-            <p class="sub">Connectez-vous à votre espace de travail</p>
-            @if ($errors->any())
-                <div class="error-box">{{ $errors->first() }}</div>
-            @endif
-            <form method="POST" action="{{ route('fabricant.login') }}">
-                @csrf
-                <div class="field">
-                    <label>Adresse Email</label>
-                    <div class="iw">
-                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-                        <input type="email" name="email" value="{{ old('email') }}" required placeholder="hermannchoffo05@gmail.com">
-                    </div>
-                </div>
-                <div class="field">
-                    <label>Mot de passe</label>
-                    <div class="iw">
-                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-                        <input type="password" name="password" id="password-input" required placeholder="••••••••" style="padding-right:36px;">
-                        <button type="button" class="eye-btn" onclick="togglePassword()">
-                            <svg id="eye-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-                <div class="row-mid">
-                    <label class="remember"><input type="checkbox" name="remember"> Se souvenir de moi</label>
-                    <a href="{{ route('fabricant.password.request') }}" class="forgot">Mot de passe oublié ?</a>
-                </div>
-                <button type="submit" class="btn">Se connecter</button>
-            </form>
-            <p class="footer-link">Pas encore de compte ? <a href="{{ route('fabricant.register') }}">S'inscrire</a></p>
+        <div class="brand-row">
+            <div class="logo-circle" style="background-image: url('{{ asset('images/logo.png') }}');"></div>
         </div>
+        <h1>Connexion</h1>
+        <p class="sub">Connectez-vous à votre espace de travail</p>
+        @if ($errors->any())
+            <div class="error-box">{{ $errors->first() }}</div>
+        @endif
+        <form method="POST" action="{{ route('fabricant.login') }}">
+            @csrf
+            <div class="field">
+                <label>Adresse Email</label>
+                <div class="iw">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                    <input type="email" name="email" value="{{ old('email') }}" required placeholder="hermannchoffo05@gmail.com">
+                </div>
+            </div>
+            <div class="field">
+                <label>Mot de passe</label>
+                <div class="iw">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                    <input type="password" name="password" id="password-input" required placeholder="••••••••" style="padding-right:36px;">
+                    <button type="button" class="eye-btn" onclick="togglePassword()">
+                        <svg id="eye-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="row-mid">
+                <label class="remember"><input type="checkbox" name="remember"> Se souvenir de moi</label>
+                <a href="{{ route('fabricant.password.request') }}" class="forgot">Mot de passe oublié ?</a>
+            </div>
+            <button type="submit" class="btn">Se connecter</button>
+        </form>
+
+        {{-- Connexion Google --}}
+        <div class="divider">
+            <div class="divider-line"></div>
+            <span class="divider-text">OU</span>
+            <div class="divider-line"></div>
+        </div>
+        <a href="{{ route('fabricant.auth.google') }}" class="btn-google">
+            <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.52 12.27c0-.85-.08-1.66-.22-2.45H12v4.63h6.48c-.28 1.5-1.13 2.78-2.4 3.63v3h3.89c2.28-2.1 3.55-5.2 3.55-8.81z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.07 7.93-2.9l-3.89-3.02c-1.08.72-2.46 1.15-4.04 1.15-3.1 0-5.73-2.1-6.67-4.92H1.3v3.1C3.26 21.3 7.3 24 12 24z"/><path fill="#FBBC05" d="M5.33 14.31A7.2 7.2 0 014.94 12c0-.8.14-1.58.39-2.31V6.6H1.3A11.98 11.98 0 000 12c0 1.94.46 3.77 1.3 5.4l4.03-3.09z"/><path fill="#EA4335" d="M12 4.77c1.77 0 3.35.61 4.6 1.8l3.45-3.45C17.94 1.19 15.23 0 12 0 7.3 0 3.26 2.7 1.3 6.6l4.03 3.09C6.27 6.87 8.9 4.77 12 4.77z"/></svg>
+            Continuer avec Google
+        </a>
+
+        <p class="footer-link">Pas encore de compte ? <a href="{{ route('fabricant.register') }}">S'inscrire</a></p>
+
         <div class="admin-link">
             <a href="{{ route('admin.login') }}">
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="11" height="11"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>

@@ -153,39 +153,38 @@
             flex-shrink: 0;
         }
         .feat-icon svg { width: 15px; height: 15px; color: #F5A623; }
+
+        /* ── RIGHT ──────────────────────────────────────────────────
+           Même traitement que la page de connexion : plus de boîte
+           .form-card encadrée (bordure/ombre/fond distinct) — le
+           contenu occupe directement toute la section droite, avec
+           le fond appliqué ici. */
         .right {
             width: 50%;
-            padding: 24px 32px;
+            padding: 20px 40px;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            background: white;
-            overflow: hidden;
-        }
-        .form-card {
             background: #F8F9FD;
-            border: 1.5px solid rgba(46,58,107,0.18);
-            border-radius: 16px;
-            padding: 20px 22px 18px;
-            box-shadow: 0 2px 16px rgba(46,58,107,0.06);
+            overflow: hidden;
         }
         .form-tag {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            font-size: 10.5px;
+            font-size: 10px;
             font-weight: 700;
             color: #2E3A6B;
             letter-spacing: 0.08em;
             text-transform: uppercase;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
         .form-tag .dot { width:6px; height:6px; border-radius:50%; background:#2E3A6B; }
-        h1 { font-size: 20px; font-weight: 800; color: #111827; margin-bottom: 2px; }
-        .sub { font-size: 12px; color: #6b7280; margin-bottom: 14px; }
-        .form-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
-        .field { display: flex; flex-direction: column; gap: 3px; }
-        label { font-size: 11.5px; font-weight: 500; color: #374151; }
+        h1 { font-size: 19px; font-weight: 800; color: #111827; margin-bottom: 1px; }
+        .sub { font-size: 11.5px; color: #6b7280; margin-bottom: 10px; }
+        .form-grid { display: grid; grid-template-columns: 1fr; gap: 7px; }
+        .field { display: flex; flex-direction: column; gap: 2px; }
+        label { font-size: 11px; font-weight: 500; color: #374151; }
         .iw { position: relative; }
         .iw > svg {
             position: absolute;
@@ -199,7 +198,7 @@
         }
         input[type=text], input[type=email], input[type=password], input[type=tel], select {
             width: 100%;
-            padding: 8px 11px 8px 30px;
+            padding: 6px 11px 6px 30px;
             border: 1.5px solid #e5e7eb;
             border-radius: 9px;
             font-size: 13px;
@@ -241,14 +240,84 @@
             border-top: 5px solid #9ca3af;
             pointer-events: none;
         }
-        .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .field-row { display: grid; grid-template-columns: 1fr; gap: 7px; }
+
+        /* ── Sélecteur d'indicatif téléphonique avec drapeaux ── */
+        .phone-group {
+            display: flex;
+            align-items: stretch;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 9px;
+            background: white;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .phone-group:focus-within {
+            border-color: #2E3A6B;
+            box-shadow: 0 0 0 3px rgba(46,58,107,0.12);
+        }
+        .phone-group input[type=tel] {
+            border: none;
+            box-shadow: none !important;
+            border-radius: 0 9px 9px 0;
+            padding-left: 8px;
+        }
+        .cc-select {
+            position: relative;
+            flex-shrink: 0;
+        }
+        .cc-trigger {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            height: 100%;
+            padding: 0 8px;
+            background: none;
+            border: none;
+            border-right: 1.5px solid #e5e7eb;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 12.5px;
+            color: #111827;
+            font-weight: 600;
+        }
+        .cc-trigger img { width: 18px; height: 13px; border-radius: 2px; object-fit: cover; flex-shrink: 0; }
+        .cc-trigger svg { width: 9px; height: 9px; color: #9ca3af; flex-shrink: 0; }
+        .cc-list {
+            display: none;
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0;
+            min-width: 168px;
+            background: white;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 10px;
+            box-shadow: 0 12px 32px rgba(0,0,0,0.14);
+            z-index: 30;
+            overflow: hidden;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .cc-list.open { display: block; }
+        .cc-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 10px;
+            font-size: 12.5px;
+            color: #111827;
+            cursor: pointer;
+        }
+        .cc-option:hover { background: #F8F9FD; }
+        .cc-option img { width: 18px; height: 13px; border-radius: 2px; object-fit: cover; flex-shrink: 0; }
+        .cc-option .cc-country { flex: 1; }
+        .cc-option .cc-code { color: #6b7280; font-weight: 600; }
         .terms-row {
             display: flex;
             align-items: flex-start;
             gap: 8px;
-            font-size: 11.5px;
+            font-size: 11px;
             color: #6b7280;
-            margin-top: 2px;
+            margin-top: 0;
         }
         .terms-row input[type=checkbox] {
             width: 13px; height: 13px;
@@ -260,7 +329,7 @@
         .terms-row a:hover { text-decoration: underline; }
         .btn {
             width: 100%;
-            padding: 10px;
+            padding: 9px;
             background: #F5A623;
             color: #171B3D;
             border: none;
@@ -271,7 +340,7 @@
             font-family: inherit;
             transition: background 0.2s, box-shadow 0.2s;
             box-shadow: 0 4px 14px rgba(245,166,35,0.35);
-            margin-top: 4px;
+            margin-top: 2px;
         }
         .btn:hover { background: #e0961d; }
         .btn:active { transform: scale(0.99); }
@@ -279,7 +348,7 @@
             text-align: center;
             font-size: 12px;
             color: #6b7280;
-            margin-top: 12px;
+            margin-top: 8px;
         }
         .footer-link a { color: #2E3A6B; font-weight: 700; text-decoration: none; }
         .error-box {
@@ -402,107 +471,149 @@
         </div>
     </div>
 
-    {{-- ── DROITE ── --}}
+    {{-- ── DROITE : contenu directement dans .right, plus de
+         wrapper .form-card autour ── --}}
     <div class="right">
-        <div class="form-card">
-            <div class="form-tag"><span class="dot"></span>Nouveau compte</div>
-            <h1>Créer un compte</h1>
-            <p class="sub">Remplissez les informations pour rejoindre la plateforme</p>
+        <div class="form-tag"><span class="dot"></span>Nouveau compte</div>
+        <h1>Créer un compte</h1>
+        <p class="sub">Remplissez les informations pour rejoindre la plateforme</p>
 
-            @if ($errors->any())
-                <div class="error-box">{{ $errors->first() }}</div>
-            @endif
+        @if ($errors->any())
+            <div class="error-box">{{ $errors->first() }}</div>
+        @endif
 
-            <form method="POST" action="{{ route('fabricant.register') }}">
-                @csrf
-                <div class="form-grid">
+        <form method="POST" action="{{ route('fabricant.register') }}">
+            @csrf
+            <div class="form-grid">
 
-                    <div class="field">
-                        <label>Nom de l'entreprise</label>
-                        <div class="iw">
-                            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
-                            <input type="text" name="nom_entreprise" value="{{ old('nom_entreprise') }}" required placeholder="Ex : Pharmacie Centrale">
-                        </div>
+                <div class="field">
+                    <label>Nom de l'entreprise</label>
+                    <div class="iw">
+                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                        <input type="text" name="nom_entreprise" value="{{ old('nom_entreprise') }}" required placeholder="Ex : Pharmacie Centrale">
                     </div>
+                </div>
 
-                    <div class="field">
-                        <label>Adresse email</label>
-                        <div class="iw">
-                            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-                            <input type="email" name="email" value="{{ old('email') }}" required placeholder="contact@entreprise.com">
-                        </div>
+                <div class="field">
+                    <label>Adresse email</label>
+                    <div class="iw">
+                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                        <input type="email" name="email" value="{{ old('email') }}" required placeholder="contact@entreprise.com">
                     </div>
+                </div>
 
-                    <div class="field-row">
-                        <div class="field">
-                            <label>Téléphone</label>
-                            <div class="iw">
-                                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
-                                <input type="tel" name="telephone" value="{{ old('telephone') }}" placeholder="+237 6XX XXX XXX">
-                            </div>
-                        </div>
-                        <div class="field">
-                            <label>Pays</label>
-                            <div class="iw">
-                                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064"/></svg>
-                                <div class="select-wrap">
-                                    <select name="pays" style="padding-left:30px;">
-                                        <option value="CM" selected>Cameroun</option>
-                                        <option value="SN">Sénégal</option>
-                                        <option value="CI">Côte d'Ivoire</option>
-                                        <option value="NG">Nigeria</option>
-                                        <option value="GH">Ghana</option>
-                                        <option value="OTHER">Autre</option>
-                                    </select>
+                <div class="field">
+                    <label>Téléphone</label>
+                    <div class="phone-group">
+                        <div class="cc-select" id="ccSelect">
+                            <button type="button" class="cc-trigger" onclick="toggleCcList()">
+                                <img id="ccFlag" src="https://flagcdn.com/w40/cm.png" alt="Cameroun">
+                                <span id="ccCode">+237</span>
+                                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
+                            </button>
+                            <input type="hidden" name="indicatif" id="ccValue" value="+237">
+                            <div class="cc-list" id="ccList">
+                                <div class="cc-option" onclick="selectCc('cm','+237','Cameroun')">
+                                    <img src="https://flagcdn.com/w40/cm.png" alt="Cameroun"><span class="cc-country">Cameroun</span><span class="cc-code">+237</span>
+                                </div>
+                                <div class="cc-option" onclick="selectCc('sn','+221','Sénégal')">
+                                    <img src="https://flagcdn.com/w40/sn.png" alt="Sénégal"><span class="cc-country">Sénégal</span><span class="cc-code">+221</span>
+                                </div>
+                                <div class="cc-option" onclick="selectCc('ci','+225','Côte d\'Ivoire')">
+                                    <img src="https://flagcdn.com/w40/ci.png" alt="Côte d'Ivoire"><span class="cc-country">Côte d'Ivoire</span><span class="cc-code">+225</span>
+                                </div>
+                                <div class="cc-option" onclick="selectCc('ng','+234','Nigeria')">
+                                    <img src="https://flagcdn.com/w40/ng.png" alt="Nigeria"><span class="cc-country">Nigeria</span><span class="cc-code">+234</span>
+                                </div>
+                                <div class="cc-option" onclick="selectCc('gh','+233','Ghana')">
+                                    <img src="https://flagcdn.com/w40/gh.png" alt="Ghana"><span class="cc-country">Ghana</span><span class="cc-code">+233</span>
+                                </div>
+                                <div class="cc-option" onclick="selectCc('fr','+33','France')">
+                                    <img src="https://flagcdn.com/w40/fr.png" alt="France"><span class="cc-country">France</span><span class="cc-code">+33</span>
                                 </div>
                             </div>
                         </div>
+                        <input type="tel" name="telephone" value="{{ old('telephone') }}" placeholder="6XX XXX XXX">
                     </div>
-
-                    <div class="field-row">
-                        <div class="field">
-                            <label>Mot de passe</label>
-                            <div class="iw">
-                                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-                                <input type="password" name="password" id="pw1" required placeholder="••••••••" style="padding-right:32px;">
-                                <button type="button" class="eye-btn" onclick="togglePw('pw1','eye1')">
-                                    <svg id="eye1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="field">
-                            <label>Confirmer</label>
-                            <div class="iw">
-                                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-                                <input type="password" name="password_confirmation" id="pw2" required placeholder="Répétez" style="padding-right:32px;">
-                                <button type="button" class="eye-btn" onclick="togglePw('pw2','eye2')">
-                                    <svg id="eye2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="terms-row">
-                        <input type="checkbox" name="terms" required>
-                        <span>
-                            J'accepte les
-                            <a href="{{ route('conditions') }}" target="_blank">Conditions d'utilisation</a>
-                            et la
-                            <a href="{{ route('politique') }}" target="_blank">Politique de confidentialité</a>
-                            de VeriScan
-                        </span>
-                    </div>
-
-                    <button type="submit" class="btn">Créer mon compte</button>
-
                 </div>
-            </form>
-        </div>
+
+                <div class="field">
+                    <label>Pays</label>
+                    <div class="iw">
+                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064"/></svg>
+                        <div class="select-wrap">
+                            <select name="pays" style="padding-left:30px;">
+                                <option value="CM" selected>Cameroun</option>
+                                <option value="SN">Sénégal</option>
+                                <option value="CI">Côte d'Ivoire</option>
+                                <option value="NG">Nigeria</option>
+                                <option value="GH">Ghana</option>
+                                <option value="OTHER">Autre</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field-row">
+                    <div class="field">
+                        <label>Mot de passe</label>
+                        <div class="iw">
+                            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                            <input type="password" name="password" id="pw1" required placeholder="••••••••" style="padding-right:32px;">
+                            <button type="button" class="eye-btn" onclick="togglePw('pw1','eye1')">
+                                <svg id="eye1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>Confirmer</label>
+                        <div class="iw">
+                            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                            <input type="password" name="password_confirmation" id="pw2" required placeholder="Répétez" style="padding-right:32px;">
+                            <button type="button" class="eye-btn" onclick="togglePw('pw2','eye2')">
+                                <svg id="eye2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="terms-row">
+                    <input type="checkbox" name="terms" required>
+                    <span>
+                        J'accepte les
+                        <a href="{{ route('conditions') }}" target="_blank">Conditions d'utilisation</a>
+                        et la
+                        <a href="{{ route('politique') }}" target="_blank">Politique de confidentialité</a>
+                        de VeriScan
+                    </span>
+                </div>
+
+                <button type="submit" class="btn">Créer mon compte</button>
+
+            </div>
+        </form>
         <p class="footer-link">Déjà un compte ? <a href="{{ route('fabricant.login') }}">Se connecter</a></p>
     </div>
 
 </div>
 <script>
+    function toggleCcList() {
+        document.getElementById('ccList').classList.toggle('open');
+    }
+    function selectCc(iso, code, name) {
+        document.getElementById('ccFlag').src = `https://flagcdn.com/w40/${iso}.png`;
+        document.getElementById('ccFlag').alt = name;
+        document.getElementById('ccCode').textContent = code;
+        document.getElementById('ccValue').value = code;
+        document.getElementById('ccList').classList.remove('open');
+    }
+    document.addEventListener('click', function (e) {
+        const wrap = document.getElementById('ccSelect');
+        if (wrap && !wrap.contains(e.target)) {
+            document.getElementById('ccList').classList.remove('open');
+        }
+    });
+
     function togglePw(inputId, iconId) {
         const input = document.getElementById(inputId);
         const icon  = document.getElementById(iconId);
