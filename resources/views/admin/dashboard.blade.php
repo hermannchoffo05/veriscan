@@ -121,9 +121,9 @@
     .stat-card:nth-child(3) { animation-delay: 0.15s; }
     .stat-card:nth-child(4) { animation-delay: 0.20s; }
     .stat-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.07); }
-    .stat-header { display: flex; align-items: center; justify-content: space-between; }
-    .stat-icon { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
-    .stat-icon svg { width: 20px; height: 20px; }
+    .stat-header { display: flex; align-items: center; justify-content: center; margin-bottom: 4px; }
+.stat-icon { width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; }
+.stat-icon svg { width: 24px; height: 24px; }
     .stat-icon.indigo { background: #EEF0F8; color: #2E3A6B; }
     .stat-icon.teal   { background: #EEF0F8; color: #2E3A6B; }
     .stat-icon.yellow { background: #fefce8; color: #a16207; }
@@ -135,8 +135,9 @@
     .stat-change.up   { background: #f0fdf4; color: #007A4D; }
     .stat-change.down { background: #fef2f2; color: #CE1126; }
     .stat-change svg  { width: 11px; height: 11px; }
-    .stat-value { font-size: 30px; font-weight: 800; color: var(--text); line-height: 1; }
-    .stat-label { font-size: 12.5px; color: var(--text-light); font-weight: 500; }
+   .stat-value { font-size: 30px; font-weight: 800; color: var(--text); line-height: 1; text-align: center; }
+.stat-label { font-size: 12.5px; color: var(--text-light); font-weight: 500; text-align: center; }
+.stat-card { align-items: center; }
 
     /* ── Cards ── */
     .card { background: var(--white); border-radius: 16px; border: 1.5px solid var(--border); overflow: hidden; }
@@ -281,17 +282,11 @@
 <div class="stats-grid">
 
     <div class="stat-card">
-        <div class="stat-header">
-            <div class="stat-icon indigo">
-                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-            </div>
-            @if($fabricantsAujourdhui > 0)
-            <div class="stat-change up">
-                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7"/></svg>
-                +{{ $fabricantsAujourdhui }} aujourd'hui
-            </div>
-            @endif
-        </div>
+      <div class="stat-header">
+    <div class="stat-icon indigo">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+    </div>
+</div>
         <div>
             <div class="stat-value" id="stat-fabricants">{{ $totalFabricants }}</div>
             <div class="stat-label">Fabricants inscrits</div>
@@ -311,12 +306,11 @@
     </div>
 
     <div class="stat-card">
-        <div class="stat-header">
-            <div class="stat-icon yellow">
-                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-            </div>
-            <div class="live-badge"><span class="live-dot"></span>Temps réel</div>
-        </div>
+      <div class="stat-header">
+    <div class="stat-icon yellow">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+    </div>
+</div>
         <div>
             <div class="stat-value" id="stat-scans">{{ number_format($totalScans) }}</div>
             <div class="stat-label">Scans effectués</div>
@@ -324,17 +318,11 @@
     </div>
 
     <div class="stat-card">
-        <div class="stat-header">
-            <div class="stat-icon red">
-                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-            </div>
-            @if($signalementsEnCours > 0)
-            <div class="stat-change down">
-                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01"/></svg>
-                {{ $signalementsEnCours }} en cours
-            </div>
-            @endif
-        </div>
+   <div class="stat-header">
+    <div class="stat-icon red">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+    </div>
+</div>
         <div>
             <div class="stat-value" id="stat-signalements">{{ $totalSignalements }}</div>
             <div class="stat-label">Signalements reçus</div>

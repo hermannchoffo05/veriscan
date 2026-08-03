@@ -69,14 +69,15 @@
     .stat-card { background: var(--white); border-radius: 16px; padding: 20px 22px; border: 1.5px solid var(--border); display: flex; flex-direction: column; gap: 12px; transition: transform 0.2s, box-shadow 0.2s; animation: fadeUp 0.4s ease both; cursor: pointer; text-decoration: none; }
     .stat-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.07); }
     .stat-card:nth-child(1){animation-delay:.05s} .stat-card:nth-child(2){animation-delay:.10s} .stat-card:nth-child(3){animation-delay:.15s} .stat-card:nth-child(4){animation-delay:.20s}
-    .stat-header { display: flex; align-items: center; justify-content: space-between; }
-    .stat-icon { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
-    .stat-icon svg { width: 20px; height: 20px; }
+    .stat-header { display: flex; align-items: center; justify-content: center; margin-bottom: 4px; }
+.stat-icon { width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; }
+.stat-icon svg { width: 24px; height: 24px; }
     .stat-icon.teal{background:#EEF0F8;color:#2E3A6B} .stat-icon.green{background:#f0fdf4;color:#007A4D} .stat-icon.yellow{background:#fefce8;color:#a16207} .stat-icon.red{background:#fef2f2;color:#CE1126}
     .stat-trend { font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 20px; display: flex; align-items: center; gap: 3px; }
     .stat-trend.up{background:#f0fdf4;color:#007A4D} .stat-trend.neutral{background:#f3f4f6;color:#6b7280} .stat-trend.down{background:#fef2f2;color:#CE1126}
-    .stat-value { font-size: 30px; font-weight: 800; color: var(--text); line-height: 1; }
-    .stat-label { font-size: 12.5px; color: var(--text-light); font-weight: 500; }
+   .stat-value { font-size: 30px; font-weight: 800; color: var(--text); line-height: 1; text-align: center; }
+.stat-label { font-size: 12.5px; color: var(--text-light); font-weight: 500; text-align: center; }
+.stat-card { align-items: center; }
     .main-grid { display: grid; grid-template-columns: 1fr 340px; gap: 20px; margin-bottom: 20px; }
     .card { background: var(--white); border-radius: 16px; border: 1.5px solid var(--border); overflow: hidden; }
     .card-header { padding: 18px 22px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
@@ -169,11 +170,10 @@
     <div class="stats-grid">
         <a href="{{ route('fabricant.produits.index') }}" class="stat-card">
             <div class="stat-header">
-                <div class="stat-icon teal">
-                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
-                </div>
-                <div class="stat-trend neutral">{{ $totalProduits > 0 ? __('messages.actif') : __('messages.vide') }}</div>
-            </div>
+    <div class="stat-icon teal">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+    </div>
+</div>
             <div>
                 <div class="stat-value">{{ $totalProduits }}</div>
                 <div class="stat-label">{{ __('messages.produits_enregistres') }}</div>
@@ -181,12 +181,11 @@
         </a>
 
         <a href="{{ route('fabricant.qrcodes.index') }}" class="stat-card">
-            <div class="stat-header">
-                <div class="stat-icon green">
-                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4h4v4H4V4zm12 0h4v4h-4V4zM4 16h4v4H4v-4zm8-12h1m4 4h2m-6 4h-2v4m0-8v1M12 12h4"/></svg>
-                </div>
-                <div class="stat-trend neutral">{{ __('messages.phase_test') }}</div>
-            </div>
+           <div class="stat-header">
+    <div class="stat-icon green">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4h4v4H4V4zm12 0h4v4h-4V4zM4 16h4v4H4v-4zm8-12h1m4 4h2m-6 4h-2v4m0-8v1M12 12h4"/></svg>
+    </div>
+</div>
             <div>
                 <div class="stat-value">{{ $totalQrcodes }}</div>
                 <div class="stat-label">{{ __('messages.qr_generes') }}</div>
@@ -194,41 +193,28 @@
         </a>
 
         <a href="{{ route('fabricant.statistiques.index') }}" class="stat-card">
-            <div class="stat-header">
-                <div class="stat-icon yellow">
-                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-                </div>
-                @if($scansAujourdHui > 0)
-                    <div class="stat-trend up">
-                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7"/></svg>
-                        +{{ $scansAujourdHui }} {{ __('messages.ce_jour') }}
-                    </div>
-                @else
-                    <div class="stat-trend neutral">{{ __('messages.ce_jour') }}: 0</div>
-                @endif
-            </div>
+         <div class="stat-header">
+    <div class="stat-icon yellow">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+    </div>
+</div>
             <div>
                 <div class="stat-value">{{ $totalScans }}</div>
                 <div class="stat-label">{{ __('messages.scans_effectues') }}</div>
             </div>
         </a>
 
-        <a href="{{ route('fabricant.signalements.index') }}" class="stat-card">
-            <div class="stat-header">
-                <div class="stat-icon red">
-                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-                </div>
-                @if($signalementsEnCours > 0)
-                    <div class="stat-trend down">{{ $signalementsEnCours }} {{ __('messages.en_cours') }}</div>
-                @else
-                    <div class="stat-trend neutral">0 {{ __('messages.en_cours') }}</div>
-                @endif
-            </div>
-            <div>
-                <div class="stat-value">{{ $totalSignalements }}</div>
-                <div class="stat-label">{{ __('messages.signalements_recus') }}</div>
-            </div>
-        </a>
+  <a href="{{ route('fabricant.signalements.index') }}" class="stat-card">
+    <div class="stat-header">
+        <div class="stat-icon red">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+        </div>
+    </div>
+    <div>
+        <div class="stat-value">{{ $totalSignalements }}</div>
+        <div class="stat-label">{{ __('messages.signalements_recus') }}</div>
+    </div>
+</a>
     </div>
 
     <div class="main-grid">

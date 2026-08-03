@@ -4,7 +4,7 @@ Write-Host "Demarrage du tunnel Cloudflare..." -ForegroundColor Cyan
 
 # Lance cloudflared et capture l'URL
 $job = Start-Job -ScriptBlock {
-    & cloudflared tunnel --url http://localhost:8000 2>&1
+    & cloudflared tunnel --protocol http2 --url http://localhost:8000 2>&1
 }
 
 # Attend l'URL dans la sortie

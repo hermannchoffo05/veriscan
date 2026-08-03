@@ -686,6 +686,10 @@
         </a>
 
         <div class="nav-section-label" style="margin-top:8px;">{{ __('messages.compte') }}</div>
+        <a href="{{ route('fabricant.tarifs') }}" class="nav-item {{ request()->routeIs('fabricant.tarifs') ? 'active' : '' }}">
+    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path stroke-linecap="round" stroke-linejoin="round" d="M2 10h20"/></svg>
+    {{ __('Abonnement') }}
+</a>
 
         <a href="{{ route('fabricant.profil') }}" class="nav-item {{ request()->routeIs('fabricant.profil') ? 'active' : '' }}">
             <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>

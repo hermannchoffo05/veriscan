@@ -1,0 +1,10 @@
+﻿G:\veriscan\app\Models\Souscription.php:7: class Souscription extends Model
+G:\veriscan\database\migrations\2026_04_16_000000_create_souscriptions_table.php:11: Schema::create('souscriptions', function (Blueprint $table) {
+G:\veriscan\database\migrations\2026_04_16_000000_create_souscriptions_table.php:27: Schema::dropIfExists('souscriptions');
+G:\veriscan\resources\views\layouts\fabricant.blade.php:939: patterns: ['paiement', 'abonnement', 'plan', 'tarif', 'souscrire'],
+G:\veriscan\resources\views\public\conditions.blade.php:293: <p>L'accès aux fonctionnalités avancées de VeriScan est conditionné à la souscription d'un abonnement mensuel. Les tarifs en vigueur sont :</p>
+G:\veriscan\resources\views\tarifs.blade.php:223: <a href="{{ route('paiement.checkout', 'starter') }}" class="btn-plan">{{ $fabricant ? ($locale === 'en' ? 'Switch to Starter' : 'Passer à Starter') : ($locale === 'en' ? 'Subscribe' : 'Souscrire') }}</a>
+G:\veriscan\resources\views\tarifs.blade.php:250: <a href="{{ route('paiement.checkout', 'pro') }}" class="btn-plan">{{ $fabricant ? ($locale === 'en' ? 'Switch to Pro' : 'Passer à Pro') : ($locale === 'en' ? 'Subscribe to Pro' : 'Souscrire au plan Pro') }}</a>
+G:\veriscan\resources\views\tarifs.blade.php:275: <a href="{{ route('paiement.checkout', 'entreprise') }}" class="btn-plan">{{ $fabricant ? ($locale === 'en' ? 'Switch to Enterprise' : 'Passer à Entreprise') : ($locale === 'en' ? 'Subscribe — Enterprise' : 'Souscrire plan Entreprise') }}</a>
+G:\veriscan\resources\views\welcome.blade.php:361: <a href="{{ route('tarifs') }}" class="pp-btn pp-btn-filled">{{ $locale === 'en' ? 'Subscribe' : 'Souscrire' }}</a>
+G:\veriscan\resources\views\welcome.blade.php:371: <a href="{{ route('tarifs') }}" class="pp-btn pp-btn-outline">{{ $locale === 'en' ? 'Contact us' : 'Souscrire plan enterprise ' }}</a>

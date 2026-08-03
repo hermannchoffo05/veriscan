@@ -13,25 +13,26 @@
 @section('styles')
 <style>
     /* ── Stats en ligne ── */
-    .stats-row {
-        display: grid; grid-template-columns: repeat(4, 1fr);
-        gap: 14px; margin-bottom: 20px;
-    }
-    .stat-card {
-        background: var(--white); border-radius: 14px;
-        padding: 16px 18px; border: 1.5px solid var(--border);
-        display: flex; align-items: center; gap: 12px;
-        transition: all 0.2s;
-    }
-    .stat-card:hover { border-color: rgba(46,58,107,0.3); transform: translateY(-2px); box-shadow: 0 4px 16px rgba(46,58,107,0.08); }
-    .stat-icon { width: 40px; height: 40px; border-radius: 11px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .stat-icon svg { width: 18px; height: 18px; }
-    .stat-icon.teal { background: #EEF0F8; color: #2E3A6B; }
-    .stat-icon.green  { background: #f0fdf4; color: #007A4D; }
-    .stat-icon.yellow { background: #fefce8; color: #a16207; }
-    .stat-icon.red    { background: #fef2f2; color: #CE1126; }
-    .stat-value { font-size: 24px; font-weight: 800; color: var(--text); line-height: 1; }
-    .stat-label { font-size: 11.5px; color: var(--text-light); margin-top: 2px; }
+   .stats-row {
+    display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px; margin-bottom: 20px;
+}
+.stat-card {
+    background: var(--white); border-radius: 14px;
+    padding: 16px 18px; border: 1.5px solid var(--border);
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    transition: all 0.2s;
+    min-width: 0;
+}
+.stat-card:hover { border-color: rgba(46,58,107,0.3); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.07); }
+.stat-icon { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.stat-icon svg { width: 20px; height: 20px; }
+.stat-icon.teal { background: #EEF0F8; color: #2E3A6B; }
+.stat-icon.green  { background: #f0fdf4; color: #007A4D; }
+.stat-icon.yellow { background: #fefce8; color: #a16207; }
+.stat-icon.red    { background: #fef2f2; color: #CE1126; }
+.stat-value { font-size: 26px; font-weight: 800; color: var(--text); line-height: 1; text-align: center; }
+.stat-label { font-size: 12.5px; color: var(--text-light); margin-top: 2px; text-align: center; font-weight: 500; }
 
     /* ── Layout principal ── */
     .main-layout {

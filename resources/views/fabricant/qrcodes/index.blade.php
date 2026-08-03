@@ -77,8 +77,8 @@
     @if($qrcodes->isEmpty())
     <div class="empty-state">
         <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4h4v4H4V4zm12 0h4v4h-4V4zM4 16h4v4H4v-4zm8-12h1m4 4h2m-6 4h-2v4m0-8v1M12 12h4"/></svg>
-        <h3>{{ __('messages.aucun_qr') }}</h3>
-        <p>{{ __('messages.aucun_qr_desc') }}</p>
+        <h3>{{ __('Aucun Qrcode') }}</h3>
+        <p>{{ __('Aucune Description') }}</p>
         <a href="{{ route('fabricant.qrcodes.create') }}" class="btn-sm teal">{{ __('messages.generer_qr') }}</a>
     </div>
     @else
