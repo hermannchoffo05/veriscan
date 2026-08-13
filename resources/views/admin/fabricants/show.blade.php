@@ -177,12 +177,46 @@
         </div>
         
         <div class="profile-actions">
+            @if($statut === 'en_attente')
+                {{-- Bouton Valider --}}
+                <form method="POST" action="{{ route('admin.fabricants.valider', $fabricant->id) }}">
+                    @csrf
+                    <button type="submit" class="btn-action btn-validate">
+                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                        Valider le fabricant
+                    </button>
+                </form>
+
+                {{-- Formulaire de rejet --}}
+                <div class="rejet-box">
+                    <form method="POST" action="{{ route('admin.fabricants.rejeter', $fabricant->id) }}">
+                        @csrf
+                        <label class="rejet-label">Motif de rejet</label>
+                        <input type="text" name="motif" class="rejet-input" placeholder="Expliquez la raison du rejet..." required>
+                        <button type="submit" class="btn-action btn-delete" style="width:100%;">
+                            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                            Rejeter la demande
+                        </button>
+                    </form>
+                </div>
+            @endif
+
             @if($statut === 'actif')
                 <form method="POST" action="{{ route('admin.fabricants.suspendre', $fabricant->id) }}">
                     @csrf
                     <button type="submit" class="btn-action btn-suspend">
                         <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                         Suspendre le compte
+                    </button>
+                </form>
+            @endif
+
+            @if($statut === 'suspendu')
+                <form method="POST" action="{{ route('admin.fabricants.valider', $fabricant->id) }}">
+                    @csrf
+                    <button type="submit" class="btn-action btn-validate">
+                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                        Réactiver le compte
                     </button>
                 </form>
             @endif

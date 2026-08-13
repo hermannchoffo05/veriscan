@@ -34,22 +34,31 @@
 
         /* ── LEFT ── */
         .left { width: 50%; position: relative; overflow: hidden; border-radius: 24px 0 0 24px; background: #1B1854; display: flex; flex-direction: column; justify-content: flex-end; align-items: flex-start; padding: 32px; color: white; }
-        .slide-bg { position: absolute; inset: 0; background-size: cover; background-position: center; background-repeat: no-repeat; opacity: 0; transition: opacity 0.8s ease; z-index: 0; }
+        .left.paused .dot.active .fill { animation-play-state: paused; }
+        .slide-bg { position: absolute; inset: 0; background-size: cover; background-position: center; background-repeat: no-repeat; opacity: 0; transition: opacity 0.9s ease; z-index: 0; }
         .slide-bg.active { opacity: 1; }
-        .slide-overlay { position: absolute; inset: 0; background: linear-gradient(145deg, rgba(15,12,55,0.45) 0%, rgba(27,24,84,0.30) 100%); z-index: 1; }
+        /* ── Overlay localisé : transparent en haut (image visible), sombre
+             seulement en bas où se trouve le texte, pour garantir la
+             lisibilité quelle que soit l'illustration affichée ── */
+        .slide-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(10,8,40,0.82) 0%, rgba(10,8,40,0.55) 22%, rgba(10,8,40,0.15) 45%, rgba(10,8,40,0) 62%); z-index: 1; pointer-events: none; }
         .left::before { content: ''; position: absolute; inset: 0; background-image: radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 22px 22px; z-index: 2; }
         .sphere { position: absolute; border-radius: 50%; background: radial-gradient(circle at 35% 35%, rgba(255,255,255,0.20), rgba(27,24,84,0.55) 60%, rgba(15,12,55,0.75)); box-shadow: inset -6px -6px 20px rgba(0,0,0,0.3), inset 6px 6px 20px rgba(255,255,255,0.10); z-index: 3; }
         .sphere-tl { width: 220px; height: 220px; top: -80px; left: -60px; opacity: 0.85; }
         .sphere-bl { width: 180px; height: 180px; bottom: -70px; left: -30px; opacity: 0.75; }
         .sphere-tr { width: 110px; height: 110px; top: 30px; right: -20px; opacity: 0.55; }
         .caption-zone { position: relative; z-index: 4; display: flex; flex-direction: column; gap: 14px; }
-        .slide-label { display: inline-flex; align-items: center; gap: 8px; background: rgba(245,166,35,0.18); border: 1px solid rgba(245,166,35,0.35); border-radius: 20px; padding: 5px 14px; font-size: 11px; font-weight: 600; width: fit-content; backdrop-filter: blur(4px); color: #FCD34D; }
+        .slide-label { display: inline-flex; align-items: center; gap: 8px; background: rgba(245,166,35,0.20); border: 1px solid rgba(245,166,35,0.40); border-radius: 20px; padding: 5px 14px; font-size: 11px; font-weight: 700; width: fit-content; backdrop-filter: blur(6px); color: #FCD34D; text-shadow: 0 1px 4px rgba(0,0,0,0.3); }
         .slide-label svg { width: 13px; height: 13px; flex-shrink: 0; }
-        .caption-text h2 { font-size: 28px; font-weight: 800; line-height: 1.2; margin-top: 8px; }
-        .caption-text p { font-size: 13px; opacity: 0.72; margin-top: 8px; line-height: 1.6; max-width: 280px; }
-        .carousel-dots { display: flex; gap: 8px; align-items: center; margin-top: 6px; }
-        .dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.35); cursor: pointer; transition: all 0.3s; border: none; padding: 0; }
-        .dot.active { width: 22px; border-radius: 4px; background: #F5A623; }
+        .caption-text h2 { font-size: 28px; font-weight: 800; line-height: 1.2; margin-top: 8px; text-shadow: 0 2px 12px rgba(0,0,0,0.45); }
+        .caption-text p { font-size: 13px; opacity: 0.88; margin-top: 8px; line-height: 1.6; max-width: 280px; text-shadow: 0 1px 8px rgba(0,0,0,0.5); }
+
+        /* ── Barres de progression type "Stories" à la place des simples points ── */
+        .carousel-dots { display: flex; gap: 6px; align-items: center; margin-top: 10px; }
+        .dot { position: relative; width: 30px; height: 4px; border-radius: 3px; background: rgba(255,255,255,0.25); cursor: pointer; border: none; padding: 0; overflow: hidden; }
+        .dot .fill { position: absolute; left: 0; top: 0; height: 100%; width: 0%; background: #F5A623; border-radius: 3px; }
+        .dot.active .fill { animation: fillBar 3s linear forwards; }
+        .dot.done .fill { width: 100%; }
+        @keyframes fillBar { from { width: 0%; } to { width: 100%; } }
 
         /* ── RIGHT ──────────────────────────────────────────────────
            Le formulaire occupe maintenant directement toute cette
@@ -151,10 +160,10 @@
                 <p id="caption-p">Accédez à votre espace fabricant protégé contre toute intrusion.</p>
             </div>
             <div class="carousel-dots">
-                <button class="dot active" onclick="goToSlide(0)"></button>
-                <button class="dot" onclick="goToSlide(1)"></button>
-                <button class="dot" onclick="goToSlide(2)"></button>
-                <button class="dot" onclick="goToSlide(3)"></button>
+                <button class="dot active" onclick="goToSlide(0)"><span class="fill"></span></button>
+                <button class="dot" onclick="goToSlide(1)"><span class="fill"></span></button>
+                <button class="dot" onclick="goToSlide(2)"><span class="fill"></span></button>
+                <button class="dot" onclick="goToSlide(3)"><span class="fill"></span></button>
             </div>
         </div>
     </div>
@@ -237,12 +246,27 @@
         bgs[current].classList.remove('active'); bgs[index].classList.add('active');
         zone.style.opacity = '0'; zone.style.transform = 'translateY(8px)'; zone.style.transition = 'opacity 0.3s, transform 0.3s';
         setTimeout(() => { document.getElementById('slide-label').innerHTML = data.icon + `<span>${data.label}</span>`; document.getElementById('caption-h2').innerHTML = data.h2; document.getElementById('caption-p').textContent = data.p; zone.style.opacity = '1'; zone.style.transform = 'translateY(0)'; }, 280);
-        dots.forEach((d, i) => d.classList.toggle('active', i === index));
+
+        dots.forEach((d, i) => {
+            d.classList.remove('active', 'done');
+            if (i < index) d.classList.add('done');
+        });
+        // Forcer le navigateur à relancer l'animation CSS de la barre active
+        // (sinon, ré-ajouter la même classe ne redémarre pas l'animation).
+        void dots[index].offsetWidth;
+        dots[index].classList.add('active');
+
         current = index; resetTimer();
     }
     function nextSlide() { goToSlide((current + 1) % total); }
     function resetTimer() { clearInterval(timer); timer = setInterval(nextSlide, 3000); }
     timer = setInterval(nextSlide, 3000);
+
+    // Pause du défilement automatique (et de l'animation de la barre) au
+    // survol du panneau gauche, reprise à la sortie de la souris.
+    const leftPanel = document.querySelector('.left');
+    leftPanel.addEventListener('mouseenter', () => { clearInterval(timer); leftPanel.classList.add('paused'); });
+    leftPanel.addEventListener('mouseleave', () => { leftPanel.classList.remove('paused'); resetTimer(); });
     function togglePassword() {
         const input = document.getElementById('password-input');
         const icon  = document.getElementById('eye-icon');

@@ -20,6 +20,28 @@ class AdminFabricantsController extends Controller
         return view('admin.fabricants.show', compact('fabricant'));
     }
 
+    public function valider($id)
+    {
+        $fabricant = Fabricant::findOrFail($id);
+        $fabricant->update(['statut' => 'actif']);
+        return back()->with('success', 'Fabricant validé avec succès.');
+    }
+
+    public function rejeter(Request $request, $id)
+    {
+        $request->validate([
+            'motif' => 'required|string|max:500',
+        ]);
+
+        $fabricant = Fabricant::findOrFail($id);
+        $fabricant->update([
+            'statut' => 'rejete',
+            'motif_rejet' => $request->motif,
+        ]);
+
+        return back()->with('success', 'Fabricant rejeté.');
+    }
+
     public function suspendre($id)
     {
         $fabricant = Fabricant::findOrFail($id);

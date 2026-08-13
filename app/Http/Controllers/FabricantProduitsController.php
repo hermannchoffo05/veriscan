@@ -6,10 +6,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use App\Models\Produit;
 use App\Models\QrCode;
 use App\Models\Signalement;
 use App\Models\Verification;
+use App\Models\CertificationPharmaceutique;
+use App\Models\CertificationCosmetique;
 
 class FabricantProduitsController extends Controller
 {
@@ -45,14 +48,19 @@ class FabricantProduitsController extends Controller
     public function store(Request $request)
     {
         $fabricant = Auth::guard('fabricant')->user();
+
         $validated = $request->validate([
             'nom'         => 'required|string|max:255',
-            'categorie'   => 'required|string|max:100',
+            'categorie'   => ['required', 'string', Rule::in(Produit::CATEGORIES_AUTORISEES)],
             'description' => 'nullable|string',
             'image'       => 'nullable|image|max:2048',
         ]);
-        $validated['fabricant_id'] = $fabricant->id;
-        $validated['code_produit'] = 'VS-' . strtoupper(Str::random(8));
+
+        // Champs de certification propres au secteur choisi — validés séparément
+        // car les règles (et les noms de champs) changent selon la catégorie.
+        $validatedCertif = $request->validate(
+            $this->reglesCertification($validated['categorie'])
+        );
 
         $restant = $fabricant->quotaProduitsRestant();
         if ($restant !== null && $restant <= 0) {
@@ -60,10 +68,16 @@ class FabricantProduitsController extends Controller
     "Vous avez atteint la limite de produits de votre plan ({$fabricant->limites()['label']}). Passez à un plan supérieur pour en ajouter davantage.");
         }
 
+        $validated['fabricant_id'] = $fabricant->id;
+        $validated['code_produit'] = 'VS-' . strtoupper(Str::random(8));
+
         if ($request->hasFile('image')) {
             $validated['image'] = $request->file('image')->store('produits', 'public');
         }
-        Produit::create($validated);
+
+        $produit = Produit::create($validated);
+        $this->enregistrerCertification($produit, $validated['categorie'], $validatedCertif);
+
         return redirect()->route('fabricant.produits.index')
                          ->with('success', 'Produit créé avec succès.');
     }
@@ -72,7 +86,7 @@ class FabricantProduitsController extends Controller
     {
         $fabricant = Auth::guard('fabricant')->user();
         $produit   = Produit::where('fabricant_id', $fabricant->id)
-                            ->with(['lots.qrcodes'])
+                            ->with(['lots.qrcodes', 'certificationPharmaceutique', 'certificationCosmetique'])
                             ->findOrFail($id);
         return view('fabricant.produits.show', compact('produit', 'fabricant'));
     }
@@ -81,6 +95,7 @@ class FabricantProduitsController extends Controller
     {
         $fabricant = Auth::guard('fabricant')->user();
         $produit   = Produit::where('fabricant_id', $fabricant->id)
+                            ->with(['certificationPharmaceutique', 'certificationCosmetique'])
                             ->findOrFail($id);
         return view('fabricant.produits.edit', compact('produit', 'fabricant'));
     }
@@ -90,16 +105,25 @@ class FabricantProduitsController extends Controller
         $fabricant = Auth::guard('fabricant')->user();
         $produit   = Produit::where('fabricant_id', $fabricant->id)
                             ->findOrFail($id);
+
         $validated = $request->validate([
             'nom'         => 'required|string|max:255',
-            'categorie'   => 'required|string|max:100',
+            'categorie'   => ['required', 'string', Rule::in(Produit::CATEGORIES_AUTORISEES)],
             'description' => 'nullable|string',
             'image'       => 'nullable|image|max:2048',
         ]);
+
+        $validatedCertif = $request->validate(
+            $this->reglesCertification($validated['categorie'])
+        );
+
         if ($request->hasFile('image')) {
             $validated['image'] = $request->file('image')->store('produits', 'public');
         }
+
         $produit->update($validated);
+        $this->enregistrerCertification($produit, $validated['categorie'], $validatedCertif);
+
         return redirect()->route('fabricant.produits.index')
                          ->with('success', 'Produit mis à jour.');
     }
@@ -112,6 +136,46 @@ class FabricantProduitsController extends Controller
         $produit->delete();
         return redirect()->route('fabricant.produits.index')
                          ->with('success', 'Produit supprimé.');
+    }
+
+    /**
+     * Règles de validation des champs de certification, propres à chaque
+     * secteur. C'est ici que "chaque produit a des règles de certification
+     * différentes" devient vérifiable dans le code, et pas seulement dans
+     * le mémoire.
+     */
+    private function reglesCertification(?string $categorie): array
+    {
+        return match ($categorie) {
+            'Pharmaceutique' => [
+                'numero_amm'            => 'required|string|max:100',
+                'laboratoire_fabricant' => 'nullable|string|max:255',
+                'date_amm'              => 'nullable|date',
+            ],
+            'Cosmétique' => [
+                'liste_inci'            => 'required|string',
+                'certificat_conformite' => 'nullable|string|max:255',
+                'date_certification'    => 'nullable|date',
+            ],
+            default => [],
+        };
+    }
+
+    /**
+     * Crée ou met à jour la fiche de certification liée au produit,
+     * dans la table correspondant à son secteur.
+     */
+    private function enregistrerCertification(Produit $produit, string $categorie, array $data): void
+    {
+        match ($categorie) {
+            'Pharmaceutique' => CertificationPharmaceutique::updateOrCreate(
+                ['produit_id' => $produit->id], $data
+            ),
+            'Cosmétique' => CertificationCosmetique::updateOrCreate(
+                ['produit_id' => $produit->id], $data
+            ),
+            default => null,
+        };
     }
 
     private function groqCall(string $prompt, int $maxTokens = 200): ?string
@@ -150,14 +214,13 @@ class FabricantProduitsController extends Controller
     {
         $fabricant = Auth::guard('fabricant')->user();
 
-        // ✅ Quota mensuel (gratuit/starter) au lieu d'un blocage total
         if (!$fabricant->peutUtiliserAssistantProduitIA()) {
             return $this->reponseQuotaAtteint();
         }
 
         $request->validate([
             'nom'       => 'required|string|max:255',
-            'categorie' => 'required|string',
+            'categorie' => ['required', 'string', Rule::in(Produit::CATEGORIES_AUTORISEES)],
         ]);
         $nom       = $request->input('nom');
         $categorie = $request->input('categorie');
@@ -165,7 +228,6 @@ class FabricantProduitsController extends Controller
         try {
             $description = $this->groqCall($prompt, 200);
             if ($description) {
-                // ✅ On ne consomme le quota qu'en cas de succès réel
                 $fabricant->incrementerAssistantProduitIA();
                 return response()->json(['description' => trim($description)]);
             }
@@ -179,7 +241,6 @@ class FabricantProduitsController extends Controller
     {
         $fabricant = Auth::guard('fabricant')->user();
 
-        // ✅ Quota mensuel (gratuit/starter) au lieu d'un blocage total
         if (!$fabricant->peutUtiliserAssistantProduitIA()) {
             return $this->reponseQuotaAtteint();
         }
@@ -192,12 +253,18 @@ class FabricantProduitsController extends Controller
         $nom       = $request->input('nom');
         $categorie = $request->input('categorie', '');
 
+        // Le prompt est volontairement restreint aux deux secteurs couverts
+        // par VeriScan — il ne doit plus jamais suggérer "Agroalimentaire",
+        // "Électronique", "Textile", etc. Un produit hors périmètre reçoit
+        // "Hors périmètre".
         $prompt = "Tu es un expert en classification de produits pour la plateforme VeriScan au Cameroun. "
-            . "Propose UNE SEULE catégorie courte et précise (2-3 mots maximum) pour ce produit.\n"
+            . "VeriScan certifie exclusivement deux secteurs : Pharmaceutique, Cosmétique.\n"
             . "Produit : {$nom}\n"
             . ($categorie ? "Catégorie actuelle : {$categorie}\n" : "")
-            . "Exemples de catégories : Alimentaire, Cosmétique, Pharmaceutique, Électronique, Textile, Boisson, Hygiène, Agriculture.\n"
-            . "Réponds UNIQUEMENT avec le nom de la catégorie, sans ponctuation ni explication.";
+            . "Si le produit appartient à un de ces deux secteurs, réponds avec son nom exact. "
+            . "Sinon, réponds exactement \"Hors périmètre\".\n"
+            . "Réponds UNIQUEMENT avec un seul de ces trois mots, sans ponctuation ni explication : "
+            . "Pharmaceutique, Cosmétique, Hors périmètre.";
 
         try {
             $category = $this->groqCall($prompt, 20);
@@ -213,7 +280,6 @@ class FabricantProduitsController extends Controller
 
     public function chat(Request $request)
     {
-        // Chatbot conversationnel — reste réservé Pro/Entreprise (décision distincte)
         $fabricant = Auth::guard('fabricant')->user();
         if (!$fabricant->aAccesIA()) {
             return response()->json(['answer' => "L'assistant IA est réservé aux plans Pro et Entreprise."], 403);

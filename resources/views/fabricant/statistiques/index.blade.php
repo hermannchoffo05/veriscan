@@ -8,15 +8,32 @@
     .page-header h1 { font-size: 22px; font-weight: 800; color: var(--text); }
     .page-header p { font-size: 13px; color: var(--text-light); margin-top: 3px; }
     .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
-    .stat-card { background: white; border-radius: 14px; padding: 18px 20px; border: 1.5px solid var(--border); }
-    .stat-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px; }
-    .stat-icon svg { width: 18px; height: 18px; }
+    .stat-card {
+        background: white;
+        border-radius: 14px;
+        padding: 24px 20px;
+        border: 1.5px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    .stat-icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 14px;
+    }
+    .stat-icon svg { width: 24px; height: 24px; stroke-width: 2.2; }
     .stat-icon.teal { background: var(--teal-light); color: var(--teal); }
     .stat-icon.green { background: #f0fdf4; color: var(--green-ok); }
     .stat-icon.yellow { background: #fefce8; color: #a16207; }
     .stat-icon.red { background: #fef2f2; color: var(--red); }
-    .stat-value { font-size: 28px; font-weight: 800; color: var(--text); }
-    .stat-label { font-size: 12px; color: var(--text-light); margin-top: 3px; }
+    .stat-value { font-size: 30px; font-weight: 800; color: var(--text); line-height: 1.2; }
+    .stat-label { font-size: 12.5px; color: var(--text-light); margin-top: 4px; }
     .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
     .card { background: white; border-radius: 16px; border: 1.5px solid var(--border); overflow: hidden; }
     .card-header { padding: 16px 20px; border-bottom: 1px solid var(--border); }

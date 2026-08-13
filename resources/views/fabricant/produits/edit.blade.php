@@ -34,6 +34,10 @@ textarea.form-control{resize:vertical;min-height:100px;}
 .btn-secondary:hover{background:#e5e7eb;}
 .alert-error{background:#fef2f2;border:1px solid #fecaca;color:#dc2626;padding:12px 16px;border-radius:10px;font-size:13px;margin-bottom:20px;}
 .alert-error ul{margin:6px 0 0 16px;}
+.certif-section{border:1px solid #e5e7eb;border-radius:12px;padding:18px 20px;margin-top:6px;background:#fafbfc;}
+.certif-section .form-label{margin-top:14px;}
+.certif-section .form-label:first-child{margin-top:0;}
+.certif-hint{font-size:12px;color:#6b7280;margin-bottom:14px;}
 </style>
 @endsection
 @section('content')
@@ -54,25 +58,70 @@ textarea.form-control{resize:vertical;min-height:100px;}
     @endif
     <form action="{{ route('fabricant.produits.update', $produit->id) }}" method="POST" enctype="multipart/form-data">
         @csrf @method('PUT')
+
+        {{-- NOM --}}
         <div class="form-group">
             <label class="form-label">{{ __('messages.nom_produit') }} <span class="required">*</span></label>
             <input type="text" name="nom" class="form-control @error('nom') is-invalid @enderror" value="{{ old('nom', $produit->nom) }}">
             @error('nom') <div class="invalid-feedback">{{ $message }}</div> @enderror
         </div>
+
+        {{-- CATEGORIE : restreinte aux deux secteurs couverts par VeriScan --}}
         <div class="form-group">
             <label class="form-label">{{ __('messages.categorie') }} <span class="required">*</span></label>
-            <select name="categorie" class="form-control @error('categorie') is-invalid @enderror">
-                @foreach(['Médicaments'=>__('messages.medicaments'),'Alimentation'=>__('messages.alimentation'),'Cosmétiques'=>__('messages.cosmetiques'),'Pièces automobiles'=>__('messages.pieces_automobiles'),'Électronique'=>__('messages.electronique'),'Autre'=>__('messages.autre')] as $val=>$label)
+            <select id="categorieProduit" name="categorie" class="form-control @error('categorie') is-invalid @enderror">
+                @foreach(['Pharmaceutique'=>__('Pharmaceutique'),'Cosmétique'=>__('Cosmétique')] as $val=>$label)
                     <option value="{{ $val }}" {{ old('categorie',$produit->categorie)==$val?'selected':'' }}>{{ $label }}</option>
                 @endforeach
             </select>
             @error('categorie') <div class="invalid-feedback">{{ $message }}</div> @enderror
         </div>
+
+        {{-- CHAMPS DE CERTIFICATION — un bloc par secteur, pré-rempli si déjà enregistré --}}
+        @php $certif = $produit->certification; @endphp
+        <div class="form-group" id="blocsCertification">
+
+            <div id="champsPharmaceutique" class="certif-section certif-fields" style="display:none">
+                <p class="certif-hint">Informations réglementaires propres au secteur pharmaceutique.</p>
+                <label class="form-label">Numéro d'AMM (Autorisation de Mise sur le Marché) <span class="required">*</span></label>
+                <input type="text" name="numero_amm" class="form-control @error('numero_amm') is-invalid @enderror"
+                       value="{{ old('numero_amm', $produit->categorie === 'Pharmaceutique' ? $certif?->numero_amm : null) }}">
+                @error('numero_amm') <div class="invalid-feedback">{{ $message }}</div> @enderror
+
+                <label class="form-label">Laboratoire fabricant</label>
+                <input type="text" name="laboratoire_fabricant" class="form-control"
+                       value="{{ old('laboratoire_fabricant', $produit->categorie === 'Pharmaceutique' ? $certif?->laboratoire_fabricant : null) }}">
+
+                <label class="form-label">Date de l'AMM</label>
+                <input type="date" name="date_amm" class="form-control"
+                       value="{{ old('date_amm', $produit->categorie === 'Pharmaceutique' && $certif?->date_amm ? $certif->date_amm->format('Y-m-d') : null) }}">
+            </div>
+
+            <div id="champsCosmetique" class="certif-section certif-fields" style="display:none">
+                <p class="certif-hint">Informations réglementaires propres au secteur cosmétique.</p>
+                <label class="form-label">Liste INCI (ingrédients) <span class="required">*</span></label>
+                <textarea name="liste_inci" class="form-control @error('liste_inci') is-invalid @enderror" placeholder="Ex : Aqua, Glycerin, Hydroquinone...">{{ old('liste_inci', $produit->categorie === 'Cosmétique' ? $certif?->liste_inci : null) }}</textarea>
+                @error('liste_inci') <div class="invalid-feedback">{{ $message }}</div> @enderror
+
+                <label class="form-label">Certificat de conformité (référence)</label>
+                <input type="text" name="certificat_conformite" class="form-control"
+                       value="{{ old('certificat_conformite', $produit->categorie === 'Cosmétique' ? $certif?->certificat_conformite : null) }}">
+
+                <label class="form-label">Date de certification</label>
+                <input type="date" name="date_certification" class="form-control"
+                       value="{{ old('date_certification', $produit->categorie === 'Cosmétique' && $certif?->date_certification ? $certif->date_certification->format('Y-m-d') : null) }}">
+            </div>
+
+        </div>
+
+        {{-- DESCRIPTION --}}
         <div class="form-group">
             <label class="form-label">{{ __('messages.description') }}</label>
             <textarea name="description" class="form-control @error('description') is-invalid @enderror">{{ old('description', $produit->description) }}</textarea>
             @error('description') <div class="invalid-feedback">{{ $message }}</div> @enderror
         </div>
+
+        {{-- IMAGE --}}
         <div class="form-group">
             <label class="form-label">{{ __('messages.image_produit') }}</label>
             @if($produit->image)
@@ -88,11 +137,35 @@ textarea.form-control{resize:vertical;min-height:100px;}
             <input type="file" id="imageInput" name="image" accept="image/*" style="display:none" onchange="previewImage(this)">
             @error('image') <div class="invalid-feedback">{{ $message }}</div> @enderror
         </div>
+
         <div class="form-actions">
             <a href="{{ route('fabricant.produits.show', $produit->id) }}" class="btn-secondary">{{ __('messages.annuler') }}</a>
             <button type="submit" class="btn-primary">{{ __('messages.enregistrer_modifications') }}</button>
         </div>
     </form>
 </div>
-<script>function previewImage(input){const preview=document.getElementById('imagePreview');if(input.files&&input.files[0]){const reader=new FileReader();reader.onload=e=>{preview.innerHTML=`<img src="${e.target.result}" style="width:100%;height:100%;object-fit:cover;border-radius:8px">`;};reader.readAsDataURL(input.files[0]);}}</script>
+<script>
+function previewImage(input){
+    const preview=document.getElementById('imagePreview');
+    if(input.files&&input.files[0]){
+        const reader=new FileReader();
+        reader.onload=e=>{preview.innerHTML=`<img src="${e.target.result}" style="width:100%;height:100%;object-fit:cover;border-radius:8px">`;};
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+function afficherChampsCertification(categorie) {
+    document.querySelectorAll('.certif-fields').forEach(el => el.style.display = 'none');
+    const map = { 'Pharmaceutique': 'champsPharmaceutique', 'Cosmétique': 'champsCosmetique' };
+    const id = map[categorie];
+    if (id) document.getElementById(id).style.display = 'block';
+}
+
+document.getElementById('categorieProduit').addEventListener('change', function() {
+    afficherChampsCertification(this.value);
+});
+
+// Affiche le bon bloc dès le chargement de la page (catégorie actuelle du produit)
+afficherChampsCertification(document.getElementById('categorieProduit').value);
+</script>
 @endsection

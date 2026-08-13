@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Signalement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class AdminSignalementsController extends Controller
 {
@@ -79,7 +80,10 @@ Analyse cette image et fournis : niveau de suspicion, observations, signes de co
                     'Content-Type'  => 'application/json',
                 ])
                 ->post('https://api.groq.com/openai/v1/chat/completions', [
-                    'model'       => 'meta-llama/llama-4-scout-17b-16e-instruct',
+                    // ⚠️ meta-llama/llama-4-scout-17b-16e-instruct a été déprécié par Groq.
+                    // qwen/qwen3.6-27b est le modèle vision actuel (statut "preview" chez Groq,
+                    // donc à re-vérifier périodiquement sur console.groq.com/docs/models).
+                    'model'       => 'qwen/qwen3.6-27b',
                     'messages'    => [
                         [
                             'role'    => 'user',
@@ -102,9 +106,22 @@ Analyse cette image et fournis : niveau de suspicion, observations, signes de co
                 return response()->json(['analyse' => $analyse]);
             }
 
+            // DEBUG TEMPORAIRE : capture la vraie réponse d'erreur de Groq
+            Log::error('Erreur Groq analyserPhoto', [
+                'status' => $response->status(),
+                'body'   => $response->body(),
+            ]);
+
             return response()->json(['error' => 'Erreur lors de l\'analyse IA.'], 500);
 
         } catch (\Exception $e) {
+            // DEBUG TEMPORAIRE : capture l'exception PHP réelle (timeout, DNS, etc.)
+            Log::error('Exception analyserPhoto', [
+                'message' => $e->getMessage(),
+                'file'    => $e->getFile(),
+                'line'    => $e->getLine(),
+            ]);
+
             return response()->json(['error' => 'Service IA indisponible.'], 500);
         }
     }
@@ -180,7 +197,8 @@ Ne commence pas par 'Voici' ou 'Bien sûr'. Va directement au résumé.";
                     'Content-Type'  => 'application/json',
                 ])
                 ->post('https://api.groq.com/openai/v1/chat/completions', [
-                    'model'       => 'llama-3.1-8b-instant',
+                    // ⚠️ llama-3.1-8b-instant a été déprécié par Groq.
+                    'model'       => 'openai/gpt-oss-120b',
                     'messages'    => [['role' => 'user', 'content' => $prompt]],
                     'max_tokens'  => 400,
                     'temperature' => 0.4,

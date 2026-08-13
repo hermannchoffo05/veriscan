@@ -75,6 +75,7 @@ return [
 'medicament'           => 'Médicament',
 'alimentation'         => 'Alimentation',
 'cosmetique'           => 'Cosmétique',
+'pharmaceutique'  => 'Pharmaceutique',
 'hygiene'              => 'Hygiène',
 'authentique'          => 'Authentique',
 'suspect'              => 'Suspect',

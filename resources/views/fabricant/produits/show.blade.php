@@ -95,6 +95,16 @@
 .stat-value { font-size: 28px; font-weight: 700; color: #2E3A6B; }
 .stat-label { font-size: 12px; color: #6b7280; margin-top: 4px; }
 
+.certif-card { background: #fff; border-radius: 16px; border: 1px solid #e5e7eb; padding: 20px 24px; margin-bottom: 24px; }
+.certif-card .section-title { font-size: 16px; font-weight: 700; color: #1f2937; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+.certif-card .section-title svg { width: 18px; height: 18px; color: #2E3A6B; }
+.certif-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.certif-item .certif-label { font-size: 11px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 4px; }
+.certif-item .certif-value { font-size: 14px; color: #1f2937; font-weight: 500; word-break: break-word; }
+.certif-item .certif-value.empty { color: #9ca3af; font-weight: 400; font-style: italic; }
+.certif-missing { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #92400e; background: #fffbeb; border: 1px solid #fde68a; border-radius: 10px; padding: 10px 14px; }
+.certif-missing svg { width: 16px; height: 16px; flex-shrink: 0; }
+
 .lots-section { background: #fff; border-radius: 16px; border: 1px solid #e5e7eb; overflow: hidden; }
 .section-header { padding: 20px 24px; border-bottom: 1px solid #f3f4f6; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
 .section-title { font-size: 16px; font-weight: 700; color: #1f2937; }
@@ -139,6 +149,8 @@ tr:hover td { background: #f9fafb; }
     .stat-card { padding: 12px 4px; }
     .stat-value { font-size: 18px; }
     .stat-label { font-size: 10px; line-height: 1.3; }
+
+    .certif-grid { grid-template-columns: 1fr; }
 
     .section-header { padding: 14px 16px; }
     .table-scroll-hint { display: block; }
@@ -193,6 +205,53 @@ tr:hover td { background: #f9fafb; }
             <div class="product-desc">{{ $produit->description }}</div>
         @endif
     </div>
+</div>
+
+{{-- Certification propre au secteur --}}
+<div class="certif-card">
+    <div class="section-title">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        Certification {{ $produit->categorie }}
+    </div>
+
+    @php $certif = $produit->certification; @endphp
+
+    @if(!$certif)
+        <div class="certif-missing">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Aucune information de certification enregistrée pour ce produit. Complétez-la depuis "{{ __('messages.modifier') }}".
+        </div>
+    @elseif($produit->categorie === 'Pharmaceutique')
+        <div class="certif-grid">
+            <div class="certif-item">
+                <div class="certif-label">Numéro d'AMM</div>
+                <div class="certif-value">{{ $certif->numero_amm }}</div>
+            </div>
+            <div class="certif-item">
+                <div class="certif-label">Laboratoire fabricant</div>
+                <div class="certif-value {{ $certif->laboratoire_fabricant ? '' : 'empty' }}">{{ $certif->laboratoire_fabricant ?? 'Non renseigné' }}</div>
+            </div>
+            <div class="certif-item">
+                <div class="certif-label">Date de l'AMM</div>
+                <div class="certif-value {{ $certif->date_amm ? '' : 'empty' }}">{{ $certif->date_amm ? $certif->date_amm->format('d/m/Y') : 'Non renseignée' }}</div>
+            </div>
+        </div>
+    @elseif($produit->categorie === 'Cosmétique')
+        <div class="certif-grid">
+            <div class="certif-item" style="grid-column: 1 / -1">
+                <div class="certif-label">Liste INCI</div>
+                <div class="certif-value">{{ $certif->liste_inci }}</div>
+            </div>
+            <div class="certif-item">
+                <div class="certif-label">Certificat de conformité</div>
+                <div class="certif-value {{ $certif->certificat_conformite ? '' : 'empty' }}">{{ $certif->certificat_conformite ?? 'Non renseigné' }}</div>
+            </div>
+            <div class="certif-item">
+                <div class="certif-label">Date de certification</div>
+                <div class="certif-value {{ $certif->date_certification ? '' : 'empty' }}">{{ $certif->date_certification ? $certif->date_certification->format('d/m/Y') : 'Non renseignée' }}</div>
+            </div>
+        </div>
+    @endif
 </div>
 
 {{-- Stats --}}

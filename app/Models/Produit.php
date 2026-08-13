@@ -6,6 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Produit extends Model
 {
+    /**
+     * VeriScan ne certifie que ces secteurs. Toute valeur hors de cette
+     * liste doit être rejetée par la validation (voir le contrôleur).
+     */
+    public const CATEGORIES_AUTORISEES = ['Pharmaceutique', 'Cosmétique'];
+
     protected $fillable = [
         'fabricant_id', 'nom', 'categorie',
         'description', 'image', 'code_produit'
@@ -25,6 +31,30 @@ class Produit extends Model
     public function qrcodes()
     {
         return $this->hasManyThrough(QrCode::class, Lot::class);
+    }
+
+    public function certificationPharmaceutique()
+    {
+        return $this->hasOne(CertificationPharmaceutique::class);
+    }
+
+    public function certificationCosmetique()
+    {
+        return $this->hasOne(CertificationCosmetique::class);
+    }
+
+    /**
+     * Retourne la fiche de certification liée à ce produit, quel que soit
+     * son secteur — utile pour l'affichage (show.blade.php) sans avoir à
+     * tester la catégorie manuellement à chaque fois.
+     */
+    public function getCertificationAttribute()
+    {
+        return match ($this->categorie) {
+            'Pharmaceutique' => $this->certificationPharmaceutique,
+            'Cosmétique'     => $this->certificationCosmetique,
+            default          => null,
+        };
     }
 
     // Compte total de signalements (via lots → qr_codes → signalements)

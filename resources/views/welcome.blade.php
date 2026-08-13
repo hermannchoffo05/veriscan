@@ -52,6 +52,15 @@
 
         /* ── HERO ── */
         .hero { min-height: 100vh; background: #ECEEFA; display: flex; align-items: center; padding: 100px 60px 30px; position: relative; overflow: hidden; gap: 60px; }
+        .hero::after {
+            content: '';
+            position: absolute;
+            left: 0; right: 0; bottom: 0;
+            height: 90px;
+            background: linear-gradient(to bottom, rgba(236,238,250,0) 0%, rgba(46,58,107,0.08) 60%, rgba(46,58,107,0.18) 100%);
+            pointer-events: none;
+            z-index: 1;
+        }
         .hero-left { flex: 1; position: relative; z-index: 2; max-width: 560px; }
         .cameroon-map { position: absolute; width: 580px; height: 580px; top: 50%; left: -30px; transform: translateY(-50%); opacity: 0.10; z-index: 0; pointer-events: none; filter: grayscale(100%) brightness(0.9); }
         .hero-left h1, .hero-left p, .hero-actions { position: relative; z-index: 1; }
@@ -66,7 +75,79 @@
         .btn-hero-secondary:hover { border-color: var(--teal); color: var(--teal); transform: translateY(-2px); }
         .btn-hero-secondary svg { width: 18px; height: 18px; }
         .hero-right { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; z-index: 2; }
-        .hero-illustration { width: 460px; filter: drop-shadow(0 20px 40px rgba(46,58,107,0.15)); animation: fadeUp 0.8s ease 0.2s both; }
+
+        /* ── Illustration hero animée ── */
+        .hero-glow {
+            position: absolute;
+            width: 460px;
+            height: 460px;
+            border-radius: 32px;
+            background: linear-gradient(155deg, rgba(46,58,107,0.10) 0%, rgba(245,166,35,0.14) 55%, rgba(46,58,107,0.05) 100%);
+            filter: blur(6px);
+            z-index: 0;
+            animation: glowPulse 6s ease-in-out infinite;
+        }
+
+        .hero-illustration-wrap {
+            position: relative;
+            z-index: 1;
+            animation: floatY 4.5s ease-in-out infinite;
+            transition: transform 0.15s ease-out;
+        }
+
+        .hero-illustration { width: 460px; filter: drop-shadow(0 25px 45px rgba(46,58,107,0.25)); animation: fadeUp 0.8s ease 0.2s both; display: block; }
+
+        .hero-float-badge {
+            position: absolute;
+            background: white;
+            border-radius: 14px;
+            box-shadow: 0 10px 30px rgba(46,58,107,0.18);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            font-size: 12.5px;
+            font-weight: 700;
+            color: var(--teal);
+            z-index: 2;
+            border: 1.5px solid rgba(46,58,107,0.08);
+        }
+        .hero-float-badge svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+        /* ── Badge "verdict de scan" : change automatiquement de couleur/texte
+             entre Authentique, Suspect et Contrefait, pour illustrer le
+             fonctionnement réel de VeriScan sans ajouter d'éléments visuels
+             supplémentaires sur l'illustration. ── */
+        .badge-scan-result {
+            top: 8%;
+            left: -6%;
+            border-left: 4px solid var(--badge-color, #16a34a);
+            color: var(--badge-color, #16a34a);
+            animation: floatY 3.6s ease-in-out infinite, fadeUp 0.7s ease 0.5s both;
+            transition: border-color 0.4s ease, color 0.4s ease;
+        }
+        .badge-scan-result svg { color: var(--badge-color, #16a34a); transition: color 0.4s ease; }
+        .badge-scan-result .badge-text { transition: opacity 0.25s ease; }
+        .badge-scan-result .badge-text.fading { opacity: 0; }
+
+        .badge-secure {
+            bottom: 12%;
+            right: -8%;
+            animation: floatY 4s ease-in-out infinite reverse, fadeUp 0.7s ease 0.7s both;
+        }
+
+        @keyframes floatY {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-16px); }
+        }
+        @keyframes glowPulse {
+            0%, 100% { opacity: 0.75; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.035); }
+        }
+        @keyframes spinSlow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
 
         /* ── STATS ── */
         .stats-band { background: #2E3A6B; padding: 48px 60px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; position: relative; overflow: hidden; }
@@ -108,7 +189,7 @@
 
         /* ── TARIFS ── */
         .pricing-preview { background: white; }
-        .pricing-preview-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; max-width: 900px; margin: 0 auto; }
+        .pricing-preview-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; max-width: 1140px; margin: 0 auto; }
         .pp-card { background: #fafafa; border: 2px solid var(--border); border-radius: 20px; padding: 28px 24px; display: flex; flex-direction: column; gap: 16px; position: relative; transition: all 0.2s; }
         .pp-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.07); }
         .pp-card.pp-popular { border-color: var(--yellow); background: white; box-shadow: 0 8px 28px rgba(245,166,35,0.15); }
@@ -187,6 +268,8 @@
             .hero-right { width: 100%; }
             .hero-illustration { width: 200px; margin-top: -10px; }
 .hero-right { margin-top: -16px; }
+            .hero-glow { display: none; }
+            .hero-float-badge { display: none; }
             .stats-band { grid-template-columns: repeat(2, 1fr); padding: 28px 20px; gap: 0; }
             .band-stat { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.15); padding: 16px 8px; }
             .band-stat:nth-child(odd) { border-right: 1px solid rgba(255,255,255,0.15); }
@@ -292,8 +375,22 @@
             </a>
         </div>
     </div>
-    <div class="hero-right">
-        <img src="{{ asset('images/scan0.png') }}" alt="Scan QR Code VeriScan" class="hero-illustration">
+    <div class="hero-right" id="heroRight">
+        <div class="hero-glow"></div>
+
+        <div class="hero-float-badge badge-scan-result" id="scanResultBadge" style="--badge-color:#16a34a;">
+            <svg id="scanResultIcon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <span class="badge-text" id="scanResultText">{{ $locale === 'en' ? 'Authentic' : 'Authentique' }}</span>
+        </div>
+
+        <div class="hero-float-badge badge-secure">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+            HMAC-SHA256
+        </div>
+
+        <div class="hero-illustration-wrap" id="heroIllustrationWrap">
+            <img src="{{ asset('images/scan0.png') }}" alt="Scan QR Code VeriScan" class="hero-illustration">
+        </div>
     </div>
 </section>
 
@@ -349,6 +446,17 @@
                 <span>{{ $locale === 'en' ? 'Basic statistics' : 'Statistiques basiques' }}</span>
             </div>
             <a href="{{ route('fabricant.register') }}" class="pp-btn pp-btn-outline">{{ $locale === 'en' ? 'Get started' : 'Commencer' }}</a>
+        </div>
+        <div class="pp-card">
+            <div class="pp-name">Starter</div>
+            <div class="pp-price">2 000 <span>FCFA/{{ $locale === 'en' ? 'month' : 'mois' }}</span></div>
+            <div class="pp-features">
+                <span>5 {{ $locale === 'en' ? 'registered products' : 'produits enregistrés' }}</span>
+                <span>500 QR codes/{{ $locale === 'en' ? 'month' : 'mois' }}</span>
+                <span>{{ $locale === 'en' ? 'Full statistics' : 'Statistiques complètes' }}</span>
+                <span>1 {{ $locale === 'en' ? 'PDF report/month' : 'rapport PDF/mois' }}</span>
+            </div>
+            <a href="{{ route('paiement.checkout', 'starter') }}" class="pp-btn pp-btn-outline">{{ $locale === 'en' ? 'Subscribe' : 'Souscrire' }}</a>
         </div>
         <div class="pp-card pp-popular">
             <div class="pp-badge">★ {{ $locale === 'en' ? 'POPULAR' : 'POPULAIRE' }}</div>
@@ -581,6 +689,66 @@ async function pollStatsLive() {
 // Première vérification après 25s (le chargement initial affiche déjà les
 // valeurs correctes via le serveur), puis toutes les 25s en continu.
 setInterval(pollStatsLive, 25000);
+
+// ── AJOUT : léger effet de parallaxe sur l'illustration hero au survol ──
+(function () {
+    const wrap = document.getElementById('heroIllustrationWrap');
+    const container = document.getElementById('heroRight');
+    if (!wrap || !container) return;
+
+    container.addEventListener('mousemove', (e) => {
+        const rect = container.getBoundingClientRect();
+        const x = (e.clientX - rect.left - rect.width / 2) / rect.width;
+        const y = (e.clientY - rect.top - rect.height / 2) / rect.height;
+        wrap.style.transform = `translate(${x * 14}px, ${y * 14}px) rotate(${x * 2}deg)`;
+    });
+
+    container.addEventListener('mouseleave', () => {
+        wrap.style.transform = 'translate(0, 0) rotate(0deg)';
+    });
+})();
+
+// ── AJOUT : badge "verdict de scan" qui illustre les 3 résultats possibles
+// (Authentique / Suspect / Contrefait) en boucle, sans ajouter d'éléments
+// visuels supplémentaires sur l'illustration.
+(function () {
+    const badge = document.getElementById('scanResultBadge');
+    const icon  = document.getElementById('scanResultIcon');
+    const text  = document.getElementById('scanResultText');
+    if (!badge || !icon || !text) return;
+
+    const isEn = "{{ $locale }}" === 'en';
+    const states = [
+        {
+            color: '#16a34a',
+            label: isEn ? 'Authentic' : 'Authentique',
+            path: '<path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>'
+        },
+        {
+            color: '#F5A623',
+            label: isEn ? 'Suspicious' : 'Suspect',
+            path: '<path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>'
+        },
+        {
+            color: '#dc2626',
+            label: isEn ? 'Counterfeit' : 'Contrefait',
+            path: '<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>'
+        }
+    ];
+
+    let index = 0;
+    setInterval(() => {
+        index = (index + 1) % states.length;
+        const s = states[index];
+        text.classList.add('fading');
+        setTimeout(() => {
+            badge.style.setProperty('--badge-color', s.color);
+            icon.innerHTML = s.path;
+            text.textContent = s.label;
+            text.classList.remove('fading');
+        }, 250);
+    }, 2600);
+})();
 </script>
 </body>
 </html>

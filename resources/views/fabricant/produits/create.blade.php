@@ -53,6 +53,10 @@ textarea.form-control{resize:vertical;min-height:100px;}
 .ai-warning.visible{display:flex;}
 .ai-warning button{background:#2E3A6B;color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;}
 .ai-warning button:hover{background:#212a52;}
+.certif-section{border:1px solid #e5e7eb;border-radius:12px;padding:18px 20px;margin-top:6px;background:#fafbfc;}
+.certif-section .form-label{margin-top:14px;}
+.certif-section .form-label:first-child{margin-top:0;}
+.certif-hint{font-size:12px;color:#6b7280;margin-bottom:14px;}
 </style>
 @endsection
 @section('content')
@@ -86,14 +90,14 @@ textarea.form-control{resize:vertical;min-height:100px;}
             @error('nom') <div class="invalid-feedback">{{ $message }}</div> @enderror
         </div>
 
-        {{-- CATEGORIE --}}
+        {{-- CATEGORIE : restreinte aux deux secteurs couverts par VeriScan --}}
         <div class="form-group">
             <label class="form-label">
                 {{ __('messages.categorie') }} <span class="required">*</span>
             </label>
             <select id="categorieProduit" name="categorie" class="form-control @error('categorie') is-invalid @enderror">
                 <option value="">-- {{ __('messages.selectionner_categorie') }} --</option>
-                @foreach(['Pharmaceutique'=>__('Pharmaceutique'),'Alimentation'=>__('messages.alimentation'),'Cosmétiques'=>__('messages.cosmetiques'),'Pièces automobiles'=>__('messages.pieces_automobiles'),'Électronique'=>__('messages.electronique'),'Autre'=>__('messages.autre')] as $val=>$label)
+                @foreach(['Pharmaceutique'=>__('Pharmaceutique'),'Cosmétique'=>__('Cosmétique')] as $val=>$label)
                     <option value="{{ $val }}" {{ old('categorie')==$val?'selected':'' }}>{{ $label }}</option>
                 @endforeach
             </select>
@@ -108,7 +112,39 @@ textarea.form-control{resize:vertical;min-height:100px;}
             <div id="catError" class="ai-error"></div>
             <div id="catQuota" class="ai-quota"></div>
             <div id="catCoherenceWarning" class="ai-warning"></div>
+            <div id="catHorsPerimetre" class="ai-warning"></div>
             @error('categorie') <div class="invalid-feedback">{{ $message }}</div> @enderror
+        </div>
+
+        {{-- CHAMPS DE CERTIFICATION — un bloc par secteur, un seul visible à la fois --}}
+        <div class="form-group" id="blocsCertification">
+
+            <div id="champsPharmaceutique" class="certif-section certif-fields" style="display:none">
+                <p class="certif-hint">Informations réglementaires propres au secteur pharmaceutique.</p>
+                <label class="form-label">Numéro d'AMM (Autorisation de Mise sur le Marché) <span class="required">*</span></label>
+                <input type="text" name="numero_amm" class="form-control @error('numero_amm') is-invalid @enderror" value="{{ old('numero_amm') }}">
+                @error('numero_amm') <div class="invalid-feedback">{{ $message }}</div> @enderror
+
+                <label class="form-label">Laboratoire fabricant</label>
+                <input type="text" name="laboratoire_fabricant" class="form-control" value="{{ old('laboratoire_fabricant') }}">
+
+                <label class="form-label">Date de l'AMM</label>
+                <input type="date" name="date_amm" class="form-control" value="{{ old('date_amm') }}">
+            </div>
+
+            <div id="champsCosmetique" class="certif-section certif-fields" style="display:none">
+                <p class="certif-hint">Informations réglementaires propres au secteur cosmétique.</p>
+                <label class="form-label">Liste INCI (ingrédients) <span class="required">*</span></label>
+                <textarea name="liste_inci" class="form-control @error('liste_inci') is-invalid @enderror" placeholder="Ex : Aqua, Glycerin, Hydroquinone...">{{ old('liste_inci') }}</textarea>
+                @error('liste_inci') <div class="invalid-feedback">{{ $message }}</div> @enderror
+
+                <label class="form-label">Certificat de conformité (référence)</label>
+                <input type="text" name="certificat_conformite" class="form-control" value="{{ old('certificat_conformite') }}">
+
+                <label class="form-label">Date de certification</label>
+                <input type="date" name="date_certification" class="form-control" value="{{ old('date_certification') }}">
+            </div>
+
         </div>
 
         {{-- DESCRIPTION --}}
@@ -161,22 +197,30 @@ const CSRF_TOKEN     = '{{ csrf_token() }}';
 const ROUTE_CLASSIFY = '{{ route("fabricant.produits.classify-category") }}';
 const ROUTE_DESC     = '{{ route("fabricant.produits.generate-description") }}';
 
+// La carte de normalisation ne couvre plus que les deux secteurs
+// autorisés. Toute autre formulation (auto, électronique, textile,
+// alimentaire...) n'a volontairement plus de correspondance : elle
+// retombe sur "Hors périmètre".
 const CAT_MAP = {
     'medicament': 'Pharmaceutique', 'médicaments': 'Pharmaceutique', 'medicaments': 'Pharmaceutique', 'pharmaceut': 'Pharmaceutique',
-    'alimentat': 'Alimentation', 'food': 'Alimentation', 'boisson': 'Alimentation', 'nourriture': 'Alimentation',
-    'cosmet': 'Cosmétiques', 'beaut': 'Cosmétiques', 'hygiene': 'Cosmétiques', 'hygiène': 'Cosmétiques',
-    'automobile': 'Pièces automobiles', 'auto': 'Pièces automobiles', 'pièces': 'Pièces automobiles', 'pieces': 'Pièces automobiles',
-    'electron': 'Électronique', 'électron': 'Électronique', 'technolog': 'Électronique',
-    'autre': 'Autre', 'other': 'Autre', 'divers': 'Autre',
+    'cosmet': 'Cosmétique', 'cosmét': 'Cosmétique', 'beaut': 'Cosmétique', 'hygiene': 'Cosmétique', 'hygiène': 'Cosmétique',
 };
 
 function normalizeCategory(raw) {
     if (!raw) return null;
     const lower = raw.toLowerCase().trim();
+    if (lower.includes('hors') || lower.includes('perimetre') || lower.includes('périmètre')) return 'HORS_PERIMETRE';
     for (const [key, val] of Object.entries(CAT_MAP)) {
         if (lower.includes(key)) return val;
     }
     return null;
+}
+
+function afficherChampsCertification(categorie) {
+    document.querySelectorAll('.certif-fields').forEach(el => el.style.display = 'none');
+    const map = { 'Pharmaceutique': 'champsPharmaceutique', 'Cosmétique': 'champsCosmetique' };
+    const id = map[categorie];
+    if (id) document.getElementById(id).style.display = 'block';
 }
 
 function previewImage(input) {
@@ -201,16 +245,18 @@ function masquerMessage(container) {
 }
 
 async function classifierCategorie(nom) {
-    const catSelect  = document.getElementById('categorieProduit');
-    const catLoading = document.getElementById('catLoading');
-    const catBadge   = document.getElementById('catAiBadge');
-    const catError   = document.getElementById('catError');
-    const catQuota   = document.getElementById('catQuota');
+    const catSelect     = document.getElementById('categorieProduit');
+    const catLoading    = document.getElementById('catLoading');
+    const catBadge      = document.getElementById('catAiBadge');
+    const catError      = document.getElementById('catError');
+    const catQuota      = document.getElementById('catQuota');
+    const catHorsPerim  = document.getElementById('catHorsPerimetre');
 
     catLoading.classList.add('visible');
     catBadge.classList.remove('visible');
     masquerMessage(catError);
     masquerMessage(catQuota);
+    masquerMessage(catHorsPerim);
 
     try {
         const res  = await fetch(ROUTE_CLASSIFY, {
@@ -233,8 +279,11 @@ async function classifierCategorie(nom) {
 
         if (data.category) {
             const normalized = normalizeCategory(data.category);
-            if (normalized) {
+            if (normalized === 'HORS_PERIMETRE') {
+                afficherMessage(catHorsPerim, "⚠️ Ce produit ne semble appartenir à aucun des deux secteurs couverts par VeriScan (Pharmaceutique, Cosmétique). Sélectionnez la catégorie la plus proche ou vérifiez le nom saisi.");
+            } else if (normalized) {
                 catSelect.value = normalized;
+                afficherChampsCertification(normalized);
                 catBadge.classList.add('visible');
                 await genererDescription();
             }
@@ -318,7 +367,10 @@ async function verifierCoherenceCategorie() {
         const data = await res.json();
         const suggestion = normalizeCategory(data.category);
 
-        if (suggestion && suggestion !== categorieSel) {
+        if (suggestion === 'HORS_PERIMETRE') {
+            warningBox.innerHTML = `⚠️ "${nom}" ne semble appartenir à aucun des deux secteurs couverts par VeriScan.`;
+            warningBox.classList.add('visible');
+        } else if (suggestion && suggestion !== categorieSel) {
             warningBox.innerHTML = `⚠️ "${nom}" correspond généralement à la catégorie <strong>${suggestion}</strong>, pas ${categorieSel}. <button type="button" onclick="corrigerCategorie('${suggestion}')">Corriger</button>`;
             warningBox.classList.add('visible');
         } else {
@@ -331,6 +383,7 @@ async function verifierCoherenceCategorie() {
 
 function corrigerCategorie(categorie) {
     document.getElementById('categorieProduit').value = categorie;
+    afficherChampsCertification(categorie);
     document.getElementById('catCoherenceWarning').classList.remove('visible');
     genererDescription();
 }
@@ -348,11 +401,15 @@ document.getElementById('nomProduit').addEventListener('blur', function() {
 });
 
 document.getElementById('categorieProduit').addEventListener('change', function() {
+    afficherChampsCertification(this.value);
     const nom = document.getElementById('nomProduit').value.trim();
     if (nom && this.value) {
         genererDescription();
         verifierCoherenceCategorie();
     }
 });
+
+// Cas d'un rechargement de page après erreur de validation (old('categorie'))
+afficherChampsCertification(document.getElementById('categorieProduit').value);
 </script>
 @endsection
