@@ -53,7 +53,7 @@ class VerifyApiController extends Controller
             'produit'  => [
                 'nom'        => $qrCode->lot?->produit?->nom,
                 'categorie'  => $qrCode->lot?->produit?->categorie,
-                'fabricant'  => $qrCode->lot?->produit?->fabricant?->nom,
+                'fabricant'  => $qrCode->lot?->produit?->fabricant?->nom_entreprise,
                 'lot'        => $qrCode->lot?->numero_lot,
                 'expiration' => $qrCode->lot?->date_expiration,
             ],
@@ -103,7 +103,7 @@ class VerifyApiController extends Controller
                 return [
                     'token'     => $qr->token,
                     'produit'   => $qr->lot?->produit?->nom ?? 'Produit inconnu',
-                    'fabricant' => $qr->lot?->produit?->fabricant?->nom ?? '',
+                    'fabricant' => $qr->lot?->produit?->fabricant?->nom_entreprise ?? '',
                     'categorie' => $qr->lot?->produit?->categorie ?? '',
                     'statut'    => $qr->statut,
                 ];

@@ -3,7 +3,7 @@
 @section('title', __('messages.carte_risques'))
 
 @section('topbar-title')
-    {{ __('messages.carte_des') }} <span>{{ __('messages.risques') }}</span>
+    {{ __('messages.carte_des') }} <span>{{ __('Cartes des risques') }}</span>
 @endsection
 
 @section('styles')

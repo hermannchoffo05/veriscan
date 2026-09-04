@@ -24,8 +24,8 @@ class PlanGatingTest extends TestCase
 
         $this->actingAs($fabricant, 'fabricant')
             ->get(route('fabricant.carte.index'))
-            ->assertRedirect(route('fabricant.dashboard'))
-            ->assertSessionHas('warning');
+                    ->assertOk()
+        ->assertViewIs('fabricant.plan-locked');
     }
 
     public function test_bloque_carte_risques_plan_starter(): void
@@ -34,7 +34,8 @@ class PlanGatingTest extends TestCase
 
         $this->actingAs($fabricant, 'fabricant')
             ->get(route('fabricant.carte.index'))
-            ->assertRedirect(route('fabricant.dashboard'));
+                    ->assertOk()
+        ->assertViewIs('fabricant.plan-locked');
     }
 
     public function test_autorise_carte_risques_plan_pro(): void
@@ -83,7 +84,8 @@ class PlanGatingTest extends TestCase
 
         $this->actingAs($fabricant, 'fabricant')
             ->get(route('fabricant.carte.index'))
-            ->assertRedirect(route('fabricant.dashboard'));
+                    ->assertOk()
+        ->assertViewIs('fabricant.plan-locked');
     }
 
     public function test_redirige_sans_json_quand_pas_de_json_attendu(): void
@@ -92,6 +94,7 @@ class PlanGatingTest extends TestCase
 
         $this->actingAs($fabricant, 'fabricant')
             ->post(route('fabricant.dashboard.chat'), ['message' => 'test'])
-            ->assertRedirect(route('fabricant.dashboard'));
+                    ->assertOk()
+        ->assertViewIs('fabricant.plan-locked');
     }
 }
