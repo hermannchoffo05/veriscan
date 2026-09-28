@@ -147,6 +147,7 @@ Route::middleware(["auth:fabricant"])->prefix("fabricant")->name("fabricant.")->
     Route::post("/qrcodes", [FabricantQRCodesController::class, "store"])->name("qrcodes.store");
     Route::get("/qrcodes/{id}", [FabricantQRCodesController::class, "show"])->name("qrcodes.show");
     Route::get("/qrcodes/{id}/download", [FabricantQRCodesController::class, "download"])->name("qrcodes.download");
+    Route::post("/qrcodes/{id}/revoke", [FabricantQRCodesController::class, "revoke"])->name("qrcodes.revoke");
     Route::get("/qrcodes/{id}/download-pdf", [FabricantQRCodesController::class, "downloadPdf"])->name("qrcodes.download-pdf");
 
     // Signalements
@@ -186,6 +187,7 @@ Route::middleware("auth:admin")->prefix("admin")->name("admin.")->group(function
     Route::post("/fabricants/{id}/valider", [AdminFabricantsController::class, "valider"])->name("fabricants.valider");
     Route::post("/fabricants/{id}/rejeter", [AdminFabricantsController::class, "rejeter"])->name("fabricants.rejeter");
     Route::post("/fabricants/{id}/suspendre", [AdminFabricantsController::class, "suspendre"])->name("fabricants.suspendre");
+    Route::post("/fabricants/{id}/reactiver", [AdminFabricantsController::class, "reactiver"])->name("fabricants.reactiver");
     Route::delete("/fabricants/{id}", [AdminFabricantsController::class, "destroy"])->name("fabricants.destroy");
 
     Route::get("/signalements", [AdminSignalementsController::class, "index"])->name("signalements.index");

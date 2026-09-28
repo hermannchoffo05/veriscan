@@ -168,6 +168,23 @@ class FabricantQRCodesController extends Controller
         return view('fabricant.qrcodes.show', compact('qrcode', 'qrImage', 'fabricant'));
     }
 
+    public function revoke($id)
+    {
+        $fabricant = Auth::guard('fabricant')->user();
+        $qrcode = QrCode::whereHas('lot.produit', function ($q) use ($fabricant) {
+                        $q->where('fabricant_id', $fabricant->id);
+                    })
+                    ->findOrFail($id);
+
+        if ($qrcode->statut === 'revoque') {
+            return back()->with('success', 'Ce QR code est déjà révoqué.');
+        }
+
+        $qrcode->update(['statut' => 'revoque']);
+
+        return back()->with('success', 'QR code révoqué. Toute vérification renverra désormais "révoqué".');
+    }
+
     public function download($id)
     {
         $fabricant = Auth::guard('fabricant')->user();

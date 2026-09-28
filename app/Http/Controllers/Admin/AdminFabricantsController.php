@@ -49,6 +49,13 @@ class AdminFabricantsController extends Controller
         return back()->with('success', 'Fabricant suspendu.');
     }
 
+    public function reactiver($id)
+    {
+        $fabricant = Fabricant::findOrFail($id);
+        $fabricant->update(['statut' => 'actif']);
+        return back()->with('success', 'Fabricant réactivé.');
+    }
+
     public function destroy($id)
     {
         $fabricant = Fabricant::findOrFail($id);

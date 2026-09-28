@@ -105,6 +105,12 @@
                 <span class="badge {{ $qrcode->statut==='actif'?'badge-green':'badge-red' }}">
                     {{ $qrcode->statut==='actif'?__('messages.actif'):__('messages.inactif') }}
                 </span>
+                @if($qrcode->statut === 'actif')
+                    <form method="POST" action="{{ route('fabricant.qrcodes.revoke', $qrcode->id) }}" style="display:inline;margin-left:8px;" onsubmit="return confirm('Révoquer ce QR code ? Toute vérification future renverra « révoqué ». Cette action est irréversible.')">
+                        @csrf
+                        <button type="submit" class="btn-download" style="background:#B02A2A;color:#fff;padding:4px 12px;font-size:12px;">Révoquer</button>
+                    </form>
+                @endif
             </span>
         </div>
         <div class="info-row">
