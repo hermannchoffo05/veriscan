@@ -27,8 +27,10 @@ class FabricantQRCodesController extends Controller
     public function create()
     {
         $fabricant = Auth::guard('fabricant')->user();
+        // Seuls les lots de produits certifiés sont proposés à la génération.
         $lots = Lot::whereHas('produit', function ($q) use ($fabricant) {
-                    $q->where('fabricant_id', $fabricant->id);
+                    $q->where('fabricant_id', $fabricant->id)
+                      ->where('statut_certification', Produit::CERT_CERTIFIE);
                 })
                 ->with('produit')
                 ->latest()
@@ -46,7 +48,14 @@ class FabricantQRCodesController extends Controller
 
         $lot = Lot::whereHas('produit', function ($q) use ($fabricant) {
                     $q->where('fabricant_id', $fabricant->id);
-                })->findOrFail($validated['lot_id']);
+                })->with('produit')->findOrFail($validated['lot_id']);
+
+        // ✅ Verrou de certification : aucun QR code pour un produit non certifié.
+        if (!$lot->produit->estCertifie()) {
+            return back()->withInput()->with('warning',
+                "Le produit « {$lot->produit->nom} » n'est pas certifié (statut : {$lot->produit->libelle_certification}). "
+                . "Les QR codes ne peuvent être générés que pour un produit certifié.");
+        }
 
         // ✅ Garde-fou quantite du lot vs QR déjà générés.
         // Sans ça, un fabricant pouvait générer plus de QR codes que d'unités

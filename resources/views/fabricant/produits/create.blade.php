@@ -147,6 +147,18 @@ textarea.form-control{resize:vertical;min-height:100px;}
 
         </div>
 
+        {{-- JUSTIFICATIF DE CERTIFICATION --}}
+        <div class="form-group">
+            <label class="form-label">Justificatif (AMM, certificat de conformité…) <span class="required">*</span></label>
+            <input type="file" name="justificatif" accept=".pdf,.jpg,.jpeg,.png"
+                   class="form-control @error('justificatif') is-invalid @enderror">
+            <div class="certif-hint" style="margin-top:6px;">
+                PDF, JPG ou PNG, 5&nbsp;Mo max. Ce document sera examiné par l'autorité de certification
+                avant que vous puissiez générer des QR codes pour ce produit.
+            </div>
+            @error('justificatif') <div class="invalid-feedback" style="display:block">{{ $message }}</div> @enderror
+        </div>
+
         {{-- DESCRIPTION --}}
         <div class="form-group">
             <label class="form-label">

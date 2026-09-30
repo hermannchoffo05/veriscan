@@ -83,9 +83,10 @@ class FabricantAuthController extends Controller
             'telephone'      => $telephoneComplet,
             'adresse'        => $data['adresse'] ?? null,
             'pays'           => $data['pays'] ?? 'Cameroun',
-            // NOTE : auto-activation laissée telle quelle pour l'instant, en
-            // attendant un vrai workflow d'approbation admin (AdminFabricantsController
-            // n'a pas encore de méthode activer()). Point à revoir après la démo.
+            // Choix de conception : le fabricant accède immédiatement à son tableau
+            // de bord (pas d'attente de validation du compte). Le contrôle de
+            // confiance porte sur chaque PRODUIT : il doit être certifié par
+            // l'autorité (admin) avant de pouvoir émettre des QR codes.
             'statut'         => 'actif',
         ]);
 

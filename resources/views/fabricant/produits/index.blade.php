@@ -116,7 +116,9 @@
                         @endif
                         <span class="image-badge">{{ $produit->categorie }}</span>
                         <span class="status-overlay">
-                            @if($produit->est_suspect)
+                            @if(!$produit->estCertifie())
+                                <span class="status-badge-img suspect">{{ $produit->libelle_certification }}</span>
+                            @elseif($produit->est_suspect)
                                 <span class="status-badge-img suspect">{{ __('messages.suspect') }}</span>
                             @else
                                 <span class="status-badge-img actif">{{ __('messages.authentique') }}</span>

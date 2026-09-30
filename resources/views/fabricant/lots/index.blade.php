@@ -108,7 +108,11 @@ tr:hover td { background:#fafafa; }
                     @endif
                 </td>
                 <td style="display:flex;gap:6px">
-                    <a href="{{ route('fabricant.qrcodes.create') }}?lot_id={{ $lot->id }}" class="btn-sm btn-sm-teal">{{ __('messages.generer_qr') }}</a>
+                    @if($produit->estCertifie())
+                        <a href="{{ route('fabricant.qrcodes.create') }}?lot_id={{ $lot->id }}" class="btn-sm btn-sm-teal">{{ __('messages.generer_qr') }}</a>
+                    @else
+                        <span class="btn-sm btn-sm-teal" style="opacity:.45;cursor:not-allowed;" title="Produit non certifié : génération de QR codes impossible">{{ __('messages.generer_qr') }}</span>
+                    @endif
                     <a href="{{ route('fabricant.lots.download-pdf', $lot->id) }}" class="btn-sm btn-sm-teal">
                         <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;vertical-align:middle;"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
                         PDF lot

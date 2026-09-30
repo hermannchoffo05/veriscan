@@ -60,6 +60,20 @@ class VerificationController extends Controller
             ]);
         }
 
+        // Produit dont la certification a été rejetée/révoquée : le QR ne prouve plus rien.
+        $produitCertif = $qrCode->lot->produit ?? null;
+        if ($produitCertif && !$produitCertif->estCertifie()) {
+            $this->enregistrerVerification($request, $qrCode, 'revoque');
+
+            return view('verify', [
+                'statut'  => 'revoque',
+                'message' => "Ce produit n'est pas (ou plus) certifié par VeriScan.",
+                'produit' => $produitCertif,
+                'qrCode'  => $qrCode,
+                'token'   => $token,
+            ]);
+        }
+
         // Incrémenter nb_scans global
         $qrCode->increment('nb_scans');
 

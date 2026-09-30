@@ -207,6 +207,33 @@ tr:hover td { background: #f9fafb; }
     </div>
 </div>
 
+{{-- Statut de certification documentaire --}}
+@php
+    $cs = $produit->statut_certification;
+    $csStyle = match($cs) {
+        'certifie' => 'background:#f0fdf4;border:1px solid #bbf7d0;color:#166534;',
+        'rejete'   => 'background:#fef2f2;border:1px solid #fecaca;color:#991b1b;',
+        'revoque'  => 'background:#f3f4f6;border:1px solid #d1d5db;color:#374151;',
+        default    => 'background:#fffbeb;border:1px solid #fde68a;color:#92400e;',
+    };
+@endphp
+<div style="{{ $csStyle }} border-radius:14px;padding:16px 20px;margin-bottom:20px;font-size:14px;">
+    <strong>Certification : {{ $produit->libelle_certification }}</strong>
+    @if($cs === 'certifie')
+        <div style="margin-top:4px;">
+            Certificat n° {{ $produit->numero_certificat }}
+            @if($produit->certifie_le) — délivré le {{ $produit->certifie_le->format('d/m/Y') }} @endif.
+            Vous pouvez générer des QR codes pour ce produit.
+        </div>
+    @elseif($cs === 'soumis')
+        <div style="margin-top:4px;">Votre justificatif est en cours d'examen par l'autorité de certification. La génération de QR codes sera disponible après certification.</div>
+    @elseif($cs === 'rejete')
+        <div style="margin-top:4px;">Motif du rejet : {{ $produit->motif_decision }}<br>Modifiez le produit et déposez un nouveau justificatif pour le soumettre à nouveau.</div>
+    @elseif($cs === 'revoque')
+        <div style="margin-top:4px;">Motif de la révocation : {{ $produit->motif_decision }}<br>Les QR codes de ce produit ont été révoqués. Déposez un nouveau justificatif pour un nouvel examen.</div>
+    @endif
+</div>
+
 {{-- Certification propre au secteur --}}
 <div class="certif-card">
     <div class="section-title">
@@ -327,8 +354,12 @@ tr:hover td { background: #f9fafb; }
                     </td>
                     <td>
                         <div class="actions-cell">
-                            <a href="{{ route('fabricant.qrcodes.create') }}?lot_id={{ $lot->id }}"
-                               class="btn-sm btn-sm-teal">{{ __('messages.generer_qr') }}</a>
+                            @if($produit->estCertifie())
+                                <a href="{{ route('fabricant.qrcodes.create') }}?lot_id={{ $lot->id }}"
+                                   class="btn-sm btn-sm-teal">{{ __('messages.generer_qr') }}</a>
+                            @else
+                                <span class="btn-sm btn-sm-teal" style="opacity:.45;cursor:not-allowed;" title="Produit non certifié : génération de QR codes impossible">{{ __('messages.generer_qr') }}</span>
+                            @endif
                             <a href="{{ route('fabricant.lots.download-pdf', $lot->id) }}" class="btn-sm btn-sm-teal">PDF lot</a>
                             <a href="{{ route('fabricant.lots.edit', [$produit->id, $lot->id]) }}"
                                class="btn-sm btn-sm-edit">{{ __('messages.modifier') }}</a>

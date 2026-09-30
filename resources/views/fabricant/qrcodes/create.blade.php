@@ -53,6 +53,12 @@ select.form-control{appearance:none;cursor:pointer;}
         @csrf
         <div class="form-group">
             <label class="form-label">{{ __('messages.lot_production') }} <span class="required">*</span></label>
+            @if($lots->isEmpty())
+                <div style="background:#fffbeb;border:1px solid #fde68a;color:#92400e;border-radius:10px;padding:10px 14px;font-size:13px;margin-bottom:10px;">
+                    Aucun lot disponible : seuls les lots de produits <strong>certifiés</strong> peuvent recevoir des QR codes.
+                    Vérifiez le statut de certification de vos produits.
+                </div>
+            @endif
             <select name="lot_id" class="form-control @error('lot_id') is-invalid @enderror">
                 <option value="">-- {{ __('messages.selectionner_lot') }} --</option>
                 @foreach($lots as $lot)

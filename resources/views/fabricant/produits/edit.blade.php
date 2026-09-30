@@ -114,6 +114,23 @@ textarea.form-control{resize:vertical;min-height:100px;}
 
         </div>
 
+        {{-- JUSTIFICATIF DE CERTIFICATION --}}
+        <div class="form-group">
+            <label class="form-label">Justificatif (AMM, certificat de conformité…)</label>
+            <div class="certif-hint" style="margin-bottom:8px;">
+                Statut actuel : <strong>{{ $produit->libelle_certification }}</strong>
+                @if($produit->motif_decision && in_array($produit->statut_certification, ['rejete','revoque']))
+                    — motif : {{ $produit->motif_decision }}
+                @endif
+            </div>
+            <input type="file" name="justificatif" accept=".pdf,.jpg,.jpeg,.png"
+                   class="form-control @error('justificatif') is-invalid @enderror">
+            <div class="certif-hint" style="margin-top:6px;">
+                Laisser vide pour conserver le justificatif actuel. Déposer un nouveau fichier renvoie le produit en validation.
+            </div>
+            @error('justificatif') <div class="invalid-feedback" style="display:block">{{ $message }}</div> @enderror
+        </div>
+
         {{-- DESCRIPTION --}}
         <div class="form-group">
             <label class="form-label">{{ __('messages.description') }}</label>

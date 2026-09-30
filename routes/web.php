@@ -26,6 +26,8 @@ use App\Http\Controllers\AvisController;
 use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminFabricantsController;
+use App\Http\Controllers\Admin\AdminCertificationsController;
+use App\Http\Controllers\Admin\AdminConsommateursController;
 use App\Http\Controllers\Admin\AdminSignalementsController;
 use App\Http\Controllers\Admin\AdminRapportsController;
 use App\Http\Controllers\Admin\AdminCarteController;
@@ -189,6 +191,19 @@ Route::middleware("auth:admin")->prefix("admin")->name("admin.")->group(function
     Route::post("/fabricants/{id}/suspendre", [AdminFabricantsController::class, "suspendre"])->name("fabricants.suspendre");
     Route::post("/fabricants/{id}/reactiver", [AdminFabricantsController::class, "reactiver"])->name("fabricants.reactiver");
     Route::delete("/fabricants/{id}", [AdminFabricantsController::class, "destroy"])->name("fabricants.destroy");
+
+    // Certification documentaire des produits (autorité de certification)
+    Route::get("/certifications", [AdminCertificationsController::class, "index"])->name("certifications.index");
+    Route::get("/certifications/{id}", [AdminCertificationsController::class, "show"])->name("certifications.show");
+    Route::get("/certifications/{id}/justificatif", [AdminCertificationsController::class, "justificatif"])->name("certifications.justificatif");
+    Route::post("/certifications/{id}/certifier", [AdminCertificationsController::class, "certifier"])->name("certifications.certifier");
+    Route::post("/certifications/{id}/rejeter", [AdminCertificationsController::class, "rejeter"])->name("certifications.rejeter");
+    Route::post("/certifications/{id}/revoquer", [AdminCertificationsController::class, "revoquer"])->name("certifications.revoquer");
+
+    // Gestion des comptes consommateurs
+    Route::get("/consommateurs", [AdminConsommateursController::class, "index"])->name("consommateurs.index");
+    Route::post("/consommateurs/{id}/suspendre", [AdminConsommateursController::class, "suspendre"])->name("consommateurs.suspendre");
+    Route::post("/consommateurs/{id}/reactiver", [AdminConsommateursController::class, "reactiver"])->name("consommateurs.reactiver");
 
     Route::get("/signalements", [AdminSignalementsController::class, "index"])->name("signalements.index");
     Route::get("/signalements/{id}", [AdminSignalementsController::class, "show"])->name("signalements.show");

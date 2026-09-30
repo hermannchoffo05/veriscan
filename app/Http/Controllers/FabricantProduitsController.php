@@ -54,6 +54,11 @@ class FabricantProduitsController extends Controller
             'categorie'   => ['required', 'string', Rule::in(Produit::CATEGORIES_AUTORISEES)],
             'description' => 'nullable|string',
             'image'       => 'nullable|image|max:2048',
+            'justificatif' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
+        ], [
+            'justificatif.required' => 'Le justificatif (AMM ou certificat de conformité) est obligatoire.',
+            'justificatif.mimes'    => 'Le justificatif doit être un PDF, JPG ou PNG.',
+            'justificatif.max'      => 'Le justificatif ne doit pas dépasser 5 Mo.',
         ]);
 
         // Champs de certification propres au secteur choisi — validés séparément
@@ -75,11 +80,16 @@ class FabricantProduitsController extends Controller
             $validated['image'] = $request->file('image')->store('produits', 'public');
         }
 
+        // Justificatif : stocké sur le disque PRIVÉ (non accessible par URL publique),
+        // consulté uniquement par l'autorité de certification via une route protégée.
+        $validated['justificatif']         = $request->file('justificatif')->store('justificatifs', 'local');
+        $validated['statut_certification'] = Produit::CERT_SOUMIS;
+
         $produit = Produit::create($validated);
         $this->enregistrerCertification($produit, $validated['categorie'], $validatedCertif);
 
         return redirect()->route('fabricant.produits.index')
-                         ->with('success', 'Produit créé avec succès.');
+                         ->with('success', 'Produit créé. Il est en cours de validation par l\'autorité de certification : vous pourrez générer ses QR codes dès qu\'il sera certifié.');
     }
 
     public function show($id)
@@ -111,6 +121,7 @@ class FabricantProduitsController extends Controller
             'categorie'   => ['required', 'string', Rule::in(Produit::CATEGORIES_AUTORISEES)],
             'description' => 'nullable|string',
             'image'       => 'nullable|image|max:2048',
+            'justificatif' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
         ]);
 
         $validatedCertif = $request->validate(
@@ -119,6 +130,24 @@ class FabricantProduitsController extends Controller
 
         if ($request->hasFile('image')) {
             $validated['image'] = $request->file('image')->store('produits', 'public');
+        }
+
+        // Un produit rejeté ne peut être re-soumis qu'avec un nouveau justificatif.
+        if ($produit->statut_certification === Produit::CERT_REJETE && !$request->hasFile('justificatif')) {
+            return back()->withInput()->with('warning',
+                'Ce produit a été rejeté : déposez un nouveau justificatif pour le soumettre à nouveau.');
+        }
+
+        // Nouveau justificatif => on remplace l'ancien et on repasse en validation.
+        if ($request->hasFile('justificatif')) {
+            if ($produit->justificatif) {
+                \Illuminate\Support\Facades\Storage::disk('local')->delete($produit->justificatif);
+            }
+            $validated['justificatif']         = $request->file('justificatif')->store('justificatifs', 'local');
+            $validated['statut_certification'] = Produit::CERT_SOUMIS;
+            $validated['motif_decision']       = null;
+        } else {
+            unset($validated['justificatif']);
         }
 
         $produit->update($validated);

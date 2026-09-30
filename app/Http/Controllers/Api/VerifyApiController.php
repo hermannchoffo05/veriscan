@@ -24,7 +24,35 @@ class VerifyApiController extends Controller
             ], 404);
         }
 
-        $resultat = $qrCode->statut === 'actif' ? 'authentique' : 'suspect';
+        // ── Verdict à trois états, identique à la vérification web ─────────
+        // `resultat`  : valeur historique lue par l'app mobile (authentique | suspect)
+        // `verdict`   : valeur détaillée (authentique | suspect | contrefait | revoque | non_certifie)
+        $produit = $qrCode->lot?->produit;
+
+        $hmacValide = hash_equals(
+            hash_hmac('sha256', $qrCode->token, config('app.key')),
+            (string) $qrCode->hmac
+        );
+
+        if (!$hmacValide) {
+            $verdict = 'contrefait';
+        } elseif ($qrCode->statut !== 'actif') {
+            $verdict = 'revoque';
+        } elseif ($produit && !$produit->estCertifie()) {
+            $verdict = 'non_certifie';
+        } else {
+            $verdict = 'authentique';
+        }
+
+        $resultat = $verdict === 'authentique' ? 'authentique' : 'suspect';
+
+        $messages = [
+            'authentique'  => 'Ce produit est authentique et certifié.',
+            'contrefait'   => 'La signature de ce QR code est invalide : produit probablement contrefait.',
+            'revoque'      => 'Ce QR code a été révoqué : ne consommez pas ce produit.',
+            'non_certifie' => "Ce produit n'est pas (ou plus) certifié.",
+            'suspect'      => 'Ce produit est suspect — soyez vigilant.',
+        ];
 
         Verification::create([
             'user_id'      => auth('sanctum')->id(),
@@ -32,10 +60,12 @@ class VerifyApiController extends Controller
             'ip_address'   => $request->ip(),
             'appareil'     => $request->userAgent(),
             'localisation' => $request->input('localisation', null),
-            'resultat'     => $resultat,
+            'resultat'     => in_array($verdict, ['contrefait', 'revoque'], true) ? $verdict : $resultat,
         ]);
 
-        $qrCode->increment('nb_scans');
+        if ($verdict !== 'contrefait') {
+            $qrCode->increment('nb_scans');
+        }
 
         if (auth('sanctum')->id()) {
             Notification::create([
@@ -50,12 +80,20 @@ class VerifyApiController extends Controller
         return response()->json([
             'success'  => true,
             'resultat' => $resultat,
+            'verdict'  => $verdict,
+            'message'  => $messages[$verdict] ?? $messages['suspect'],
             'produit'  => [
-                'nom'        => $qrCode->lot?->produit?->nom,
-                'categorie'  => $qrCode->lot?->produit?->categorie,
-                'fabricant'  => $qrCode->lot?->produit?->fabricant?->nom_entreprise,
+                'nom'        => $produit?->nom,
+                'categorie'  => $produit?->categorie,
+                'fabricant'  => $produit?->fabricant?->nom_entreprise,
                 'lot'        => $qrCode->lot?->numero_lot,
                 'expiration' => $qrCode->lot?->date_expiration,
+                // Informations certifiées (affichables dans l'app mobile)
+                'certification' => [
+                    'statut'            => $produit?->statut_certification,
+                    'numero_certificat' => $produit?->numero_certificat,
+                    'certifie_le'       => $produit?->certifie_le?->format('d/m/Y'),
+                ],
             ],
         ]);
     }
