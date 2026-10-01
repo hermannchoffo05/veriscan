@@ -16,11 +16,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        DB::statement("ALTER TABLE fabricants MODIFY statut ENUM('actif', 'suspendu', 'en_attente', 'rejete') DEFAULT 'en_attente'");
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement("ALTER TABLE fabricants MODIFY statut ENUM('actif', 'suspendu', 'en_attente', 'rejete') DEFAULT 'en_attente'");
+        }
     }
 
     public function down(): void
     {
-        DB::statement("ALTER TABLE fabricants MODIFY statut ENUM('actif', 'suspendu', 'en_attente') DEFAULT 'en_attente'");
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement("ALTER TABLE fabricants MODIFY statut ENUM('actif', 'suspendu', 'en_attente') DEFAULT 'en_attente'");
+        }
     }
 };
