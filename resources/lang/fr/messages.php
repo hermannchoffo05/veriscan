@@ -3,7 +3,7 @@
 return [
     // Navigation
     'dashboard'       => 'Tableau de bord',
-    'mes_produits'    => 'Mes Produits',
+    'mes_produits'    => 'Gestion Produits',
     'qr_codes'        => 'QR Codes',
     'statistiques'    => 'Statistiques',
     'signalements'    => 'Signalements',
@@ -14,7 +14,7 @@ return [
     'alertes'         => 'Alertes',
     'compte'          => 'Compte',
     'deconnexion'     => 'Déconnexion',
-    'fabricant_certifie' => 'Fabricant certifié',
+    'fabricant_certifie' => 'Espace fabricant',
 
     // Dashboard
     'bienvenue'       => 'Bienvenue',

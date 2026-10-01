@@ -57,10 +57,10 @@ return [
 'fcm' => [
     'server_key' => env('FCM_SERVER_KEY'),
 ],
-'google' => [
-    'client_id'     => env('GOOGLE_CLIENT_ID'),
-    'client_secret' => env('GOOGLE_CLIENT_SECRET'),
-    'redirect'      => env('GOOGLE_REDIRECT_URI'),
+'groq' => [
+    'key'          => env('GROQ_API_KEY'),
+    'model'        => env('GROQ_MODEL', 'openai/gpt-oss-120b'),
+    'vision_model' => env('GROQ_VISION_MODEL', 'qwen/qwen3.6-27b'),
 ],
 
 ];

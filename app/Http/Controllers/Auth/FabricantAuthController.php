@@ -107,7 +107,9 @@ class FabricantAuthController extends Controller
     // l'écran de consentement Google.
     public function redirectToGoogle()
     {
-        return Socialite::driver('google')->redirect();
+        return Socialite::driver('google')
+            ->redirectUrl(route('fabricant.auth.google.callback'))
+            ->redirect();
     }
 
     // ✅ AJOUTÉ : callback appelé par Google après consentement. Cherche un
@@ -119,7 +121,10 @@ class FabricantAuthController extends Controller
     // une obligation stricte).
     public function handleGoogleCallback()
     {
-        $googleUser = Socialite::driver('google')->stateless()->user();
+        $googleUser = Socialite::driver('google')
+            ->redirectUrl(route('fabricant.auth.google.callback'))
+            ->stateless()
+            ->user();
 
         $fabricant = Fabricant::where('google_id', $googleUser->getId())
             ->orWhere('email', $googleUser->getEmail())

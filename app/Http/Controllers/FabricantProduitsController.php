@@ -209,17 +209,26 @@ class FabricantProduitsController extends Controller
 
     private function groqCall(string $prompt, int $maxTokens = 200): ?string
     {
-        $apiKey = env('GROQ_API_KEY');
+        $apiKey = config('services.groq.key');
         $response = Http::withHeaders([
             'Content-Type'  => 'application/json',
             'Authorization' => 'Bearer ' . $apiKey,
-        ])->timeout(15)->post('https://api.groq.com/openai/v1/chat/completions', [
-            'model'       => 'llama-3.1-8b-instant',
-            'messages'    => [['role' => 'user', 'content' => $prompt]],
-            'max_tokens'  => $maxTokens,
-            'temperature' => 0.7,
+        ])->timeout(30)->post('https://api.groq.com/openai/v1/chat/completions', [
+            'model'            => config('services.groq.model'),
+            'messages'         => [['role' => 'user', 'content' => $prompt]],
+            // marge pour le raisonnement interne du modèle
+            'max_tokens'       => $maxTokens + 400,
+            'reasoning_effort' => 'low',
+            'temperature'      => 0.7,
         ]);
-        return $response->json('choices.0.message.content');
+        if (!$response->successful()) {
+            \Illuminate\Support\Facades\Log::error('Erreur Groq groqCall', [
+                'status' => $response->status(), 'body' => $response->body(),
+            ]);
+            return null;
+        }
+        $texte = $response->json('choices.0.message.content');
+        return $texte !== null ? trim($texte) : null;
     }
 
     /**

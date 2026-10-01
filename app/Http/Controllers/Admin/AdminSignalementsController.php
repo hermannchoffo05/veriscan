@@ -83,7 +83,7 @@ Analyse cette image et fournis : niveau de suspicion, observations, signes de co
                     // ⚠️ meta-llama/llama-4-scout-17b-16e-instruct a été déprécié par Groq.
                     // qwen/qwen3.6-27b est le modèle vision actuel (statut "preview" chez Groq,
                     // donc à re-vérifier périodiquement sur console.groq.com/docs/models).
-                    'model'       => 'qwen/qwen3.6-27b',
+                    'model'       => config('services.groq.vision_model'),
                     'messages'    => [
                         [
                             'role'    => 'user',
@@ -198,7 +198,7 @@ Ne commence pas par 'Voici' ou 'Bien sûr'. Va directement au résumé.";
                 ])
                 ->post('https://api.groq.com/openai/v1/chat/completions', [
                     // ⚠️ llama-3.1-8b-instant a été déprécié par Groq.
-                    'model'       => 'openai/gpt-oss-120b',
+                    'model'       => config('services.groq.model'),
                     'messages'    => [['role' => 'user', 'content' => $prompt]],
                     'max_tokens'  => 400,
                     'temperature' => 0.4,

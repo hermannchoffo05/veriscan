@@ -953,7 +953,7 @@
         fr: [
             {
                 patterns: ['créer un produit', 'nouveau produit', 'ajouter produit', 'comment créer'],
-                answer: '📦 Pour créer un produit :\n1. Allez dans <b>Mes Produits</b> dans la sidebar\n2. Cliquez sur <b>+ Nouveau produit</b>\n3. Remplissez le nom et la catégorie\n4. La description se génère automatiquement par IA !\n5. Cliquez sur <b>Créer le produit</b>'
+                answer: '📦 Pour créer un produit :\n1. Allez dans <b>Gestion Produits</b> dans la sidebar\n2. Cliquez sur <b>+ Nouveau produit</b>\n3. Remplissez le nom et la catégorie\n4. La description se génère automatiquement par IA !\n5. Cliquez sur <b>Créer le produit</b>'
             },
             {
                 patterns: ['qr code', 'qr-code', 'générer qr', 'créer qr'],
@@ -961,7 +961,7 @@
             },
             {
                 patterns: ['lot', 'créer lot', 'nouveau lot', 'ajouter lot'],
-                answer: '📋 Pour créer un lot :\n1. Allez dans <b>Mes Produits</b>\n2. Cliquez sur un produit existant\n3. Cliquez sur <b>+ Nouveau lot</b>\n4. Remplissez le numéro, les dates et la quantité\n5. Validez — le lot est créé et prêt pour les QR codes'
+                answer: '📋 Pour créer un lot :\n1. Allez dans <b>Gestion Produits</b>\n2. Cliquez sur un produit existant\n3. Cliquez sur <b>+ Nouveau lot</b>\n4. Remplissez le numéro, les dates et la quantité\n5. Validez — le lot est créé et prêt pour les QR codes'
             },
             {
                 patterns: ['statistique', 'stats', 'analyse', 'rapport'],

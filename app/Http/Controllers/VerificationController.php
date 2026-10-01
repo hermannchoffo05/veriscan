@@ -345,7 +345,7 @@ Analyse cette image et donne un avis en 2-3 phrases. Commence par le niveau de s
                 'Content-Type'  => 'application/json',
             ])
             ->post('https://api.groq.com/openai/v1/chat/completions', [
-                'model'       => 'meta-llama/llama-4-scout-17b-16e-instruct',
+                'model'       => config('services.groq.vision_model'),
                 'messages'    => [
                     [
                         'role'    => 'user',
@@ -404,7 +404,7 @@ Analyse cette image et fournis : niveau de suspicion, observations, signes de co
                     'Content-Type'  => 'application/json',
                 ])
                 ->post('https://api.groq.com/openai/v1/chat/completions', [
-                    'model'       => 'meta-llama/llama-4-scout-17b-16e-instruct',
+                    'model'       => config('services.groq.vision_model'),
                     'messages'    => [
                         [
                             'role'    => 'user',

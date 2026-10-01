@@ -89,13 +89,14 @@ Ne mentionne pas que tu as accès à une base de données — réponds naturelle
         try {
             $response = Http::timeout(30)
                 ->withHeaders([
-                    'Authorization' => 'Bearer ' . env('GROQ_API_KEY'),
+                    'Authorization' => 'Bearer ' . config('services.groq.key'),
                     'Content-Type'  => 'application/json',
                 ])
                 ->post('https://api.groq.com/openai/v1/chat/completions', [
-                    'model'       => 'llama-3.1-8b-instant',
-                    'messages'    => $messages,
-                    'max_tokens'  => 500,
+                    'model'            => config('services.groq.model'),
+                    'messages'         => $messages,
+                    'reasoning_effort' => 'low',
+                    'max_tokens'       => 900,
                     'temperature' => 0.7,
                 ]);
 

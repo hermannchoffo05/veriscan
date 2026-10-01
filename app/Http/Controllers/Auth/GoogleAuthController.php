@@ -19,9 +19,27 @@ class GoogleAuthController extends Controller
             ]);
 
             // Vérifie le token Google et récupère les infos utilisateur
-            $googleUser = Socialite::driver('google')
-                ->stateless()
-                ->userFromToken($request->id_token);
+            // Le mobile envoie un id_token (JWT) : on le fait valider par Google.
+            $info = \Illuminate\Support\Facades\Http::timeout(15)
+                ->get('https://oauth2.googleapis.com/tokeninfo', ['id_token' => $request->id_token]);
+
+            if ($info->successful() && $info->json('email')) {
+                $aud = $info->json('aud');
+                $attendus = array_filter([config('services.google.client_id'), env('GOOGLE_MOBILE_SERVER_CLIENT_ID')]);
+                if (!empty($attendus) && !in_array($aud, $attendus, true)) {
+                    throw new \Exception('id_token destiné à une autre application.');
+                }
+                $googleUser = new class($info->json()) {
+                    public function __construct(private array $d) {}
+                    public function getId() { return $this->d['sub'] ?? null; }
+                    public function getEmail() { return $this->d['email'] ?? null; }
+                    public function getName() { return $this->d['name'] ?? ($this->d['email'] ?? 'Utilisateur'); }
+                    public function getAvatar() { return $this->d['picture'] ?? null; }
+                };
+            } else {
+                // Repli : le jeton est peut-être un access_token.
+                $googleUser = Socialite::driver('google')->stateless()->userFromToken($request->id_token);
+            }
 
             // Cherche l'utilisateur en DB ou le crée
             $user = User::where('email', $googleUser->getEmail())->first();
