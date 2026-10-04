@@ -22,7 +22,7 @@ class PaiementController extends Controller
     private function getCampayToken(): ?string
     {
         try {
-            $response = Http::timeout(15)
+            $response = Http::timeout(30)->retry(2, 1000, throw: false)
                 ->post(config('services.campay.base_url') . 'token/', [
                     'username' => config('services.campay.username'),
                     'password' => config('services.campay.password'),
@@ -113,9 +113,10 @@ class PaiementController extends Controller
         $reference = 'VS-' . strtoupper($request->plan) . '-' . Str::random(8) . '-' . time();
 
         $telephone = preg_replace('/\D/', '', $request->telephone);
-        if (!str_starts_with($telephone, '237')) {
-            $telephone = '237' . $telephone;
-        }
+        $telephone = '237' . substr($telephone, -9);
+        $demo = str_contains((string) config('services.campay.base_url'), 'demo.campay.net');
+        $montantEnvoye = $demo ? min($plan['montant'], 25) : $plan['montant'];
+        Log::info('CamPay collect request', ['from' => $telephone, 'amount' => $montantEnvoye, 'demo' => $demo]);
 
         $token = $this->getCampayToken();
         if (!$token) {
@@ -126,7 +127,7 @@ class PaiementController extends Controller
             $response = Http::timeout(30)
                 ->withHeaders(['Authorization' => 'Token ' . $token, 'Content-Type' => 'application/json'])
                 ->post(config('services.campay.base_url') . 'collect/', [
-                    'amount'             => (string) $plan['montant'],
+                    'amount'             => (string) $montantEnvoye,
                     'currency'           => 'XAF',
                     'from'               => $telephone,
                     'description'        => 'Abonnement VeriScan ' . $plan['nom'],
